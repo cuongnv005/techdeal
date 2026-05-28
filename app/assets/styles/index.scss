@@ -1,0 +1,12 @@
+// using @use or @forward instead @import
+@use './pages/index.scss';
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-out;
+}
