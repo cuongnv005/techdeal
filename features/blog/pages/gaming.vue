@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-vue-next'
+import { useUserStore } from '@stores/user'
 import type { BlogPost } from '../types/post.type'
 import AdBanner from '../components/AdBanner.vue'
 import GamingBanner from '../components/gaming/GamingBanner.vue'
@@ -9,6 +10,8 @@ import GamingSpotlight from '../components/gaming/GamingSpotlight.vue'
 import GamingSidebar from '../components/gaming/GamingSidebar.vue'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
+
+const userStore = useUserStore()
 
 // SEO optimization for Gaming Page
 useSeoMeta({
@@ -141,6 +144,24 @@ const recentSidebarPosts = ref<BlogPost[]>([
 
     <!-- MAIN AREA -->
     <main>
+      <!-- Admin Action Bar -->
+      <div
+        v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')"
+        class="bg-[#e74c3c]/10 border-b border-[#e74c3c]/20 py-3"
+      >
+        <div class="container mx-auto px-4 flex items-center justify-between">
+          <span class="text-xs font-bold text-[#e74c3c] tracking-wider uppercase">
+            Quản trị viên / Moderator
+          </span>
+          <NuxtLink
+            to="/blog/publish?category=gaming"
+            class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#e74c3c] text-white hover:bg-[#c0392b] transition-all font-bold text-xs rounded-lg shadow-sm cursor-pointer"
+          >
+            📝 Đăng bài Game mới
+          </NuxtLink>
+        </div>
+      </div>
+
       <!-- GAMING BANNER COMPONENT -->
       <GamingBanner :banner-posts="bannerPosts" />
 
@@ -148,7 +169,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
       <GamingCategories :categories="categories" />
 
       <!-- MIDDLE AD BANNER -->
-      <AdBanner width="970px" height="90px" />
+      <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
       <!-- CONTENT GRID: MAIN / SIDEBAR -->
       <div class="container mx-auto px-4 py-8">

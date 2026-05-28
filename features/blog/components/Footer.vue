@@ -12,25 +12,36 @@ const props = withDefaults(defineProps<Props>(), {
 const isBlue = computed(() => props.theme === 'blue')
 
 // Compute classes/content based on theme
-const footerBgClass = computed(() => isBlue.value ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-zinc-955 dark:bg-zinc-950 border-zinc-900 text-zinc-550')
-const hoverTextClass = computed(() => isBlue.value ? 'hover:text-[#3498db]' : 'hover:text-[#e74c3c]')
-const textMutedClass = computed(() => isBlue.value ? 'text-zinc-500' : 'text-zinc-400')
-const titleText = computed(() => isBlue.value ? 'TECHDEAL.' : 'TECHDEAL GAMING.')
-const descriptionText = computed(() => isBlue.value 
-  ? 'Trang tin tức cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
-  : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
+const footerBgClass = computed(() =>
+  isBlue.value
+    ? 'bg-zinc-900 border-zinc-800 text-zinc-400'
+    : 'bg-zinc-955 dark:bg-zinc-950 border-zinc-900 text-zinc-550'
 )
-const middleColTitle = computed(() => isBlue.value ? 'Liên kết hữu ích' : 'Danh mục phổ biến')
-const supportEmail = computed(() => isBlue.value ? 'contact@techdeal.com' : 'gaming@techdeal.com')
-const supportPhone = computed(() => isBlue.value ? '+84 (0) 123 456 789' : '+84 (0) 987 654 321')
-const copyrightText = computed(() => isBlue.value 
-  ? '© 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.'
-  : '© 2026 TECHDEAL Gaming Hub. All rights reserved.'
+const hoverTextClass = computed(() =>
+  isBlue.value ? 'hover:text-[#3498db]' : 'hover:text-[#e74c3c]'
+)
+const textMutedClass = computed(() => (isBlue.value ? 'text-zinc-500' : 'text-zinc-400'))
+const titleText = computed(() => (isBlue.value ? 'TECHDEAL.' : 'TECHDEAL GAMING.'))
+const descriptionText = computed(() =>
+  isBlue.value
+    ? 'Trang tin tức cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
+    : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
+)
+const middleColTitle = computed(() => (isBlue.value ? 'Liên kết hữu ích' : 'Danh mục phổ biến'))
+const supportEmail = computed(() => (isBlue.value ? 'contact@techdeal.com' : 'gaming@techdeal.com'))
+const supportPhone = computed(() => (isBlue.value ? '+84 (0) 123 456 789' : '+84 (0) 987 654 321'))
+const copyrightText = computed(() =>
+  isBlue.value
+    ? '© 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.'
+    : '© 2026 TECHDEAL Gaming Hub. All rights reserved.'
 )
 </script>
 
 <template>
-  <footer class="text-xs py-10 mt-16 border-t transition-colors duration-300" :class="footerBgClass">
+  <footer
+    class="text-xs py-10 mt-16 border-t transition-colors duration-300"
+    :class="footerBgClass"
+  >
     <div class="container mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Brand Info -->
@@ -57,11 +68,21 @@ const copyrightText = computed(() => isBlue.value
             <li><a href="#" class="hover:text-white transition-colors">Giới thiệu bản tin</a></li>
           </ul>
           <ul v-else class="space-y-2">
-            <li><NuxtLink to="/cong-nghe" class="hover:text-white transition-colors">Công nghệ</NuxtLink></li>
-            <li><NuxtLink to="/windows" class="hover:text-white transition-colors">Windows</NuxtLink></li>
+            <li>
+              <NuxtLink to="/cong-nghe" class="hover:text-white transition-colors"
+                >Công nghệ</NuxtLink
+              >
+            </li>
+            <li>
+              <NuxtLink to="/windows" class="hover:text-white transition-colors">Windows</NuxtLink>
+            </li>
             <li><NuxtLink to="/ios" class="hover:text-white transition-colors">iOS</NuxtLink></li>
-            <li><NuxtLink to="/android" class="hover:text-white transition-colors">Android</NuxtLink></li>
-            <li><a href="#" class="hover:text-white transition-colors">Phần cứng PC</a></li>
+            <li>
+              <NuxtLink to="/android" class="hover:text-white transition-colors">Android</NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/pc" class="hover:text-white transition-colors">PC máy tính</NuxtLink>
+            </li>
           </ul>
         </div>
 
@@ -72,7 +93,9 @@ const copyrightText = computed(() => isBlue.value
           <p :class="textMutedClass">Điện thoại: {{ supportPhone }}</p>
         </div>
       </div>
-      <div class="border-t mt-8 pt-6 text-center text-[10px] border-zinc-800 dark:border-zinc-900 text-zinc-600">
+      <div
+        class="border-t mt-8 pt-6 text-center text-[10px] border-zinc-800 dark:border-zinc-900 text-zinc-600"
+      >
         {{ copyrightText }}
       </div>
     </div>

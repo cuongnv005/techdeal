@@ -24,13 +24,15 @@ useSeoMeta({
 const posts = ref<BlogPost[]>([
   {
     id: '1',
-    title: 'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
+    title:
+      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
     category: 'Technology',
     author: 'Mr.X',
     publishDate: 'Hôm nay lúc 18:50',
     views: 406,
     comments: 1,
-    imageUrl: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
     summary:
       'TP. Hồ Chí Minh, ngày 29/01/2026 - realme, thương hiệu smartphone tăng trưởng nhanh hàng đầu thế giới, chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam.',
     slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
@@ -40,13 +42,15 @@ const posts = ref<BlogPost[]>([
 // Featured Posts (Hero Section)
 const featuredBigPost = ref<BlogPost>({
   id: 'f1',
-  title: 'Cuộc cách mạng thực tế ảo tiếp theo: Kỷ nguyên mới cho ngành công nghiệp game và thực tế hỗn hợp',
+  title:
+    'Cuộc cách mạng thực tế ảo tiếp theo: Kỷ nguyên mới cho ngành công nghiệp game và thực tế hỗn hợp',
   category: 'Technology',
   author: 'TechDeal Editor',
   publishDate: '28 Tháng 5, 2026',
   views: 1250,
   comments: 4,
-  imageUrl: 'https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=1200&q=80',
+  imageUrl:
+    'https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=1200&q=80',
   summary:
     'Công nghệ thực tế ảo và thực tế hỗn hợp đang tiến gần hơn tới đời sống thường nhật với hàng loạt kính thông minh tích hợp trí tuệ nhân tạo ra đời trong năm 2026.',
   slug: 'cuoc-cach-mang-thuc-te-ao-tiep-theo'
@@ -61,7 +65,8 @@ const featuredSmallPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 890,
     comments: 2,
-    imageUrl: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=400&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'danh-gia-chi-tiet-iphone-17-pro-max'
   }

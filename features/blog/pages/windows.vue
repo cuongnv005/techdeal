@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Search, Menu, Facebook, Twitter, Instagram, Linkedin, TrendingUp, Monitor } from 'lucide-vue-next'
+import {
+  Search,
+  Menu,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  TrendingUp,
+  Monitor
+} from 'lucide-vue-next'
+import { useUserStore } from '@stores/user'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
 import AdBanner from '../components/AdBanner.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
+import Header from '../components/Header.vue'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -26,8 +37,10 @@ const posts = ref<BlogPost[]>([
     publishDate: 'Hôm nay lúc 11:20',
     views: 1450,
     comments: 12,
-    imageUrl: 'https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?auto=format&fit=crop&w=800&q=80',
-    summary: 'Bản cập nhật mới mang lại cải tiến sâu sắc cho Copilot, tối ưu hóa giao diện file explorer và tăng hiệu năng chơi game trên PC.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Bản cập nhật mới mang lại cải tiến sâu sắc cho Copilot, tối ưu hóa giao diện file explorer và tăng hiệu năng chơi game trên PC.',
     slug: 'microsoft-cap-nhat-windows-11-ai-doc-quyen'
   },
   {
@@ -38,8 +51,10 @@ const posts = ref<BlogPost[]>([
     publishDate: '2 ngày trước',
     views: 3400,
     comments: 25,
-    imageUrl: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=800&q=80',
-    summary: 'Cách tắt các dịch vụ chạy ngầm thừa thãi, tinh chỉnh chế độ Game Mode và dọn dẹp phân mảnh hệ điều hành Windows cực nhanh.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Cách tắt các dịch vụ chạy ngầm thừa thãi, tinh chỉnh chế độ Game Mode và dọn dẹp phân mảnh hệ điều hành Windows cực nhanh.',
     slug: 'thu-thuat-toi-uu-windows-choi-game'
   }
 ])
@@ -49,13 +64,8 @@ const mostViewedPosts = computed(() => {
   return [...posts.value].sort((a, b) => b.views - a.views)
 })
 
-// Search query
-const searchQuery = ref('')
-const handleSearch = () => {
-  if (searchQuery.value) {
-    alert(`Tìm kiếm với từ khóa: ${searchQuery.value}`)
-  }
-}
+// User store for checking roles
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -63,84 +73,37 @@ const handleSearch = () => {
     class="min-h-screen bg-gray-100 dark:bg-zinc-950 font-display transition-colors duration-300"
   >
     <!-- Main Navigation Header -->
-    <header
-      class="bg-white dark:bg-zinc-900 border-b border-gray-250 dark:border-zinc-800 sticky top-0 z-50 shadow-sm"
-    >
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-          <span class="text-3xl font-black tracking-tighter text-[#3498db]">
-            TECHDEAL<span class="text-[#f39c12]">.</span>
-          </span>
-          <span
-            class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-[#f39c12] text-white rounded"
-            >TECH</span
-          >
-        </NuxtLink>
-
-        <!-- Main Navigation Links -->
-        <nav
-          class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
-        >
-          <NuxtLink to="/" class="hover:text-[#3498db] transition-colors">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
-          <NuxtLink to="/cong-nghe" class="hover:text-[#3498db] transition-colors">Công nghệ</NuxtLink>
-          <NuxtLink to="/windows" class="text-[#3498db]">Windows</NuxtLink>
-          <NuxtLink to="/ios" class="hover:text-[#3498db] transition-colors">iOS</NuxtLink>
-          <NuxtLink to="/android" class="hover:text-[#3498db] transition-colors">Android</NuxtLink>
-        </nav>
-
-        <!-- Search input box -->
-        <div class="flex items-center gap-3">
-          <form @submit.prevent="handleSearch" class="relative hidden sm:block">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Tìm kiếm tin tức..."
-              class="bg-gray-150 dark:bg-zinc-800 text-xs px-3 py-1.5 pr-8 rounded-full focus:outline-none focus:ring-1 focus:ring-[#3498db] w-48 dark:text-white"
-            />
-            <button
-              type="submit"
-              class="absolute right-2 top-1.5 text-zinc-555 hover:text-[#3498db]"
-            >
-              <Search class="w-4 h-4" />
-            </button>
-          </form>
-          <!-- Auth buttons -->
-          <div
-            class="hidden sm:flex items-center gap-3 border-l border-gray-250 dark:border-zinc-800 pl-3"
-          >
-            <NuxtLink
-              to="/login"
-              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] transition-colors"
-              >Đăng nhập</NuxtLink
-            >
-            <NuxtLink
-              to="/register"
-              class="text-xs font-bold bg-[#3498db] hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-full transition-colors"
-              >Đăng ký</NuxtLink
-            >
-          </div>
-          <button class="lg:hidden text-zinc-700 dark:text-white">
-            <Menu class="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-    </header>
+    <Header />
 
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
       <!-- CATEGORY BANNER -->
-      <div class="bg-gradient-to-r from-blue-700 to-indigo-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden">
+      <div
+        class="bg-gradient-to-r from-blue-700 to-indigo-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden"
+      >
         <div class="absolute right-6 bottom-0 translate-y-6 opacity-10">
           <Monitor class="w-48 h-48" />
         </div>
-        <div class="relative z-10">
-          <span class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Chuyên mục</span>
-          <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Windows</h1>
-          <p class="text-sm text-blue-50 mt-2 max-w-xl">
-            Cập nhật tin tức mới nhất về hệ điều hành Windows, các thủ thuật sử dụng máy tính hiệu quả và ứng dụng hàng đầu dành cho PC.
-          </p>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <span
+              class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
+              >Chuyên mục</span
+            >
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Windows</h1>
+            <p class="text-sm text-blue-50 mt-2 max-w-xl">
+              Cập nhật tin tức mới nhất về hệ điều hành Windows, các thủ thuật sử dụng máy tính hiệu
+              quả và ứng dụng hàng đầu dành cho PC.
+            </p>
+          </div>
+          <div v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')">
+            <NuxtLink
+              to="/blog/publish?category=windows"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-600 hover:bg-indigo-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"
+            >
+              📝 Đăng bài mới
+            </NuxtLink>
+          </div>
         </div>
       </div>
 
