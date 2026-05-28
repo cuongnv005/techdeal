@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   Gamepad2,
   Calendar,
@@ -33,12 +33,12 @@ useSeoMeta({
 
 // Mock categories for gaming
 const categories = ref([
-  { name: 'Action', count: '120 bài', icon: '💥', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=150&q=80' },
-  { name: 'Gaming', count: '340 bài', icon: '🎮', image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=150&q=80' },
-  { name: 'Racing', count: '85 bài', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=150&q=80' },
-  { name: 'Animation', count: '92 bài', icon: '🎬', image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=150&q=80' },
-  { name: 'Fighter', count: '64 bài', icon: '🥊', image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=150&q=80' },
-  { name: 'RPG/Story', count: '150 bài', icon: '🧙‍♂️', image: 'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&w=150&q=80' }
+  { name: 'Action', count: '120 bài', icon: '💥' },
+  { name: 'Gaming', count: '340 bài', icon: '🎮' },
+  { name: 'Racing', count: '85 bài', icon: '🏎️' },
+  { name: 'Animation', count: '92 bài', icon: '🎬' },
+  { name: 'Fighter', count: '64 bài', icon: '🥊' },
+  { name: 'RPG/Story', count: '150 bài', icon: '🧙‍♂️' }
 ])
 
 // Banner Posts (Big header layout)
@@ -219,19 +219,19 @@ const recentSidebarPosts = ref<BlogPost[]>([
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0d0f12] text-zinc-100 font-display transition-colors duration-300">
-    <!-- Top Nav / Social Wrap (Dark themed) -->
-    <div class="bg-black/40 text-xs py-2 border-b border-zinc-900">
+  <div class="min-h-screen bg-gray-100 dark:bg-[#0d0f12] text-zinc-800 dark:text-zinc-100 font-display transition-colors duration-300">
+    <!-- Top Nav / Social Wrap (Dark themed on both modes for gaming vibe) -->
+    <div class="bg-zinc-900 text-xs py-2 border-b border-zinc-800 dark:border-zinc-900 text-white">
       <div class="container mx-auto px-4 flex justify-between items-center">
         <div class="flex items-center gap-2">
           <span class="bg-[#e74c3c] text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 animate-pulse">
             <Gamepad2 class="w-3.5 h-3.5" /> Esports
           </span>
-          <span class="truncate max-w-[250px] sm:max-w-md text-zinc-400">
+          <span class="truncate max-w-[250px] sm:max-w-md text-zinc-300">
             Black Myth: Wukong đạt mốc doanh thu 20 triệu bản chỉ sau thời gian ngắn...
           </span>
         </div>
-        <div class="hidden md:flex items-center gap-4 text-zinc-400">
+        <div class="hidden md:flex items-center gap-4 text-zinc-300">
           <a href="#" class="hover:text-[#e74c3c] transition-colors"><Facebook class="w-4 h-4" /></a>
           <a href="#" class="hover:text-[#e74c3c] transition-colors"><Twitter class="w-4 h-4" /></a>
           <a href="#" class="hover:text-[#e74c3c] transition-colors"><Instagram class="w-4 h-4" /></a>
@@ -241,7 +241,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
     </div>
 
     <!-- Main Navigation Header -->
-    <header class="bg-[#13161c] border-b border-zinc-900 sticky top-0 z-50 shadow-lg">
+    <header class="bg-white dark:bg-[#13161c] border-b border-gray-200 dark:border-zinc-900 sticky top-0 z-50 shadow-md">
       <div class="container mx-auto px-4 py-4 flex items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center gap-2">
@@ -252,7 +252,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
         </div>
 
         <!-- Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-300">
+        <nav class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300">
           <NuxtLink to="/" class="hover:text-[#e74c3c] transition-colors">Trang chủ</NuxtLink>
           <NuxtLink to="/game" class="text-[#e74c3c]">Thế giới Game</NuxtLink>
           <a href="#" class="hover:text-[#e74c3c] transition-colors">Esports</a>
@@ -263,10 +263,10 @@ const recentSidebarPosts = ref<BlogPost[]>([
 
         <!-- Search button -->
         <div class="flex items-center gap-3">
-          <button class="text-zinc-400 hover:text-white">
+          <button class="text-zinc-500 dark:text-zinc-400 hover:text-red-500">
             <Search class="w-5 h-5" />
           </button>
-          <button class="lg:hidden text-zinc-300">
+          <button class="lg:hidden text-zinc-700 dark:text-white">
             <Menu class="w-6 h-6" />
           </button>
         </div>
@@ -275,8 +275,8 @@ const recentSidebarPosts = ref<BlogPost[]>([
 
     <!-- MAIN AREA -->
     <main>
-      <!-- BANNER SPLIT TWO POSTS (GAMING BANNER STYLE) -->
-      <section class="border-b border-zinc-900 bg-black">
+      <!-- BANNER SPLIT TWO POSTS -->
+      <section class="border-b border-gray-200 dark:border-zinc-900 bg-black">
         <div class="grid grid-cols-1 lg:grid-cols-2">
           <div
             v-for="bPost in bannerPosts"
@@ -288,14 +288,14 @@ const recentSidebarPosts = ref<BlogPost[]>([
               :alt="bPost.title"
               class="w-full h-full object-cover opacity-60 group-hover:scale-102 transition-transform duration-700"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0d0f12] via-black/30 to-transparent flex flex-col justify-end p-6 md:p-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-6 md:p-10">
               <span class="self-start bg-[#e74c3c] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-sm mb-3 tracking-wider">
                 {{ bPost.category }}
               </span>
               <h2 class="text-lg md:text-2xl font-bold text-white hover:text-[#e74c3c] transition-colors leading-tight mb-3">
                 <a href="#">{{ bPost.title }}</a>
               </h2>
-              <div class="flex items-center gap-4 text-[11px] text-zinc-400">
+              <div class="flex items-center gap-4 text-[11px] text-zinc-450">
                 <span class="flex items-center gap-1"><User class="w-3.5 h-3.5" /> {{ bPost.author }}</span>
                 <span class="flex items-center gap-1"><Calendar class="w-3.5 h-3.5" /> {{ bPost.publishDate }}</span>
               </div>
@@ -305,10 +305,10 @@ const recentSidebarPosts = ref<BlogPost[]>([
       </section>
 
       <!-- EXCITING CATEGORIES SECTION -->
-      <section class="py-12 bg-[#101216]">
+      <section class="py-12 bg-white dark:bg-[#101216]">
         <div class="container mx-auto px-4">
           <div class="text-center mb-10">
-            <h2 class="text-2xl font-black uppercase text-white tracking-wide inline-flex flex-col items-center">
+            <h2 class="text-2xl font-black uppercase text-zinc-900 dark:text-white tracking-wide inline-flex flex-col items-center">
               Chuyên mục Game đặc sắc
               <span class="w-16 h-1 bg-[#e74c3c] mt-2 rounded"></span>
             </h2>
@@ -317,12 +317,12 @@ const recentSidebarPosts = ref<BlogPost[]>([
             <div
               v-for="cat in categories"
               :key="cat.name"
-              class="bg-[#171a21] border border-zinc-800 rounded-lg p-4 text-center hover:border-[#e74c3c] transition-colors group cursor-pointer"
+              class="bg-gray-50 dark:bg-[#171a21] border border-gray-200 dark:border-zinc-800 rounded-lg p-4 text-center hover:border-[#e74c3c] dark:hover:border-[#e74c3c] transition-colors group cursor-pointer"
             >
-              <div class="w-16 h-16 mx-auto mb-3 bg-[#0d0f12] rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+              <div class="w-16 h-16 mx-auto mb-3 bg-white dark:bg-[#0d0f12] rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform shadow-xs dark:shadow-none border border-gray-100 dark:border-none">
                 {{ cat.icon }}
               </div>
-              <h3 class="text-sm font-bold text-white group-hover:text-[#e74c3c] transition-colors">
+              <h3 class="text-sm font-bold text-zinc-800 dark:text-white group-hover:text-[#e74c3c] transition-colors">
                 {{ cat.name }}
               </h3>
               <p class="text-[11px] text-zinc-500 mt-1">{{ cat.count }}</p>
@@ -342,14 +342,14 @@ const recentSidebarPosts = ref<BlogPost[]>([
             
             <!-- TODAY'S SPOTLIGHT SECTION -->
             <div>
-              <div class="border-b border-zinc-800 pb-3 mb-6">
-                <h3 class="text-lg font-black uppercase tracking-wider text-white border-l-4 border-[#e74c3c] pl-3">
+              <div class="border-b border-gray-250 dark:border-zinc-800 pb-3 mb-6">
+                <h3 class="text-lg font-black uppercase tracking-wider text-zinc-900 dark:text-white border-l-4 border-[#e74c3c] pl-3">
                   Tiêu điểm hôm nay
                 </h3>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-10 gap-6">
                 <!-- Big Post -->
-                <div class="md:col-span-6 flex flex-col bg-[#13161c] rounded-xl border border-zinc-850 overflow-hidden group">
+                <div class="md:col-span-6 flex flex-col bg-white dark:bg-[#13161c] rounded-xl border border-gray-200 dark:border-zinc-850 overflow-hidden group shadow-xs">
                   <div class="aspect-[16/10] overflow-hidden">
                     <img
                       :src="spotlightBigPost.imageUrl"
@@ -362,17 +362,17 @@ const recentSidebarPosts = ref<BlogPost[]>([
                       <span class="bg-[#e74c3c]/15 text-[#e74c3c] text-[10px] font-bold px-2.5 py-1 rounded mb-3 inline-block uppercase">
                         {{ spotlightBigPost.category }}
                       </span>
-                      <h4 class="text-base font-bold leading-snug text-white hover:text-[#e74c3c] transition-colors mb-3">
+                      <h4 class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#e74c3c] transition-colors mb-3">
                         <a href="#">{{ spotlightBigPost.title }}</a>
                       </h4>
-                      <p class="text-xs text-zinc-400 line-clamp-3 mb-4">
+                      <p class="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-3 mb-4">
                         {{ spotlightBigPost.summary }}
                       </p>
                     </div>
-                    <div class="flex items-center gap-4 text-[10px] text-zinc-500 border-t border-zinc-850 pt-3">
+                    <div class="flex items-center gap-4 text-[10px] text-zinc-550 border-t border-gray-150 dark:border-zinc-850 pt-3">
                       <span>Bởi {{ spotlightBigPost.author }}</span>
                       <span>{{ spotlightBigPost.publishDate }}</span>
-                      <span class="flex items-center gap-1 ml-auto text-red-400">
+                      <span class="flex items-center gap-1 ml-auto text-red-500 dark:text-red-400">
                         <Eye class="w-3.5 h-3.5" :stroke-width="2.5" /> {{ spotlightBigPost.views }}
                       </span>
                     </div>
@@ -384,13 +384,13 @@ const recentSidebarPosts = ref<BlogPost[]>([
                   <div
                     v-for="sPost in spotlightSmallPosts"
                     :key="sPost.id"
-                    class="bg-[#13161c] border border-zinc-850 rounded-xl p-3 flex gap-3 group hover:border-zinc-800 transition-colors"
+                    class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 rounded-xl p-3 flex gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-colors shadow-xs"
                   >
                     <div class="w-20 h-20 rounded overflow-hidden flex-shrink-0">
                       <img :src="sPost.imageUrl" :alt="sPost.title" class="w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col justify-between">
-                      <h5 class="text-xs font-bold text-white line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors">
+                      <h5 class="text-xs font-bold text-zinc-800 dark:text-white line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors">
                         <a href="#">{{ sPost.title }}</a>
                       </h5>
                       <span class="text-[9px] font-semibold text-zinc-500 uppercase">{{ sPost.category }}</span>
@@ -405,8 +405,8 @@ const recentSidebarPosts = ref<BlogPost[]>([
 
             <!-- POPULAR NEWS SECTION -->
             <div>
-              <div class="border-b border-zinc-800 pb-3 mb-6">
-                <h3 class="text-lg font-black uppercase tracking-wider text-white border-l-4 border-[#e74c3c] pl-3">
+              <div class="border-b border-gray-250 dark:border-zinc-800 pb-3 mb-6">
+                <h3 class="text-lg font-black uppercase tracking-wider text-zinc-900 dark:text-white border-l-4 border-[#e74c3c] pl-3">
                   Tin game phổ biến nhất
                 </h3>
               </div>
@@ -423,7 +423,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
                     :alt="mPost.title"
                     class="w-full h-full object-cover opacity-70 group-hover:scale-102 transition-transform duration-500"
                   />
-                  <div class="absolute inset-0 bg-gradient-to-t from-[#0d0f12] via-black/20 to-transparent flex flex-col justify-end p-5">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5">
                     <span class="self-start bg-[#e74c3c] text-white text-[9px] font-bold px-1.5 py-0.5 rounded mb-2">
                       {{ mPost.category }}
                     </span>
@@ -439,7 +439,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
                 <div
                   v-for="pPost in popularSmallPosts"
                   :key="pPost.id"
-                  class="bg-[#13161c] border border-zinc-850 p-3 rounded-xl flex flex-col gap-3 group hover:border-zinc-800 transition-all"
+                  class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-3 rounded-xl flex flex-col gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-all shadow-xs"
                 >
                   <div class="aspect-[16/9] w-full rounded overflow-hidden">
                     <img :src="pPost.imageUrl" :alt="pPost.title" class="w-full h-full object-cover" />
@@ -449,11 +449,11 @@ const recentSidebarPosts = ref<BlogPost[]>([
                       <span class="text-[9px] font-bold text-[#e74c3c] uppercase block mb-1">
                         {{ pPost.category }}
                       </span>
-                      <h5 class="text-xs font-bold text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors">
+                      <h5 class="text-xs font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors">
                         <a href="#">{{ pPost.title }}</a>
                       </h5>
                     </div>
-                    <div class="flex items-center gap-1 text-[10px] text-zinc-500 mt-2">
+                    <div class="flex items-center gap-1 text-[10px] text-zinc-555 mt-2">
                       <Eye class="w-3.5 h-3.5 text-red-500" :stroke-width="2.5" />
                       <span>{{ pPost.views }} xem</span>
                     </div>
@@ -467,39 +467,39 @@ const recentSidebarPosts = ref<BlogPost[]>([
           <!-- Sidebar (30%) -->
           <aside class="lg:col-span-3 space-y-8">
             <!-- Social Follow Us -->
-            <div class="bg-[#13161c] border border-zinc-850 p-5 rounded-xl">
-              <h4 class="text-sm font-bold uppercase tracking-wider text-white border-b border-zinc-800 pb-2 mb-4">
+            <div class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-5 rounded-xl shadow-xs">
+              <h4 class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-2 mb-4">
                 Kết nối Gaming
               </h4>
-              <div class="grid grid-cols-2 gap-3 text-xs font-bold text-zinc-300">
-                <a href="#" class="flex items-center gap-2 p-2 bg-blue-900/20 text-blue-400 rounded hover:opacity-90">
+              <div class="grid grid-cols-2 gap-3 text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                <a href="#" class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded hover:opacity-90">
                   <Facebook class="w-4 h-4" /> Facebook
                 </a>
-                <a href="#" class="flex items-center gap-2 p-2 bg-sky-900/20 text-sky-400 rounded hover:opacity-90">
+                <a href="#" class="flex items-center gap-2 p-2 bg-sky-50 dark:bg-sky-900/20 text-sky-500 dark:text-sky-400 rounded hover:opacity-90">
                   <Twitter class="w-4 h-4" /> Twitter
                 </a>
-                <a href="#" class="flex items-center gap-2 p-2 bg-pink-900/20 text-pink-400 rounded hover:opacity-90">
+                <a href="#" class="flex items-center gap-2 p-2 bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded hover:opacity-90">
                   <Instagram class="w-4 h-4" /> Instagram
                 </a>
-                <a href="#" class="flex items-center gap-2 p-2 bg-red-900/20 text-red-400 rounded hover:opacity-90">
+                <a href="#" class="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 text-red-650 dark:text-red-400 rounded hover:opacity-90">
                   <Youtube class="w-4 h-4" /> YouTube
                 </a>
               </div>
             </div>
 
             <!-- Daily Newsletter -->
-            <div class="bg-[#13161c] border border-zinc-850 p-5 rounded-xl">
-              <h4 class="text-sm font-bold uppercase tracking-wider text-white border-b border-zinc-800 pb-2 mb-4">
+            <div class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-5 rounded-xl shadow-xs">
+              <h4 class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-2 mb-4">
                 Nhận tin game mới nhất
               </h4>
-              <p class="text-xs text-zinc-400 mb-4">
+              <p class="text-xs text-gray-500 dark:text-zinc-400 mb-4">
                 Đăng ký email để không bỏ lỡ tin tức game hấp dẫn nhất mỗi ngày.
               </p>
               <form @submit.prevent class="space-y-2">
                 <input
                   type="email"
                   placeholder="Nhập email của bạn..."
-                  class="w-full text-xs px-3 py-2 border border-zinc-800 rounded bg-[#0d0f12] text-white focus:outline-none focus:ring-1 focus:ring-[#e74c3c]"
+                  class="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-800 rounded bg-gray-50 dark:bg-[#0d0f12] text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#e74c3c]"
                 />
                 <button
                   type="submit"
@@ -511,25 +511,25 @@ const recentSidebarPosts = ref<BlogPost[]>([
             </div>
 
             <!-- Recent Sidebar Posts -->
-            <div class="bg-[#13161c] border border-zinc-850 p-5 rounded-xl">
-              <h4 class="text-sm font-bold uppercase tracking-wider text-white border-b border-zinc-800 pb-2 mb-4">
+            <div class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-5 rounded-xl shadow-xs">
+              <h4 class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-2 mb-4">
                 Bài viết gần đây
               </h4>
               <ul class="space-y-4">
-                <li v-for="rp in recentSidebarPosts" :key="rp.id" class="group">
+                <li v-for="rp in recentSidebarPosts" :key="rp.id" class="group border-b border-gray-100 dark:border-zinc-850 last:border-0 pb-3 last:pb-0">
                   <span class="text-[9px] font-bold text-[#e74c3c] uppercase block mb-1">
                     {{ rp.category }}
                   </span>
-                  <h5 class="text-xs font-bold text-zinc-300 leading-snug group-hover:text-[#e74c3c] transition-colors">
+                  <h5 class="text-xs font-bold text-zinc-700 dark:text-zinc-300 leading-snug group-hover:text-[#e74c3c] transition-colors">
                     <a href="#">{{ rp.title }}</a>
                   </h5>
-                  <span class="text-[10px] text-zinc-500 mt-1 block">{{ rp.publishDate }}</span>
+                  <span class="text-[10px] text-zinc-550 mt-1 block">{{ rp.publishDate }}</span>
                 </li>
               </ul>
             </div>
 
             <!-- Ad Slot Sidebar -->
-            <div class="bg-[#13161c] border border-zinc-850 p-3 rounded-xl flex items-center justify-center">
+            <div class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-3 rounded-xl flex items-center justify-center shadow-xs">
               <AdBanner width="300px" height="250px" />
             </div>
           </aside>
@@ -537,8 +537,8 @@ const recentSidebarPosts = ref<BlogPost[]>([
       </div>
     </main>
 
-    <!-- Footer (Dark) -->
-    <footer class="bg-black text-zinc-500 text-xs py-10 border-t border-zinc-900 mt-16">
+    <!-- Footer (Dark themed for both modes) -->
+    <footer class="bg-zinc-950 text-zinc-500 text-xs py-10 border-t border-zinc-900 mt-16">
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -557,8 +557,8 @@ const recentSidebarPosts = ref<BlogPost[]>([
           </div>
           <div>
             <h4 class="text-white font-bold uppercase mb-4">Hỗ trợ</h4>
-            <p class="mb-2">Email: gaming@zairatech.com</p>
-            <p>Điện thoại: +84 (0) 987 654 321</p>
+            <p class="mb-2 text-zinc-400">Email: gaming@zairatech.com</p>
+            <p class="text-zinc-400">Điện thoại: +84 (0) 987 654 321</p>
           </div>
         </div>
         <div class="border-t border-zinc-900 mt-8 pt-6 text-center text-[10px] text-zinc-700">

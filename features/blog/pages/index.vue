@@ -182,7 +182,9 @@ const handleSearch = () => {
           class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
         >
           <NuxtLink to="/" class="text-[#3498db] hover:text-[#3498db]">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
+          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors"
+            >Thế giới Game</NuxtLink
+          >
           <a href="#" class="hover:text-[#3498db] transition-colors">Công nghệ</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Thiết bị di động</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Trí tuệ nhân tạo</a>
