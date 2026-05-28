@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-display: 'Poppins', sans-serif;
+  --font-display: 'Quicksand', 'Nunito Sans', 'Helvetica Neue', Helvetica, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', sans-serif;
 }
 
 @theme inline {
@@ -123,5 +123,9 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Quicksand', 'Nunito Sans', 'Helvetica Neue', Helvetica, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.4;
   }
 }

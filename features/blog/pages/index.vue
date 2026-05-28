@@ -153,36 +153,6 @@ const handleSearch = () => {
   <div
     class="min-h-screen bg-gray-100 dark:bg-zinc-950 font-display transition-colors duration-300"
   >
-    <!-- Top Nav / Social Wrap -->
-    <div class="bg-zinc-900 text-white text-xs py-2">
-      <div class="container mx-auto px-4 flex justify-between items-center">
-        <!-- Hot breaking label -->
-        <div class="flex items-center gap-2">
-          <span
-            class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 animate-pulse"
-          >
-            <Flame class="w-3 h-3" /> Nóng
-          </span>
-          <span class="truncate max-w-[250px] sm:max-w-md text-zinc-300">
-            Kỷ nguyên AI mới bùng nổ cùng chip kiến trúc thần kinh thế hệ tiếp theo...
-          </span>
-        </div>
-
-        <!-- Social Icons -->
-        <div class="hidden md:flex items-center gap-4">
-          <a href="#" class="hover:text-[#3498db] transition-colors"
-            ><Facebook class="w-4 h-4"
-          /></a>
-          <a href="#" class="hover:text-[#3498db] transition-colors"><Twitter class="w-4 h-4" /></a>
-          <a href="#" class="hover:text-[#3498db] transition-colors"
-            ><Instagram class="w-4 h-4"
-          /></a>
-          <a href="#" class="hover:text-[#3498db] transition-colors"
-            ><Linkedin class="w-4 h-4"
-          /></a>
-        </div>
-      </div>
-    </div>
 
     <!-- Main Navigation Header -->
     <header
@@ -319,7 +289,6 @@ const handleSearch = () => {
             >
               <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
             </h2>
-            <span class="text-xs text-zinc-500 font-medium">Danh sách tối giản</span>
           </div>
 
           <!-- Simplified News Grid (Matching screenshot layout style) -->
