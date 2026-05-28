@@ -38,90 +38,42 @@ const bannerPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 4520,
     comments: 18,
-    imageUrl:
-      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
-    summary:
-      'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
+    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+    summary: 'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
     slug: 'danh-gia-black-myth-wukong'
-  },
-  {
-    id: 'gb2',
-    title: 'CS2 ra mắt bản cập nhật lớn: Thay đổi meta bản đồ và nâng cấp hệ thống chống hack mới',
-    category: 'Action',
-    author: 'GameMaster',
-    publishDate: '27 Tháng 5, 2026',
-    views: 3120,
-    comments: 8,
-    imageUrl:
-      'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1000&q=80',
-    summary:
-      'Valve vừa tung ra bản cập nhật tối ưu hóa hiệu năng bắn súng chiến thuật cùng với cải tiến lớn cho bản đồ Mirage và Inferno.',
-    slug: 'cs2-ra-mat-ban-cap-nhat-lon'
   }
 ])
 
 // Spotlight posts
 const spotlightBigPost = ref<BlogPost>({
   id: 'gs1',
-  title:
-    'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
+  title: 'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
   category: 'Esports',
   author: 'VCS Reporter',
   publishDate: '28 Tháng 5, 2026',
   views: 5800,
   comments: 32,
-  imageUrl:
-    'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
-  summary:
-    'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
+  imageUrl: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
+  summary: 'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
   slug: 'vcs-mua-he-2026-khoi-tranh'
 })
 
 const spotlightSmallPosts = ref<BlogPost[]>([
   {
     id: 'gs2',
-    title:
-      'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
+    title: 'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
     category: 'Action',
     author: 'Admin',
     publishDate: '28 Tháng 5, 2026',
     views: 1980,
     comments: 3,
-    imageUrl:
-      'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'fortnite-dat-ky-luc-nguoi-choi-moi'
-  },
-  {
-    id: 'gs3',
-    title:
-      'GTA 6 lộ diện trailer tiếp theo: Thành phố Vice City chưa bao giờ sống động và chân thực đến thế',
-    category: 'RPG',
-    author: 'RockstarFan',
-    publishDate: '27 Tháng 5, 2026',
-    views: 10450,
-    comments: 54,
-    imageUrl:
-      'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&w=400&q=80',
-    summary: '',
-    slug: 'gta-6-lo-dien-trailer-tiep-theo'
-  },
-  {
-    id: 'gs4',
-    title: 'Nintendo Switch 2 sẽ chính thức công bố cấu hình và ngày phát hành vào cuối năm nay?',
-    category: 'Console',
-    author: 'NintendoNews',
-    publishDate: '27 Tháng 5, 2026',
-    views: 4500,
-    comments: 12,
-    imageUrl:
-      'https://images.unsplash.com/photo-1595169001925-51e18ede8436?auto=format&fit=crop&w=400&q=80',
-    summary: '',
-    slug: 'nintendo-switch-2-sap-cong-bo'
   }
 ])
 
-// Popular News list (2 medium cards, 3 small text cards)
+// Popular News list
 const popularMediumPosts = ref<BlogPost[]>([
   {
     id: 'gp1',
@@ -131,23 +83,9 @@ const popularMediumPosts = ref<BlogPost[]>([
     publishDate: '28 Tháng 5, 2026',
     views: 1200,
     comments: 2,
-    imageUrl:
-      'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
     summary: '',
     slug: 'f1-esports-pro-series-2026'
-  },
-  {
-    id: 'gp2',
-    title: 'Hướng dẫn tự tạo game phong cách Retro đơn giản bằng Engine Godot trong 24 giờ',
-    category: 'Coding',
-    author: 'DevIndie',
-    publishDate: '26 Tháng 5, 2026',
-    views: 2900,
-    comments: 11,
-    imageUrl:
-      'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=600&q=80',
-    summary: '',
-    slug: 'tu-tao-game-retro-bang-godot'
   }
 ])
 
@@ -160,36 +98,9 @@ const popularSmallPosts = ref<BlogPost[]>([
     publishDate: '25 Tháng 5, 2026',
     views: 3120,
     comments: 7,
-    imageUrl:
-      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
     summary: '',
     slug: 'phan-tich-cot-truyen-elden-ring-dlc'
-  },
-  {
-    id: 'gp4',
-    title: 'Cải tiến hiệu năng máy chơi game PC di động cầm tay Steam Deck OLED',
-    category: 'Hardware',
-    author: 'HardwareReview',
-    publishDate: '24 Tháng 5, 2026',
-    views: 1850,
-    comments: 3,
-    imageUrl:
-      'https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=300&q=80',
-    summary: '',
-    slug: 'cai-tien-hieu-nang-steam-deck-oled'
-  },
-  {
-    id: 'gp5',
-    title: 'Những tựa game indie cốt truyện cực hay đáng thử trong kỳ nghỉ hè năm nay',
-    category: 'Indie',
-    author: 'IndieLover',
-    publishDate: '23 Tháng 5, 2026',
-    views: 4500,
-    comments: 14,
-    imageUrl:
-      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=300&q=80',
-    summary: '',
-    slug: 'game-indie-cot-truyen-hay-he-2026'
   }
 ])
 
@@ -206,18 +117,6 @@ const recentSidebarPosts = ref<BlogPost[]>([
     imageUrl: '',
     summary: '',
     slug: 'danh-gia-tay-cam-dualsense-edge'
-  },
-  {
-    id: 'rs2',
-    title: 'Sự trỗi dậy của các tựa game Co-op gia đình trên hệ máy Nintendo',
-    category: 'Casual',
-    author: 'FamilyFun',
-    publishDate: '27 Tháng 5, 2026',
-    views: 1200,
-    comments: 4,
-    imageUrl: '',
-    summary: '',
-    slug: 'game-coop-gia-dinh-nintendo'
   }
 ])
 </script>
@@ -417,7 +316,11 @@ const recentSidebarPosts = ref<BlogPost[]>([
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <NuxtLink to="/">
-              <h4 class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#e74c3c] transition-colors">TECHDEAL GAMING.</h4>
+              <h4
+                class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#e74c3c] transition-colors"
+              >
+                TECHDEAL GAMING.
+              </h4>
             </NuxtLink>
             <p class="leading-relaxed">
               Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.

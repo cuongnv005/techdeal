@@ -46,7 +46,10 @@ const handleGoogleLogin = () => {
       ></div>
 
       <!-- Top logo -->
-      <NuxtLink to="/" class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity">
+      <NuxtLink
+        to="/"
+        class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity"
+      >
         <span class="text-3xl font-black tracking-tighter">
           TECHDEAL<span class="text-[#f1c40f]">.</span>
         </span>
@@ -55,7 +58,9 @@ const handleGoogleLogin = () => {
 
       <!-- Mid quote/text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">Tham gia cộng đồng TechDeal ngay hôm nay</h2>
+        <h2 class="text-4xl font-extrabold leading-tight">
+          Tham gia cộng đồng TechDeal ngay hôm nay
+        </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
           Tạo tài khoản để thảo luận các chủ đề nóng hổi về công nghệ, bình luận đánh giá game và
           lưu các bài viết yêu thích của riêng bạn.

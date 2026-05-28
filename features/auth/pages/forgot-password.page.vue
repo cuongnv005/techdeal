@@ -35,7 +35,10 @@ const handleResetRequest = () => {
       ></div>
 
       <!-- Top logo -->
-      <NuxtLink to="/" class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity">
+      <NuxtLink
+        to="/"
+        class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity"
+      >
         <span class="text-3xl font-black tracking-tighter">
           TECHDEAL<span class="text-[#f1c40f]">.</span>
         </span>
