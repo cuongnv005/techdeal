@@ -83,7 +83,7 @@ defineProps<{
             <h4
               class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors"
             >
-              <NuxtLink :to="`/blog/${p.slug}`">{{ p.title }}</NuxtLink>
+              <NuxtLink :to="`/blog/${p.slug}.${p.id}`">{{ p.title }}</NuxtLink>
             </h4>
             <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-400">
               <Eye class="w-3 h-3 text-red-400" :stroke-width="2.5" />

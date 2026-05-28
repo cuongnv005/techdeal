@@ -95,7 +95,7 @@ defineProps<{
           <h5
             class="text-xs font-bold text-zinc-700 dark:text-zinc-300 leading-snug group-hover:text-[#e74c3c] transition-colors"
           >
-            <NuxtLink :to="`/blog/${rp.slug}`">{{ rp.title }}</NuxtLink>
+            <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
           </h5>
           <span class="text-[10px] text-zinc-550 mt-1 block">{{ rp.publishDate }}</span>
         </li>

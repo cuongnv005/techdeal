@@ -25,7 +25,7 @@ const getCategoryColors = (category: string) => {
   >
     <!-- Image aspect-[16/10] -->
     <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
-      <NuxtLink :to="`/blog/${post.slug}`" class="block w-full h-full">
+      <NuxtLink :to="`/blog/${post.slug}.${post.id}`" class="block w-full h-full">
         <img
           :src="post.imageUrl"
           :alt="post.title"
@@ -50,7 +50,7 @@ const getCategoryColors = (category: string) => {
         <h4
           class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors mb-3 line-clamp-2"
         >
-          <NuxtLink :to="`/blog/${post.slug}`">
+          <NuxtLink :to="`/blog/${post.slug}.${post.id}`">
             {{ post.title }}
           </NuxtLink>
         </h4>

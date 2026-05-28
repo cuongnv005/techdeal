@@ -13,7 +13,7 @@ useSeoMeta({
   title: 'Thế giới Game - Tin tức Game & Esports mới nhất',
   description:
     'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
-  ogTitle: 'Thế giới Game - Zaira Gaming',
+  ogTitle: 'Thế giới Game - TechDeal Gaming',
   ogDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
   ogType: 'website'
 })
@@ -260,14 +260,14 @@ const recentSidebarPosts = ref<BlogPost[]>([
     >
       <div class="container mx-auto px-4 py-4 flex items-center justify-between">
         <!-- Logo -->
-        <div class="flex items-center gap-2">
+        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <span class="text-3xl font-black tracking-tighter text-[#e74c3c]">
-            ZAIRA<span class="text-[#f1c40f]">.</span>
+            TECHDEAL<span class="text-[#f1c40f]">.</span>
           </span>
           <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded"
             >GAMING</span
           >
-        </div>
+        </NuxtLink>
 
         <!-- Navigation Links -->
         <nav
@@ -287,9 +287,19 @@ const recentSidebarPosts = ref<BlogPost[]>([
             <Search class="w-5 h-5" />
           </button>
           <!-- Auth buttons -->
-          <div class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3">
-            <NuxtLink to="/login" class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#e74c3c] transition-colors">Đăng nhập</NuxtLink>
-            <NuxtLink to="/register" class="text-xs font-bold bg-[#e74c3c] hover:bg-[#c0392b] text-white px-3.5 py-1.5 rounded-full transition-colors">Đăng ký</NuxtLink>
+          <div
+            class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3"
+          >
+            <NuxtLink
+              to="/login"
+              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#e74c3c] transition-colors"
+              >Đăng nhập</NuxtLink
+            >
+            <NuxtLink
+              to="/register"
+              class="text-xs font-bold bg-[#e74c3c] hover:bg-[#c0392b] text-white px-3.5 py-1.5 rounded-full transition-colors"
+              >Đăng ký</NuxtLink
+            >
           </div>
           <button class="lg:hidden text-zinc-700 dark:text-white">
             <Menu class="w-6 h-6" />
@@ -406,7 +416,9 @@ const recentSidebarPosts = ref<BlogPost[]>([
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h4 class="text-white text-lg font-black tracking-tight mb-4">ZAIRA GAMING.</h4>
+            <NuxtLink to="/">
+              <h4 class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#e74c3c] transition-colors">TECHDEAL GAMING.</h4>
+            </NuxtLink>
             <p class="leading-relaxed">
               Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.
             </p>
@@ -421,12 +433,12 @@ const recentSidebarPosts = ref<BlogPost[]>([
           </div>
           <div>
             <h4 class="text-white font-bold uppercase mb-4">Hỗ trợ</h4>
-            <p class="mb-2 text-zinc-400">Email: gaming@zairatech.com</p>
+            <p class="mb-2 text-zinc-400">Email: gaming@techdeal.com</p>
             <p class="text-zinc-400">Điện thoại: +84 (0) 987 654 321</p>
           </div>
         </div>
         <div class="border-t border-zinc-900 mt-8 pt-6 text-center text-[10px] text-zinc-700">
-          © 2026 ZAIRA Gaming Hub. All rights reserved.
+          © 2026 TECHDEAL Gaming Hub. All rights reserved.
         </div>
       </div>
     </footer>

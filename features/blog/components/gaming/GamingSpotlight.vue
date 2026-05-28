@@ -39,7 +39,7 @@ defineProps<{
             <h4
               class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#e74c3c] transition-colors mb-3"
             >
-              <NuxtLink :to="`/blog/${spotlightBigPost.slug}`">{{
+              <NuxtLink :to="`/blog/${spotlightBigPost.slug}.${spotlightBigPost.id}`">{{
                 spotlightBigPost.title
               }}</NuxtLink>
             </h4>
@@ -79,7 +79,7 @@ defineProps<{
             <h5
               class="text-xs font-bold text-zinc-800 dark:text-white line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors"
             >
-              <NuxtLink :to="`/blog/${sPost.slug}`">{{ sPost.title }}</NuxtLink>
+              <NuxtLink :to="`/blog/${sPost.slug}.${sPost.id}`">{{ sPost.title }}</NuxtLink>
             </h5>
             <span class="text-[9px] font-semibold text-zinc-500 uppercase mt-2">{{
               sPost.category

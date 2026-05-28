@@ -28,7 +28,7 @@ defineProps<{
             {{ featuredBigPost.category }}
           </span>
           <h2 class="text-xl md:text-3xl font-bold mb-3 hover:underline leading-tight">
-            <NuxtLink :to="`/blog/${featuredBigPost.slug}`">
+            <NuxtLink :to="`/blog/${featuredBigPost.slug}.${featuredBigPost.id}`">
               {{ featuredBigPost.title }}
             </NuxtLink>
           </h2>
@@ -64,7 +64,7 @@ defineProps<{
               {{ fPost.category }}
             </span>
             <h3 class="text-sm font-bold line-clamp-2 hover:underline">
-              <NuxtLink :to="`/blog/${fPost.slug}`">
+              <NuxtLink :to="`/blog/${fPost.slug}.${fPost.id}`">
                 {{ fPost.title }}
               </NuxtLink>
             </h3>

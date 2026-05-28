@@ -153,6 +153,21 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-11-04',
 
+  // Allow dots (.) in dynamic route params - needed for /blog/{slug}.{id} URL format
+  router: {
+    options: {
+      strict: false
+    }
+  },
+
+  // Nitro: force /blog/** to be treated as app routes (not static files)
+  // This prevents Nitro from interpreting ".id" suffix as a file extension
+  nitro: {
+    routeRules: {
+      '/blog/**': { ssr: true }
+    }
+  },
+
   sentry: {
     org: 'bekisoft-40',
     project: 'javascript-nuxt'

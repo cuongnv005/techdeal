@@ -46,16 +46,16 @@ const handleGoogleLogin = () => {
       ></div>
 
       <!-- Top logo -->
-      <div class="flex items-center gap-2 relative z-10">
+      <NuxtLink to="/" class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity">
         <span class="text-3xl font-black tracking-tighter">
-          ZAIRA<span class="text-[#f1c40f]">.</span>
+          TECHDEAL<span class="text-[#f1c40f]">.</span>
         </span>
         <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded">HUBS</span>
-      </div>
+      </NuxtLink>
 
       <!-- Mid quote/text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">Tham gia cộng đồng Zaira ngay hôm nay</h2>
+        <h2 class="text-4xl font-extrabold leading-tight">Tham gia cộng đồng TechDeal ngay hôm nay</h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
           Tạo tài khoản để thảo luận các chủ đề nóng hổi về công nghệ, bình luận đánh giá game và
           lưu các bài viết yêu thích của riêng bạn.
@@ -64,7 +64,7 @@ const handleGoogleLogin = () => {
 
       <!-- Bottom copy -->
       <div class="text-xs text-zinc-400 relative z-10">
-        © 2026 ZAIRA News Magazine. All rights reserved.
+        © 2026 TECHDEAL News Magazine. All rights reserved.
       </div>
     </div>
 

@@ -43,12 +43,12 @@ const handleGoogleLogin = () => {
       ></div>
 
       <!-- Top logo -->
-      <div class="flex items-center gap-2 relative z-10">
+      <NuxtLink to="/" class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity">
         <span class="text-3xl font-black tracking-tighter">
-          ZAIRA<span class="text-[#f1c40f]">.</span>
+          TECHDEAL<span class="text-[#f1c40f]">.</span>
         </span>
         <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded">HUBS</span>
-      </div>
+      </NuxtLink>
 
       <!-- Mid quote/text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
@@ -56,14 +56,14 @@ const handleGoogleLogin = () => {
           Kết nối & Cập nhật thế giới Công nghệ - Game hàng đầu
         </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đăng nhập ngay để cá nhân hóa nguồn cấp tin tức của bạn, thảo luận cùng cộng đồng Zaira và
+          Đăng nhập ngay để cá nhân hóa nguồn cấp tin tức của bạn, thảo luận cùng cộng đồng TechDeal và
           nhận thông tin nóng hổi nhất.
         </p>
       </div>
 
       <!-- Bottom copy -->
       <div class="text-xs text-zinc-400 relative z-10">
-        © 2026 ZAIRA News Magazine. All rights reserved.
+        © 2026 TECHDEAL News Magazine. All rights reserved.
       </div>
     </div>
 
@@ -77,7 +77,7 @@ const handleGoogleLogin = () => {
             Đăng nhập tài khoản
           </h1>
           <p class="text-xs text-zinc-550 dark:text-zinc-400 mt-2">
-            Chào mừng bạn quay lại với Zaira.
+            Chào mừng bạn quay lại với TechDeal.
           </p>
         </div>
 
@@ -105,7 +105,9 @@ const handleGoogleLogin = () => {
           <div class="space-y-1.5">
             <div class="flex justify-between items-center">
               <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Mật khẩu</label>
-              <NuxtLink to="/forgot-password" class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline"
+              <NuxtLink
+                to="/forgot-password"
+                class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline"
                 >Quên mật khẩu?</NuxtLink
               >
             </div>

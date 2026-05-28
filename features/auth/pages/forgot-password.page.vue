@@ -20,42 +20,53 @@ const handleResetRequest = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-gray-150 dark:bg-zinc-950 transition-colors duration-300 font-display">
+  <div
+    class="min-h-screen flex bg-gray-150 dark:bg-zinc-950 transition-colors duration-300 font-display"
+  >
     <!-- Left side: Beautiful branding column (hidden on mobile) -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-tr from-sky-600 to-indigo-900 dark:from-red-950 dark:to-zinc-900 text-white p-12 flex-col justify-between relative overflow-hidden">
-      <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-blue-500/20 dark:bg-red-500/10 blur-3xl"></div>
-      <div class="absolute bottom-20 right-10 w-72 h-72 rounded-full bg-purple-500/20 dark:bg-zinc-800/20 blur-3xl"></div>
+    <div
+      class="hidden lg:flex lg:w-1/2 bg-gradient-to-tr from-sky-600 to-indigo-900 dark:from-red-950 dark:to-zinc-900 text-white p-12 flex-col justify-between relative overflow-hidden"
+    >
+      <div
+        class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-blue-500/20 dark:bg-red-500/10 blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-72 h-72 rounded-full bg-purple-500/20 dark:bg-zinc-800/20 blur-3xl"
+      ></div>
 
       <!-- Top logo -->
-      <div class="flex items-center gap-2 relative z-10">
+      <NuxtLink to="/" class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity">
         <span class="text-3xl font-black tracking-tighter">
-          ZAIRA<span class="text-[#f1c40f]">.</span>
+          TECHDEAL<span class="text-[#f1c40f]">.</span>
         </span>
         <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded">HUBS</span>
-      </div>
+      </NuxtLink>
 
       <!-- Mid text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">
-          Khôi phục tài khoản của bạn
-        </h2>
+        <h2 class="text-4xl font-extrabold leading-tight">Khôi phục tài khoản của bạn</h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đừng lo lắng! Chỉ cần điền địa chỉ email đã đăng ký, chúng tôi sẽ gửi liên kết để bạn thiết lập lại mật khẩu mới.
+          Đừng lo lắng! Chỉ cần điền địa chỉ email đã đăng ký, chúng tôi sẽ gửi liên kết để bạn
+          thiết lập lại mật khẩu mới.
         </p>
       </div>
 
       <!-- Bottom copy -->
       <div class="text-xs text-zinc-400 relative z-10">
-        © 2026 ZAIRA News Magazine. All rights reserved.
+        © 2026 TECHDEAL News Magazine. All rights reserved.
       </div>
     </div>
 
     <!-- Right side: Forgot Password Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-      <div class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300">
-        
+      <div
+        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300"
+      >
         <!-- Back to login link -->
-        <NuxtLink to="/login" class="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors">
+        <NuxtLink
+          to="/login"
+          class="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors"
+        >
           <ArrowLeft class="w-4 h-4" /> Quay lại đăng nhập
         </NuxtLink>
 
@@ -72,7 +83,9 @@ const handleResetRequest = () => {
           <form @submit.prevent="handleResetRequest" class="space-y-5">
             <!-- Email Input -->
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">Địa chỉ Email</label>
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
+                >Địa chỉ Email</label
+              >
               <div class="relative">
                 <span class="absolute left-3 top-3 text-zinc-400">
                   <Mail class="w-4 h-4" />
@@ -94,20 +107,28 @@ const handleResetRequest = () => {
               class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <span v-if="isLoading">Đang xử lý...</span>
-              <span v-else class="flex items-center gap-1.5">Gửi liên kết khôi phục <ArrowRight class="w-4 h-4" /></span>
+              <span v-else class="flex items-center gap-1.5"
+                >Gửi liên kết khôi phục <ArrowRight class="w-4 h-4"
+              /></span>
             </button>
           </form>
         </div>
 
         <!-- Success view -->
         <div v-else class="space-y-6 text-center lg:text-left">
-          <div class="w-12 h-12 bg-green-500/10 text-green-500 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto lg:mx-0">
+          <div
+            class="w-12 h-12 bg-green-500/10 text-green-500 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto lg:mx-0"
+          >
             <Mail class="w-6 h-6" :stroke-width="2.5" />
           </div>
           <div class="space-y-2">
-            <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Kiểm tra hộp thư của bạn</h2>
+            <h2 class="text-xl font-bold text-zinc-900 dark:text-white">
+              Kiểm tra hộp thư của bạn
+            </h2>
             <p class="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed">
-              Chúng tôi đã gửi một email khôi phục mật khẩu đến <strong class="text-zinc-800 dark:text-white font-semibold">{{ email }}</strong>. Vui lòng làm theo hướng dẫn trong email để đặt lại mật khẩu.
+              Chúng tôi đã gửi một email khôi phục mật khẩu đến
+              <strong class="text-zinc-800 dark:text-white font-semibold">{{ email }}</strong
+              >. Vui lòng làm theo hướng dẫn trong email để đặt lại mật khẩu.
             </p>
           </div>
           <button
@@ -117,7 +138,6 @@ const handleResetRequest = () => {
             Gửi lại email khác
           </button>
         </div>
-
       </div>
     </div>
   </div>

@@ -9,10 +9,10 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: 'Trang chủ - Tin tức Công nghệ Zaira',
+  title: 'Trang chủ - Tin tức Công nghệ TechDeal',
   description:
     'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
-  ogTitle: 'Trang chủ - Tin tức Công nghệ Zaira',
+  ogTitle: 'Trang chủ - Tin tức Công nghệ TechDeal',
   ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogType: 'website',
   twitterCard: 'summary_large_image'
@@ -87,7 +87,7 @@ const featuredBigPost = ref<BlogPost>({
   title:
     'Cuộc cách mạng thực tế ảo tiếp theo: Kỷ nguyên mới cho ngành công nghiệp game và thực tế hỗn hợp',
   category: 'Technology',
-  author: 'Zaira Editor',
+  author: 'TechDeal Editor',
   publishDate: '28 Tháng 5, 2026',
   views: 1250,
   comments: 4,
@@ -154,15 +154,15 @@ const handleSearch = () => {
     >
       <div class="container mx-auto px-4 py-4 flex items-center justify-between">
         <!-- Logo -->
-        <div class="flex items-center gap-2">
+        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <span class="text-3xl font-black tracking-tighter text-[#3498db]">
-            ZAIRA<span class="text-[#f39c12]">.</span>
+            TECHDEAL<span class="text-[#f39c12]">.</span>
           </span>
           <span
             class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-[#f39c12] text-white rounded"
             >TECH</span
           >
-        </div>
+        </NuxtLink>
 
         <!-- Main Navigation Links -->
         <nav
@@ -195,9 +195,19 @@ const handleSearch = () => {
             </button>
           </form>
           <!-- Auth buttons -->
-          <div class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3">
-            <NuxtLink to="/login" class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] transition-colors">Đăng nhập</NuxtLink>
-            <NuxtLink to="/register" class="text-xs font-bold bg-[#3498db] hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-full transition-colors">Đăng ký</NuxtLink>
+          <div
+            class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3"
+          >
+            <NuxtLink
+              to="/login"
+              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] transition-colors"
+              >Đăng nhập</NuxtLink
+            >
+            <NuxtLink
+              to="/register"
+              class="text-xs font-bold bg-[#3498db] hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-full transition-colors"
+              >Đăng ký</NuxtLink
+            >
           </div>
           <button class="lg:hidden text-zinc-700 dark:text-white">
             <Menu class="w-6 h-6" />
@@ -249,7 +259,9 @@ const handleSearch = () => {
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h4 class="text-white text-lg font-black tracking-tight mb-4">ZAIRA.</h4>
+            <NuxtLink to="/">
+              <h4 class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#3498db] transition-colors">TECHDEAL.</h4>
+            </NuxtLink>
             <p class="leading-relaxed text-zinc-500">
               Trang tin tức cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.
             </p>
@@ -264,12 +276,12 @@ const handleSearch = () => {
           </div>
           <div>
             <h4 class="text-white font-bold uppercase mb-4">Liên hệ hỗ trợ</h4>
-            <p class="mb-2">Email: contact@zairatech.com</p>
+            <p class="mb-2">Email: contact@techdeal.com</p>
             <p>Điện thoại: +84 (0) 123 456 789</p>
           </div>
         </div>
         <div class="border-t border-zinc-800 mt-8 pt-6 text-center text-[10px] text-zinc-600">
-          © 2026 ZAIRA News Magazine. Mọi quyền được bảo lưu.
+          © 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.
         </div>
       </div>
     </footer>
