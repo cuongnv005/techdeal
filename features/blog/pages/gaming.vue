@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Search, Menu, Facebook, Twitter, Instagram, Linkedin } from 'lucide-vue-next'
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-vue-next'
 import type { BlogPost } from '../types/post.type'
 import AdBanner from '../components/AdBanner.vue'
 import GamingBanner from '../components/gaming/GamingBanner.vue'
 import GamingCategories from '../components/gaming/GamingCategories.vue'
 import GamingSpotlight from '../components/gaming/GamingSpotlight.vue'
 import GamingSidebar from '../components/gaming/GamingSidebar.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 
 // SEO optimization for Gaming Page
 useSeoMeta({
@@ -38,8 +40,10 @@ const bannerPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 4520,
     comments: 18,
-    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
-    summary: 'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+    summary:
+      'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
     slug: 'danh-gia-black-myth-wukong'
   }
 ])
@@ -47,27 +51,32 @@ const bannerPosts = ref<BlogPost[]>([
 // Spotlight posts
 const spotlightBigPost = ref<BlogPost>({
   id: 'gs1',
-  title: 'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
+  title:
+    'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
   category: 'Esports',
   author: 'VCS Reporter',
   publishDate: '28 Tháng 5, 2026',
   views: 5800,
   comments: 32,
-  imageUrl: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
-  summary: 'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
+  imageUrl:
+    'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
+  summary:
+    'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
   slug: 'vcs-mua-he-2026-khoi-tranh'
 })
 
 const spotlightSmallPosts = ref<BlogPost[]>([
   {
     id: 'gs2',
-    title: 'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
+    title:
+      'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
     category: 'Action',
     author: 'Admin',
     publishDate: '28 Tháng 5, 2026',
     views: 1980,
     comments: 3,
-    imageUrl: 'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'fortnite-dat-ky-luc-nguoi-choi-moi'
   }
@@ -83,7 +92,8 @@ const popularMediumPosts = ref<BlogPost[]>([
     publishDate: '28 Tháng 5, 2026',
     views: 1200,
     comments: 2,
-    imageUrl: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
     summary: '',
     slug: 'f1-esports-pro-series-2026'
   }
@@ -98,7 +108,8 @@ const popularSmallPosts = ref<BlogPost[]>([
     publishDate: '25 Tháng 5, 2026',
     views: 3120,
     comments: 7,
-    imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
     summary: '',
     slug: 'phan-tich-cot-truyen-elden-ring-dlc'
   }
@@ -125,87 +136,8 @@ const recentSidebarPosts = ref<BlogPost[]>([
   <div
     class="min-h-screen bg-gray-100 dark:bg-[#0d0f12] text-zinc-800 dark:text-zinc-100 font-display transition-colors duration-300"
   >
-    <!-- Top Nav / Social Wrap (Dark themed) -->
-    <div class="bg-zinc-900 text-xs py-2 border-b border-zinc-800 dark:border-zinc-900 text-white">
-      <div class="container mx-auto px-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <span
-            class="bg-[#e74c3c] text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 animate-pulse"
-          >
-            💥 Esports
-          </span>
-          <span class="truncate max-w-[250px] sm:max-w-md text-zinc-350">
-            Black Myth: Wukong đạt mốc doanh thu 20 triệu bản chỉ sau thời gian ngắn...
-          </span>
-        </div>
-        <div class="hidden md:flex items-center gap-4 text-zinc-350">
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"
-            ><Facebook class="w-4 h-4"
-          /></a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"><Twitter class="w-4 h-4" /></a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"
-            ><Instagram class="w-4 h-4"
-          /></a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"
-            ><Linkedin class="w-4 h-4"
-          /></a>
-        </div>
-      </div>
-    </div>
-
     <!-- Main Navigation Header -->
-    <header
-      class="bg-white dark:bg-[#13161c] border-b border-gray-200 dark:border-zinc-900 sticky top-0 z-50 shadow-md"
-    >
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-          <span class="text-3xl font-black tracking-tighter text-[#e74c3c]">
-            TECHDEAL<span class="text-[#f1c40f]">.</span>
-          </span>
-          <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded"
-            >GAMING</span
-          >
-        </NuxtLink>
-
-        <!-- Navigation Links -->
-        <nav
-          class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
-        >
-          <NuxtLink to="/" class="hover:text-[#e74c3c] transition-colors">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="text-[#e74c3c]">Thế giới Game</NuxtLink>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors">Esports</a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors">Đánh giá game</a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors">Cốt truyện</a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors">Phần cứng PC</a>
-        </nav>
-
-        <!-- Search button -->
-        <div class="flex items-center gap-3">
-          <button class="text-zinc-500 dark:text-zinc-400 hover:text-red-500">
-            <Search class="w-5 h-5" />
-          </button>
-          <!-- Auth buttons -->
-          <div
-            class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3"
-          >
-            <NuxtLink
-              to="/login"
-              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#e74c3c] transition-colors"
-              >Đăng nhập</NuxtLink
-            >
-            <NuxtLink
-              to="/register"
-              class="text-xs font-bold bg-[#e74c3c] hover:bg-[#c0392b] text-white px-3.5 py-1.5 rounded-full transition-colors"
-              >Đăng ký</NuxtLink
-            >
-          </div>
-          <button class="lg:hidden text-zinc-700 dark:text-white">
-            <Menu class="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-    </header>
+    <Header theme="red" />
 
     <!-- MAIN AREA -->
     <main>
@@ -309,41 +241,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
         </div>
       </div>
     </main>
-
-    <!-- Footer (Dark themed for both modes) -->
-    <footer class="bg-zinc-950 text-zinc-550 text-xs py-10 border-t border-zinc-900 mt-16">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <NuxtLink to="/">
-              <h4
-                class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#e74c3c] transition-colors"
-              >
-                TECHDEAL GAMING.
-              </h4>
-            </NuxtLink>
-            <p class="leading-relaxed">
-              Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.
-            </p>
-          </div>
-          <div>
-            <h4 class="text-white font-bold uppercase mb-4">Danh mục phổ biến</h4>
-            <ul class="space-y-2">
-              <li><a href="#" class="hover:text-white transition-colors">Esports</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Đánh giá game</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Phần cứng PC</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-bold uppercase mb-4">Hỗ trợ</h4>
-            <p class="mb-2 text-zinc-400">Email: gaming@techdeal.com</p>
-            <p class="text-zinc-400">Điện thoại: +84 (0) 987 654 321</p>
-          </div>
-        </div>
-        <div class="border-t border-zinc-900 mt-8 pt-6 text-center text-[10px] text-zinc-700">
-          © 2026 TECHDEAL Gaming Hub. All rights reserved.
-        </div>
-      </div>
-    </footer>
+    <!-- Footer -->
+    <Footer theme="red" />
   </div>
 </template>
