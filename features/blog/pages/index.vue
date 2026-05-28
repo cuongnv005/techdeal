@@ -7,25 +7,13 @@ import {
   Twitter,
   Instagram,
   Linkedin,
-  Youtube,
-  Rss,
-  Mail,
-  Flame,
-  ArrowRight,
-  TrendingUp,
-  Bookmark,
-  Eye
+  TrendingUp
 } from 'lucide-vue-next'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
 import AdBanner from '../components/AdBanner.vue'
-
-// Computed property for the most viewed posts of the month
-const mostViewedPosts = computed(() => {
-  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value].sort(
-    (a, b) => b.views - a.views
-  )
-})
+import HomeHero from '../components/home/HomeHero.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -38,7 +26,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// Mock Articles matching user screenshot and requirements
+// Mock Articles
 const posts = ref<BlogPost[]>([
   {
     id: '1',
@@ -72,7 +60,8 @@ const posts = ref<BlogPost[]>([
   },
   {
     id: '3',
-    title: 'Tim Cook hé lộ tính năng Apple Intelligence được yêu thích nhất, bạn có sử dụng?',
+    title:
+      'Tim Cook hé lộ tính năng Apple Intelligence được yêu thích nhất, bạn có sử dụng?',
     category: 'Technology',
     author: 'Mr.X',
     publishDate: 'Hôm nay lúc 13:06',
@@ -121,7 +110,8 @@ const featuredBigPost = ref<BlogPost>({
 const featuredSmallPosts = ref<BlogPost[]>([
   {
     id: 'f2',
-    title: 'Đánh giá chi tiết iPhone 17 Pro Max với những cải tiến mang tính cách mạng',
+    title:
+      'Đánh giá chi tiết iPhone 17 Pro Max với những cải tiến mang tính cách mạng',
     category: 'Mobile',
     author: 'Admin',
     publishDate: '27 Tháng 5, 2026',
@@ -146,6 +136,12 @@ const featuredSmallPosts = ref<BlogPost[]>([
     slug: 'toi-uu-hoa-hinh-anh-nuxt-4'
   }
 ])
+
+// Computed property for the most viewed posts of the month
+const mostViewedPosts = computed(() => {
+  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value]
+    .sort((a, b) => b.views - a.views)
+})
 
 // Search query
 const searchQuery = ref('')
@@ -182,9 +178,7 @@ const handleSearch = () => {
           class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
         >
           <NuxtLink to="/" class="text-[#3498db] hover:text-[#3498db]">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors"
-            >Thế giới Game</NuxtLink
-          >
+          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
           <a href="#" class="hover:text-[#3498db] transition-colors">Công nghệ</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Thiết bị di động</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Trí tuệ nhân tạo</a>
@@ -216,72 +210,8 @@ const handleSearch = () => {
 
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
-      <!-- TOP HERO FEATURED SECTION -->
-      <section class="mb-8">
-        <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
-          <!-- Big Featured Post (70% on large screen) -->
-          <div
-            class="lg:col-span-7 relative group overflow-hidden rounded-xl bg-zinc-950 text-white aspect-[16/9] shadow-md"
-          >
-            <img
-              :src="featuredBigPost.imageUrl"
-              :alt="featuredBigPost.title"
-              class="w-full h-full object-cover opacity-80 group-hover:scale-102 transition-transform duration-750"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 md:p-8"
-            >
-              <span
-                class="self-start bg-[#3498db] text-white text-[11px] font-extrabold uppercase px-2 py-0.5 rounded mb-3"
-              >
-                {{ featuredBigPost.category }}
-              </span>
-              <h2 class="text-xl md:text-3xl font-bold mb-3 hover:underline leading-tight">
-                <NuxtLink :to="`/blog/${featuredBigPost.slug}`">
-                  {{ featuredBigPost.title }}
-                </NuxtLink>
-              </h2>
-              <p class="text-zinc-300 text-xs md:text-sm line-clamp-2 mb-4 hidden md:block">
-                {{ featuredBigPost.summary }}
-              </p>
-              <div class="flex items-center gap-4 text-[11px] text-zinc-400">
-                <span>Bởi {{ featuredBigPost.author }}</span>
-                <span>•</span>
-                <span>{{ featuredBigPost.publishDate }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Small Featured Posts Column (30% on large screen) -->
-          <div class="lg:col-span-3 flex flex-col gap-4">
-            <div
-              v-for="fPost in featuredSmallPosts"
-              :key="fPost.id"
-              class="flex-1 relative group overflow-hidden rounded-xl bg-zinc-950 text-white min-h-[160px] shadow-sm"
-            >
-              <img
-                :src="fPost.imageUrl"
-                :alt="fPost.title"
-                class="w-full h-full object-cover opacity-75 group-hover:scale-103 transition-transform duration-500"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent flex flex-col justify-end p-4"
-              >
-                <span
-                  class="self-start bg-[#f39c12] text-white text-[9px] font-bold uppercase px-1.5 py-0.5 rounded mb-2"
-                >
-                  {{ fPost.category }}
-                </span>
-                <h3 class="text-sm font-bold line-clamp-2 hover:underline">
-                  <NuxtLink :to="`/blog/${fPost.slug}`">
-                    {{ fPost.title }}
-                  </NuxtLink>
-                </h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <!-- HERO COMPONENT -->
+      <HomeHero :featured-big-post="featuredBigPost" :featured-small-posts="featuredSmallPosts" />
 
       <!-- AD BANNER BLOCK -->
       <AdBanner width="970px" height="90px" />
@@ -300,7 +230,7 @@ const handleSearch = () => {
             </h2>
           </div>
 
-          <!-- Simplified News Grid (Matching screenshot layout style) -->
+          <!-- Simplified News Grid (Using PostCard layout) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
           </div>
@@ -311,121 +241,8 @@ const handleSearch = () => {
           </div>
         </div>
 
-        <!-- Sidebar Column (30%) -->
-        <aside class="lg:col-span-3 space-y-8">
-          <!-- Social Stats Widget -->
-          <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
-            <h3
-              class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white"
-            >
-              Theo dõi chúng tôi
-            </h3>
-            <div class="grid grid-cols-2 gap-3 text-xs font-semibold">
-              <a
-                href="#"
-                class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 rounded hover:opacity-90"
-              >
-                <Facebook class="w-4 h-4" /> Facebook
-              </a>
-              <a
-                href="#"
-                class="flex items-center gap-2 p-2 bg-sky-50 dark:bg-sky-900/10 text-sky-500 dark:text-sky-400 rounded hover:opacity-90"
-              >
-                <Twitter class="w-4 h-4" /> Twitter
-              </a>
-              <a
-                href="#"
-                class="flex items-center gap-2 p-2 bg-pink-50 dark:bg-pink-900/10 text-pink-600 dark:text-pink-400 rounded hover:opacity-90"
-              >
-                <Instagram class="w-4 h-4" /> Instagram
-              </a>
-              <a
-                href="#"
-                class="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 rounded hover:opacity-90"
-              >
-                <Youtube class="w-4 h-4" /> YouTube
-              </a>
-            </div>
-          </div>
-
-          <!-- Most Viewed Posts of the Month Widget -->
-          <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
-            <h3
-              class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2"
-            >
-              <TrendingUp class="w-4 h-4 text-[#3498db]" /> Xem nhiều nhất tháng
-            </h3>
-            <ul class="space-y-4">
-              <li
-                v-for="(p, index) in mostViewedPosts.slice(0, 5)"
-                :key="p.id"
-                class="flex gap-3 items-start group"
-              >
-                <span
-                  class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold transition-colors"
-                  :class="
-                    index === 0
-                      ? 'bg-[#3498db] text-white'
-                      : index === 1
-                        ? 'bg-[#f39c12] text-white'
-                        : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400'
-                  "
-                >
-                  {{ index + 1 }}
-                </span>
-                <div class="flex-grow">
-                  <h4
-                    class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors"
-                  >
-                    <NuxtLink :to="`/blog/${p.slug}`">{{ p.title }}</NuxtLink>
-                  </h4>
-                  <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-400">
-                    <Eye class="w-3 h-3 text-red-400" :stroke-width="2.5" />
-                    <span>{{ p.views.toLocaleString() }} lượt xem</span>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Sidebar Advertisement Banner -->
-          <div
-            class="bg-white dark:bg-zinc-900 p-3 rounded-xl border border-border shadow-sm flex flex-col items-center justify-center"
-          >
-            <AdBanner width="300px" height="250px" />
-          </div>
-
-          <!-- Hot categories list -->
-          <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
-            <h3
-              class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white"
-            >
-              Chuyên mục nổi bật
-            </h3>
-            <ul class="space-y-2 text-xs">
-              <li
-                v-for="cat in [
-                  'Công nghệ',
-                  'Điện thoại',
-                  'Tai nghe & Loa',
-                  'Phần mềm & Ứng dụng',
-                  'AI & Xe điện'
-                ]"
-                :key="cat"
-              >
-                <a
-                  href="#"
-                  class="flex justify-between items-center py-2 px-3 hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded text-zinc-700 dark:text-zinc-300"
-                >
-                  <span class="flex items-center gap-2">
-                    <Bookmark class="w-3.5 h-3.5 text-[#f39c12]" /> {{ cat }}
-                  </span>
-                  <ChevronRight class="w-3.5 h-3.5 text-zinc-400" />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </aside>
+        <!-- SIDEBAR COMPONENT -->
+        <HomeSidebar :most-viewed-posts="mostViewedPosts" />
       </div>
     </main>
 
