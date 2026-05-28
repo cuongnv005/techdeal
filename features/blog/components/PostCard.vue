@@ -33,7 +33,7 @@ defineProps<{
         <span>{{ post.publishDate }}</span>
       </div>
       <div class="flex items-center gap-1 ml-auto sm:ml-0">
-        <Eye class="w-3.5 h-3.5 text-red-500 dark:text-red-400" :stroke-width="2.5" />
+        <Eye class="w-3.5 h-3.5 text-red-400 dark:text-red-400" :stroke-width="2.5" />
         <span class="font-medium">{{ post.views }}</span>
       </div>
       <div class="flex items-center gap-1">
@@ -56,7 +56,7 @@ defineProps<{
 
     <!-- Summary & Footer Button -->
     <div class="flex flex-col justify-between flex-grow p-4">
-      <p class="text-[14px] text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-4 mb-4">
+      <p class="text-[14px] text-black dark:text-gray-300 leading-relaxed line-clamp-4 mb-4">
         {{ post.summary }}
       </p>
 

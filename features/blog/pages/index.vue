@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   Search,
   Menu,
@@ -13,11 +13,18 @@ import {
   Flame,
   ArrowRight,
   TrendingUp,
-  Bookmark
+  Bookmark,
+  Eye
 } from 'lucide-vue-next'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
 import AdBanner from '../components/AdBanner.vue'
+
+// Computed property for the most viewed posts of the month
+const mostViewedPosts = computed(() => {
+  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value]
+    .sort((a, b) => b.views - a.views)
+})
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -338,32 +345,28 @@ const handleSearch = () => {
             </div>
           </div>
 
-          <!-- Daily Newsletter Widget -->
+          <!-- Most Viewed Posts of the Month Widget -->
           <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
-            <div class="flex items-center gap-2 mb-3">
-              <div class="p-2 bg-[#f39c12]/15 text-[#f39c12] rounded-lg">
-                <Mail class="w-5 h-5" />
-              </div>
-              <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-                Bản tin hàng ngày
-              </h3>
-            </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
-              Nhận các câu chuyện công nghệ hàng đầu được gửi thẳng vào hộp thư của bạn.
-            </p>
-            <form @submit.prevent class="space-y-2">
-              <input
-                type="email"
-                placeholder="Nhập email của bạn..."
-                class="w-full text-xs px-3 py-2 border border-border rounded focus:outline-none focus:ring-1 focus:ring-[#3498db] dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-              />
-              <button
-                type="submit"
-                class="w-full bg-[#3498db] hover:bg-[#2980b9] text-white text-xs font-bold py-2 rounded transition-colors flex items-center justify-center gap-1"
-              >
-                Đăng ký ngay <ArrowRight class="w-3.5 h-3.5" />
-              </button>
-            </form>
+            <h3 class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2">
+              <TrendingUp class="w-4 h-4 text-[#3498db]" /> Xem nhiều nhất tháng
+            </h3>
+            <ul class="space-y-4">
+              <li v-for="(p, index) in mostViewedPosts.slice(0, 5)" :key="p.id" class="flex gap-3 items-start group">
+                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold transition-colors"
+                  :class="index === 0 ? 'bg-[#3498db] text-white' : index === 1 ? 'bg-[#f39c12] text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400'">
+                  {{ index + 1 }}
+                </span>
+                <div class="flex-grow">
+                  <h4 class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors">
+                    <NuxtLink :to="`/blog/${p.slug}`">{{ p.title }}</NuxtLink>
+                  </h4>
+                  <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-400">
+                    <Eye class="w-3 h-3 text-red-400" :stroke-width="2.5" />
+                    <span>{{ p.views.toLocaleString() }} lượt xem</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
 
           <!-- Sidebar Advertisement Banner -->
