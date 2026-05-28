@@ -153,7 +153,6 @@ const handleSearch = () => {
   <div
     class="min-h-screen bg-gray-100 dark:bg-zinc-950 font-display transition-colors duration-300"
   >
-
     <!-- Main Navigation Header -->
     <header
       class="bg-white dark:bg-zinc-900 border-b border-gray-250 dark:border-zinc-800 sticky top-0 z-50 shadow-sm"
