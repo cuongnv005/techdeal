@@ -34,7 +34,7 @@ defineProps<{
       </div>
       <div class="flex items-center gap-1 ml-auto sm:ml-0">
         <Eye class="w-3.5 h-3.5 text-red-500 dark:text-red-400" :stroke-width="2.5" />
-        <span class="text-red-500 dark:text-red-400 font-medium">{{ post.views }}</span>
+        <span class="font-medium">{{ post.views }}</span>
       </div>
       <div class="flex items-center gap-1">
         <MessageSquare class="w-3.5 h-3.5" :stroke-width="2.5" />
