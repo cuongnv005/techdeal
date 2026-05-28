@@ -22,8 +22,9 @@ import AdBanner from '../components/AdBanner.vue'
 
 // Computed property for the most viewed posts of the month
 const mostViewedPosts = computed(() => {
-  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value]
-    .sort((a, b) => b.views - a.views)
+  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value].sort(
+    (a, b) => b.views - a.views
+  )
 })
 
 // Set page meta for SEO optimization
@@ -181,9 +182,9 @@ const handleSearch = () => {
           class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
         >
           <NuxtLink to="/" class="text-[#3498db] hover:text-[#3498db]">Trang chủ</NuxtLink>
+          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
           <a href="#" class="hover:text-[#3498db] transition-colors">Công nghệ</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Thiết bị di động</a>
-          <a href="#" class="hover:text-[#3498db] transition-colors">Ứng dụng</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Trí tuệ nhân tạo</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Liên hệ</a>
         </nav>
@@ -347,17 +348,33 @@ const handleSearch = () => {
 
           <!-- Most Viewed Posts of the Month Widget -->
           <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
-            <h3 class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2">
+            <h3
+              class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2"
+            >
               <TrendingUp class="w-4 h-4 text-[#3498db]" /> Xem nhiều nhất tháng
             </h3>
             <ul class="space-y-4">
-              <li v-for="(p, index) in mostViewedPosts.slice(0, 5)" :key="p.id" class="flex gap-3 items-start group">
-                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold transition-colors"
-                  :class="index === 0 ? 'bg-[#3498db] text-white' : index === 1 ? 'bg-[#f39c12] text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400'">
+              <li
+                v-for="(p, index) in mostViewedPosts.slice(0, 5)"
+                :key="p.id"
+                class="flex gap-3 items-start group"
+              >
+                <span
+                  class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold transition-colors"
+                  :class="
+                    index === 0
+                      ? 'bg-[#3498db] text-white'
+                      : index === 1
+                        ? 'bg-[#f39c12] text-white'
+                        : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400'
+                  "
+                >
                   {{ index + 1 }}
                 </span>
                 <div class="flex-grow">
-                  <h4 class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors">
+                  <h4
+                    class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors"
+                  >
                     <NuxtLink :to="`/blog/${p.slug}`">{{ p.title }}</NuxtLink>
                   </h4>
                   <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-400">
