@@ -16,6 +16,7 @@ import {
   Sparkles
 } from 'lucide-vue-next'
 import type { BlogPost } from '../types/post.type'
+import Header from '../components/Header.vue'
 
 const route = useRoute()
 // URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
@@ -327,57 +328,7 @@ const handleSubscribe = () => {
     class="min-h-screen bg-gray-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors duration-300 font-sans"
   >
     <!-- Main Navigation Header -->
-    <header
-      class="bg-white dark:bg-zinc-900 border-b border-gray-250 dark:border-zinc-800 sticky top-0 z-50 shadow-sm"
-    >
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-          <span class="text-3xl font-black tracking-tighter text-[#3498db]">
-            TECHDEAL<span class="text-[#f39c12]">.</span>
-          </span>
-          <span
-            class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-[#f39c12] text-white rounded"
-            >TECH</span
-          >
-        </NuxtLink>
-
-        <!-- Navigation Links -->
-        <nav
-          class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
-        >
-          <NuxtLink to="/" class="hover:text-[#3498db] transition-colors">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors"
-            >Thế giới Game</NuxtLink
-          >
-          <a href="#" class="hover:text-[#3498db] transition-colors">Công nghệ</a>
-          <a href="#" class="hover:text-[#3498db] transition-colors">Đánh giá</a>
-          <a href="#" class="hover:text-[#3498db] transition-colors">Cộng đồng</a>
-        </nav>
-
-        <!-- Right Buttons: Search & User Signin/Signup -->
-        <div class="flex items-center gap-4">
-          <button
-            class="text-zinc-550 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors cursor-pointer"
-          >
-            <Search class="w-5 h-5" />
-          </button>
-
-          <NuxtLink
-            to="/login"
-            class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] dark:hover:text-red-400 transition-colors"
-          >
-            Đăng nhập
-          </NuxtLink>
-          <NuxtLink
-            to="/register"
-            class="text-xs font-bold px-4 py-2 rounded-lg bg-[#3498db] dark:bg-[#e74c3c] text-white hover:bg-sky-600 dark:hover:bg-[#c0392b] transition-all shadow-xs"
-          >
-            Đăng ký
-          </NuxtLink>
-        </div>
-      </div>
-    </header>
+    <Header />
 
     <!-- Breadcrumbs -->
     <div

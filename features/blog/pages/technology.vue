@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Search, Menu, Facebook, Twitter, Instagram, Linkedin, TrendingUp, Cpu } from 'lucide-vue-next'
+import {
+  Search,
+  Menu,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  TrendingUp,
+  Cpu
+} from 'lucide-vue-next'
+import { useUserStore } from '@stores/user'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
 import AdBanner from '../components/AdBanner.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
+import Header from '../components/Header.vue'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -26,8 +37,10 @@ const posts = ref<BlogPost[]>([
     publishDate: 'Hôm nay lúc 15:30',
     views: 890,
     comments: 4,
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-    summary: 'Dòng chip mới tích hợp NPU thế hệ mới giúp tăng cường tốc độ xử lý các tác vụ AI trực tiếp trên thiết bị mà không cần kết nối internet.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Dòng chip mới tích hợp NPU thế hệ mới giúp tăng cường tốc độ xử lý các tác vụ AI trực tiếp trên thiết bị mà không cần kết nối internet.',
     slug: 'intel-gioi-thieu-core-ultra-moi'
   },
   {
@@ -38,19 +51,23 @@ const posts = ref<BlogPost[]>([
     publishDate: 'Hôm qua lúc 10:15',
     views: 1240,
     comments: 8,
-    imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
-    summary: 'Sự trỗi dậy của các công cụ AI hỗ trợ code đang tối ưu hóa năng suất làm việc của kỹ sư phần mềm toàn cầu.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Sự trỗi dậy của các công cụ AI hỗ trợ code đang tối ưu hóa năng suất làm việc của kỹ sư phần mềm toàn cầu.',
     slug: 'ai-thay-doi-cach-viet-code'
   },
   {
     id: '1',
-    title: 'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
+    title:
+      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
     category: 'Technology',
     author: 'Mr.X',
     publishDate: 'Hôm nay lúc 18:50',
     views: 406,
     comments: 1,
-    imageUrl: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
     summary:
       'TP. Hồ Chí Minh, ngày 29/01/2026 - realme chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam.',
     slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
@@ -62,13 +79,8 @@ const mostViewedPosts = computed(() => {
   return [...posts.value].sort((a, b) => b.views - a.views)
 })
 
-// Search query
-const searchQuery = ref('')
-const handleSearch = () => {
-  if (searchQuery.value) {
-    alert(`Tìm kiếm với từ khóa: ${searchQuery.value}`)
-  }
-}
+// User store
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -76,84 +88,43 @@ const handleSearch = () => {
     class="min-h-screen bg-gray-100 dark:bg-zinc-950 font-display transition-colors duration-300"
   >
     <!-- Main Navigation Header -->
-    <header
-      class="bg-white dark:bg-zinc-900 border-b border-gray-250 dark:border-zinc-800 sticky top-0 z-50 shadow-sm"
-    >
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-          <span class="text-3xl font-black tracking-tighter text-[#3498db]">
-            TECHDEAL<span class="text-[#f39c12]">.</span>
-          </span>
-          <span
-            class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-[#f39c12] text-white rounded"
-            >TECH</span
-          >
-        </NuxtLink>
-
-        <!-- Main Navigation Links -->
-        <nav
-          class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
-        >
-          <NuxtLink to="/" class="hover:text-[#3498db] transition-colors">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
-          <NuxtLink to="/cong-nghe" class="text-[#3498db]">Công nghệ</NuxtLink>
-          <NuxtLink to="/windows" class="hover:text-[#3498db] transition-colors">Windows</NuxtLink>
-          <NuxtLink to="/ios" class="hover:text-[#3498db] transition-colors">iOS</NuxtLink>
-          <NuxtLink to="/android" class="hover:text-[#3498db] transition-colors">Android</NuxtLink>
-        </nav>
-
-        <!-- Search input box -->
-        <div class="flex items-center gap-3">
-          <form @submit.prevent="handleSearch" class="relative hidden sm:block">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Tìm kiếm tin tức..."
-              class="bg-gray-150 dark:bg-zinc-800 text-xs px-3 py-1.5 pr-8 rounded-full focus:outline-none focus:ring-1 focus:ring-[#3498db] w-48 dark:text-white"
-            />
-            <button
-              type="submit"
-              class="absolute right-2 top-1.5 text-zinc-550 hover:text-[#3498db]"
-            >
-              <Search class="w-4 h-4" />
-            </button>
-          </form>
-          <!-- Auth buttons -->
-          <div
-            class="hidden sm:flex items-center gap-3 border-l border-gray-250 dark:border-zinc-800 pl-3"
-          >
-            <NuxtLink
-              to="/login"
-              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] transition-colors"
-              >Đăng nhập</NuxtLink
-            >
-            <NuxtLink
-              to="/register"
-              class="text-xs font-bold bg-[#3498db] hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-full transition-colors"
-              >Đăng ký</NuxtLink
-            >
-          </div>
-          <button class="lg:hidden text-zinc-700 dark:text-white">
-            <Menu class="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-    </header>
+    <Header />
 
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
       <!-- CATEGORY BANNER -->
-      <div class="bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden">
+      <div
+        class="bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden"
+      >
         <div class="absolute right-6 bottom-0 translate-y-6 opacity-10">
           <Cpu class="w-48 h-48" />
         </div>
-        <div class="relative z-10">
-          <span class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Chuyên mục</span>
-          <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Công nghệ</h1>
-          <p class="text-sm text-blue-50 mt-2 max-w-xl">
-            Cập nhật những tin tức công nghệ mới nhất, sản phẩm đột phá, các nghiên cứu và xu hướng phát triển công nghệ trên toàn cầu.
-          </p>
+        <div
+          class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
+          <div>
+            <span
+              class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
+              >Chuyên mục</span
+            >
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Công nghệ</h1>
+            <p class="text-sm text-blue-50 mt-2 max-w-xl">
+              Cập nhật những tin tức công nghệ mới nhất, sản phẩm đột phá, các nghiên cứu và xu
+              hướng phát triển công nghệ trên toàn cầu.
+            </p>
+          </div>
+          <div
+            v-if="
+              userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
+            "
+          >
+            <NuxtLink
+              to="/blog/publish?category=technology"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-600 hover:bg-blue-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"
+            >
+              📝 Đăng bài mới
+            </NuxtLink>
+          </div>
         </div>
       </div>
 

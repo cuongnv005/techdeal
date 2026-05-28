@@ -1,6 +1,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Search, Menu } from 'lucide-vue-next'
+import { useUserStore } from '@stores/user'
+
+const userStore = useUserStore()
+
+const handleLogout = () => {
+  userStore.$patch({
+    isAuthenticated: false,
+    role: null,
+    username: null,
+    email: null,
+    id: null
+  })
+  navigateTo('/')
+}
 
 interface Props {
   theme?: 'blue' | 'red'
@@ -21,15 +35,23 @@ const handleSearch = () => {
 // Compute theme-specific classes
 const isBlue = computed(() => props.theme === 'blue')
 
-const textPrimaryClass = computed(() => isBlue.value ? 'text-[#3498db]' : 'text-[#e74c3c]')
-const textHoverClass = computed(() => isBlue.value ? 'hover:text-[#3498db]' : 'hover:text-[#e74c3c]')
-const bgPrimaryClass = computed(() => isBlue.value ? 'bg-[#3498db]' : 'bg-[#e74c3c]')
-const bgHoverClass = computed(() => isBlue.value ? 'hover:bg-sky-600' : 'hover:bg-[#c0392b]')
-const focusRingClass = computed(() => isBlue.value ? 'focus:ring-[#3498db]' : 'focus:ring-[#e74c3c]')
-const dotColorClass = computed(() => isBlue.value ? 'text-[#f39c12]' : 'text-[#f1c40f]')
-const tagLabel = computed(() => isBlue.value ? 'TECH' : 'GAMING')
-const headerBgClass = computed(() => isBlue.value ? 'bg-white dark:bg-zinc-900 border-gray-250 dark:border-zinc-800' : 'bg-white dark:bg-[#13161c] border-gray-200 dark:border-zinc-900')
-const shadowClass = computed(() => isBlue.value ? 'shadow-sm' : 'shadow-md')
+const textPrimaryClass = computed(() => (isBlue.value ? 'text-[#3498db]' : 'text-[#e74c3c]'))
+const textHoverClass = computed(() =>
+  isBlue.value ? 'hover:text-[#3498db]' : 'hover:text-[#e74c3c]'
+)
+const bgPrimaryClass = computed(() => (isBlue.value ? 'bg-[#3498db]' : 'bg-[#e74c3c]'))
+const bgHoverClass = computed(() => (isBlue.value ? 'hover:bg-sky-600' : 'hover:bg-[#c0392b]'))
+const focusRingClass = computed(() =>
+  isBlue.value ? 'focus:ring-[#3498db]' : 'focus:ring-[#e74c3c]'
+)
+const dotColorClass = computed(() => (isBlue.value ? 'text-[#f39c12]' : 'text-[#f1c40f]'))
+const tagLabel = computed(() => (isBlue.value ? 'TECH' : 'GAMING'))
+const headerBgClass = computed(() =>
+  isBlue.value
+    ? 'bg-white dark:bg-zinc-900 border-gray-250 dark:border-zinc-800'
+    : 'bg-white dark:bg-[#13161c] border-gray-200 dark:border-zinc-900'
+)
+const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
 </script>
 
 <template>
@@ -55,12 +77,55 @@ const shadowClass = computed(() => isBlue.value ? 'shadow-sm' : 'shadow-md')
       <nav
         class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
       >
-        <NuxtLink to="/" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#3498db] dark:!text-red-400">Trang chủ</NuxtLink>
-        <NuxtLink to="/game" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#e74c3c]">Thế giới Game</NuxtLink>
-        <NuxtLink to="/cong-nghe" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#3498db]">Công nghệ</NuxtLink>
-        <NuxtLink to="/windows" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#3498db]">Windows</NuxtLink>
-        <NuxtLink to="/ios" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#3498db]">iOS</NuxtLink>
-        <NuxtLink to="/android" class="transition-colors duration-200" :class="textHoverClass" active-class="!text-[#3498db]">Android</NuxtLink>
+        <NuxtLink
+          to="/"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db] dark:!text-red-400"
+          >Trang chủ</NuxtLink
+        >
+        <NuxtLink
+          to="/cong-nghe"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db]"
+          >Công nghệ</NuxtLink
+        >
+        <NuxtLink
+          to="/windows"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db]"
+          >Windows</NuxtLink
+        >
+        <NuxtLink
+          to="/ios"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db]"
+          >iOS</NuxtLink
+        >
+        <NuxtLink
+          to="/android"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db]"
+          >Android</NuxtLink
+        >
+        <NuxtLink
+          to="/pc"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#3498db]"
+          >PC máy tính</NuxtLink
+        >
+        <NuxtLink
+          to="/game"
+          class="transition-colors duration-200"
+          :class="textHoverClass"
+          active-class="!text-[#e74c3c]"
+          >Thế giới Game</NuxtLink
+        >
       </nav>
 
       <!-- Search & Auth -->
@@ -86,18 +151,39 @@ const shadowClass = computed(() => isBlue.value ? 'shadow-sm' : 'shadow-md')
         <div
           class="hidden sm:flex items-center gap-3 border-l pl-3 border-gray-200 dark:border-zinc-800"
         >
-          <NuxtLink
-            to="/login"
-            class="text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-colors"
-            :class="textHoverClass"
-            >Đăng nhập</NuxtLink
-          >
-          <NuxtLink
-            to="/register"
-            class="text-xs font-bold text-white px-3.5 py-1.5 rounded-full transition-colors"
-            :class="[bgPrimaryClass, bgHoverClass]"
-            >Đăng ký</NuxtLink
-          >
+          <template v-if="userStore.isAuthenticated">
+            <span class="text-xs font-semibold text-zinc-550 dark:text-zinc-400">
+              Chào,
+              <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+            </span>
+            <NuxtLink
+              v-if="userStore.role === 'admin' || userStore.role === 'mod'"
+              to="/admin/dashboard"
+              class="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
+            >
+              Dashboard
+            </NuxtLink>
+            <button
+              @click="handleLogout"
+              class="text-xs font-bold text-zinc-550 hover:text-red-500 transition-colors cursor-pointer"
+            >
+              Đăng xuất
+            </button>
+          </template>
+          <template v-else>
+            <NuxtLink
+              to="/login"
+              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-colors"
+              :class="textHoverClass"
+              >Đăng nhập</NuxtLink
+            >
+            <NuxtLink
+              to="/register"
+              class="text-xs font-bold text-white px-3.5 py-1.5 rounded-full transition-colors"
+              :class="[bgPrimaryClass, bgHoverClass]"
+              >Đăng ký</NuxtLink
+            >
+          </template>
         </div>
         <button class="lg:hidden text-zinc-700 dark:text-white">
           <Menu class="w-6 h-6" />

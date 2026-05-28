@@ -72,6 +72,13 @@ export default defineNuxtConfig({
           crossorigin: 'anonymous'
         },
         { rel: 'shortcut icon', href: '/favicon.ico' }
+      ],
+      script: [
+        {
+          src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544',
+          async: true,
+          crossorigin: 'anonymous'
+        }
       ]
     },
     pageTransition: { name: 'page', mode: 'out-in' }
@@ -176,4 +183,4 @@ export default defineNuxtConfig({
   sourcemap: {
     client: 'hidden'
   }
-})
+}) // Hot reload trigger for new routes
