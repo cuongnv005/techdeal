@@ -84,7 +84,9 @@ const userStore = useUserStore()
         <div class="absolute right-6 bottom-0 translate-y-6 opacity-10">
           <Monitor class="w-48 h-48" />
         </div>
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div
+          class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
@@ -96,7 +98,11 @@ const userStore = useUserStore()
               quả và ứng dụng hàng đầu dành cho PC.
             </p>
           </div>
-          <div v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')">
+          <div
+            v-if="
+              userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
+            "
+          >
             <NuxtLink
               to="/blog/publish?category=windows"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-600 hover:bg-indigo-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"

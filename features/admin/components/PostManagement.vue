@@ -17,19 +17,19 @@ const searchQuery = ref('')
 const categoryFilter = ref('')
 
 const filteredPosts = computed(() => {
-  return props.postsList.filter(post => {
-    const matchesSearch = 
+  return props.postsList.filter((post) => {
+    const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       post.author.toLowerCase().includes(searchQuery.value.toLowerCase())
-    
+
     const matchesCategory = !categoryFilter.value || post.category === categoryFilter.value
-    
+
     return matchesSearch && matchesCategory
   })
 })
 
 const categories = computed(() => {
-  const all = props.postsList.map(p => p.category)
+  const all = props.postsList.map((p) => p.category)
   return [...new Set(all)]
 })
 
@@ -43,27 +43,29 @@ const confirmDelete = (id: string, title: string) => {
 <template>
   <div class="space-y-6 animate-fadeIn">
     <!-- Filter bar -->
-    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs">
+    <div
+      class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
+    >
       <div class="relative w-full sm:max-w-xs">
-        <input 
+        <input
           v-model="searchQuery"
-          type="text" 
-          placeholder="Tìm bài viết, tác giả..." 
+          type="text"
+          placeholder="Tìm bài viết, tác giả..."
           class="w-full text-xs pl-9 pr-4 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
         />
         <Search class="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
       </div>
 
       <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-        <select 
-          v-model="categoryFilter" 
+        <select
+          v-model="categoryFilter"
           class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
         >
           <option value="">Tất cả chuyên mục</option>
           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
         </select>
 
-        <NuxtLink 
+        <NuxtLink
           to="/blog/publish"
           class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer select-none"
         >
@@ -73,11 +75,15 @@ const confirmDelete = (id: string, title: string) => {
     </div>
 
     <!-- Posts Table -->
-    <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs">
+    <div
+      class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs"
+    >
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="border-b border-gray-250 dark:border-zinc-850 bg-gray-50 dark:bg-zinc-950 text-[10px] font-black uppercase tracking-wider text-zinc-500">
+            <tr
+              class="border-b border-gray-250 dark:border-zinc-850 bg-gray-50 dark:bg-zinc-950 text-[10px] font-black uppercase tracking-wider text-zinc-500"
+            >
               <th class="px-6 py-4">Bài viết</th>
               <th class="px-6 py-4">Tác giả</th>
               <th class="px-6 py-4">Chuyên mục</th>
@@ -86,14 +92,16 @@ const confirmDelete = (id: string, title: string) => {
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-150 dark:divide-zinc-850">
-            <tr 
-              v-for="post in filteredPosts" 
+            <tr
+              v-for="post in filteredPosts"
               :key="post.id"
               class="hover:bg-gray-50/50 dark:hover:bg-zinc-950/30 transition-colors"
             >
               <td class="px-6 py-4">
                 <div class="space-y-1 max-w-sm sm:max-w-md">
-                  <h4 class="text-xs font-bold text-zinc-900 dark:text-white line-clamp-1 hover:text-[#3498db] cursor-pointer">
+                  <h4
+                    class="text-xs font-bold text-zinc-900 dark:text-white line-clamp-1 hover:text-[#3498db] cursor-pointer"
+                  >
                     {{ post.title }}
                   </h4>
                   <div class="flex items-center gap-2 text-[10px] text-zinc-400">
@@ -106,18 +114,24 @@ const confirmDelete = (id: string, title: string) => {
                 {{ post.author }}
               </td>
               <td class="px-6 py-4">
-                <span class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 text-zinc-650 dark:text-zinc-450 border border-gray-200 dark:border-zinc-750">
+                <span
+                  class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 text-zinc-650 dark:text-zinc-450 border border-gray-200 dark:border-zinc-750"
+                >
                   {{ post.category }}
                 </span>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3 text-[10px] text-zinc-500">
-                  <span class="flex items-center gap-1"><Eye class="w-3.5 h-3.5" /> {{ post.views }}</span>
-                  <span class="flex items-center gap-1"><MessageSquare class="w-3.5 h-3.5" /> {{ post.comments }}</span>
+                  <span class="flex items-center gap-1"
+                    ><Eye class="w-3.5 h-3.5" /> {{ post.views }}</span
+                  >
+                  <span class="flex items-center gap-1"
+                    ><MessageSquare class="w-3.5 h-3.5" /> {{ post.comments }}</span
+                  >
                 </div>
               </td>
               <td class="px-6 py-4 text-right">
-                <button 
+                <button
                   @click="confirmDelete(post.id, post.title)"
                   class="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all cursor-pointer"
                   title="Xóa bài viết"

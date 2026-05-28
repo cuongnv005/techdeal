@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from '#app'
-import { 
-  ArrowLeft, 
-  Save, 
-  Eye, 
-  Send, 
-  Calendar, 
-  Plus, 
+import {
+  ArrowLeft,
+  Save,
+  Eye,
+  Send,
+  Calendar,
+  Plus,
   X,
   FileText,
   Clock,
@@ -66,9 +66,24 @@ const previewHtml = ref('')
 
 // Predefined tags database
 const systemTags = [
-  'Gaming', 'Esports', 'Hardware', 'Intel', 'AMD', 'Nvidia',
-  'Nintendo', 'PlayStation', 'iOS', 'iPhone', 'Apple', 'Android',
-  'Google', 'Windows', 'Microsoft', 'AI', 'Review', 'Calm'
+  'Gaming',
+  'Esports',
+  'Hardware',
+  'Intel',
+  'AMD',
+  'Nvidia',
+  'Nintendo',
+  'PlayStation',
+  'iOS',
+  'iPhone',
+  'Apple',
+  'Android',
+  'Google',
+  'Windows',
+  'Microsoft',
+  'AI',
+  'Review',
+  'Calm'
 ]
 
 // Editor instance reference
@@ -77,7 +92,7 @@ let editorInstance: any = null
 const initEditor = () => {
   const textarea = document.getElementById('sceditor-textarea')
   if (!textarea) return
-  
+
   try {
     // @ts-ignore
     window.sceditor.create(textarea, {
@@ -86,7 +101,8 @@ const initEditor = () => {
       emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/',
       width: '100%',
       height: '380px',
-      toolbar: 'bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|table|code,quote|image,link|emoticon|youtube|date,time|maximize,source'
+      toolbar:
+        'bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|table|code,quote|image,link|emoticon|youtube|date,time|maximize,source'
     })
 
     // @ts-ignore
@@ -135,7 +151,11 @@ const triggerAutoSave = async () => {
     // Simulated API call (e.g. HttpService.post('/api/posts/autosave', ...))
     await new Promise((resolve) => setTimeout(resolve, 800))
     const now = new Date()
-    const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    const timeStr = now.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
     autoSaveStatus.value = `Đã tự động lưu nháp lúc ${timeStr}`
   } catch (e) {
     autoSaveStatus.value = 'Lỗi tự động lưu nháp!'
@@ -150,21 +170,21 @@ onUnmounted(() => {
 // Tags management
 const handleAddTags = () => {
   if (!newTagInput.value.trim()) return
-  
+
   // Split tags by comma to support adding multiple tags at once
   const tags = newTagInput.value
     .split(',')
-    .map(t => t.trim())
-    .filter(t => t.length > 0)
-  
-  tags.forEach(tag => {
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0)
+
+  tags.forEach((tag) => {
     // Avoid duplicates (case-insensitive)
-    const exists = selectedTags.value.some(t => t.toLowerCase() === tag.toLowerCase())
+    const exists = selectedTags.value.some((t) => t.toLowerCase() === tag.toLowerCase())
     if (!exists) {
       selectedTags.value.push(tag)
     }
   })
-  
+
   newTagInput.value = ''
 }
 
@@ -188,10 +208,7 @@ const parseBBCode = (bbcode: string) => {
   let html = bbcode
 
   // Escape HTML tags to prevent XSS during preview
-  html = html
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   // Parse [prebreak]...[/prebreak] to highlight summary / lead card paragraph
   html = html.replace(
@@ -210,20 +227,35 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>')
   html = html.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>')
   html = html.replace(/\[strike\]([\s\S]*?)\[\/strike\]/gi, '<s>$1</s>')
-  
+
   // Align
   html = html.replace(/\[left\]([\s\S]*?)\[\/left\]/gi, '<div class="text-left">$1</div>')
   html = html.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, '<div class="text-center">$1</div>')
   html = html.replace(/\[right\]([\s\S]*?)\[\/right\]/gi, '<div class="text-right">$1</div>')
-  
+
   // Custom links and images
-  html = html.replace(/\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi, '<a href="$1" target="_blank" class="text-[#3498db] hover:underline font-bold">$2</a>')
-  html = html.replace(/\[url\]([\s\S]*?)\[\/url\]/gi, '<a href="$1" target="_blank" class="text-[#3498db] hover:underline">$1</a>')
-  html = html.replace(/\[img\]([\s\S]*?)\[\/img\]/gi, '<div class="my-4 flex justify-center"><img src="$1" class="max-w-full h-auto rounded-xl shadow-md border border-gray-100 dark:border-zinc-800" /></div>')
-  
+  html = html.replace(
+    /\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi,
+    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline font-bold">$2</a>'
+  )
+  html = html.replace(
+    /\[url\]([\s\S]*?)\[\/url\]/gi,
+    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline">$1</a>'
+  )
+  html = html.replace(
+    /\[img\]([\s\S]*?)\[\/img\]/gi,
+    '<div class="my-4 flex justify-center"><img src="$1" class="max-w-full h-auto rounded-xl shadow-md border border-gray-100 dark:border-zinc-800" /></div>'
+  )
+
   // Blockquote / code block
-  html = html.replace(/\[quote\]([\s\S]*?)\[\/quote\]/gi, '<blockquote class="border-l-4 border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900/50 p-4 my-4 italic rounded-r text-zinc-600 dark:text-zinc-400">$1</blockquote>')
-  html = html.replace(/\[code\]([\s\S]*?)\[\/code\]/gi, '<pre class="bg-gray-100 dark:bg-zinc-900 p-4 rounded-lg overflow-x-auto font-mono text-xs my-4 border border-gray-200 dark:border-zinc-800">$1</pre>')
+  html = html.replace(
+    /\[quote\]([\s\S]*?)\[\/quote\]/gi,
+    '<blockquote class="border-l-4 border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900/50 p-4 my-4 italic rounded-r text-zinc-600 dark:text-zinc-400">$1</blockquote>'
+  )
+  html = html.replace(
+    /\[code\]([\s\S]*?)\[\/code\]/gi,
+    '<pre class="bg-gray-100 dark:bg-zinc-900 p-4 rounded-lg overflow-x-auto font-mono text-xs my-4 border border-gray-200 dark:border-zinc-800">$1</pre>'
+  )
 
   // Convert newlines to br
   html = html.replace(/\n/g, '<br>')
@@ -263,7 +295,7 @@ const handlePublish = async () => {
     alert('Vui lòng điền tiêu đề bài viết!')
     return
   }
-  
+
   if (!editorInstance) return
   const content = editorInstance.val()
   if (!content.trim()) {
@@ -272,7 +304,7 @@ const handlePublish = async () => {
   }
 
   isSubmitting.value = true
-  
+
   try {
     // Prepare post data
     const postData = {
@@ -282,12 +314,14 @@ const handlePublish = async () => {
       tags: selectedTags.value,
       scheduledAt: isScheduled.value ? scheduleDate.value : null
     }
-    
+
     // Simulate API save
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    alert(`Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`)
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    alert(
+      `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
+    )
+
     // Redirect back to category page
     await navigateTo(categoryId.value === 'gaming' ? '/game' : `/${categoryId.value}`)
   } catch (e) {
@@ -299,7 +333,9 @@ const handlePublish = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors duration-300 font-sans">
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors duration-300 font-sans"
+  >
     <Header />
 
     <!-- publish main workspace -->
@@ -314,30 +350,41 @@ const handlePublish = async () => {
       </NuxtLink>
 
       <!-- Page Header -->
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 dark:border-zinc-800 pb-5 mb-8">
+      <div
+        class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 dark:border-zinc-800 pb-5 mb-8"
+      >
         <div>
-          <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
+          <h1
+            class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2"
+          >
             <span class="p-1.5 bg-[#3498db]/10 text-[#3498db] rounded-lg">📝</span>
             Đăng bài viết mới
           </h1>
           <p class="text-xs text-zinc-550 mt-1">
-            Đăng bài trong chuyên mục: <strong class="text-zinc-700 dark:text-zinc-300">{{ categoryName }}</strong>
+            Đăng bài trong chuyên mục:
+            <strong class="text-zinc-700 dark:text-zinc-300">{{ categoryName }}</strong>
           </p>
         </div>
-        
+
         <!-- Auto save indicator -->
-        <div v-if="autoSaveStatus" class="flex items-center gap-1.5 text-[11px] text-zinc-500 font-medium">
+        <div
+          v-if="autoSaveStatus"
+          class="flex items-center gap-1.5 text-[11px] text-zinc-500 font-medium"
+        >
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           {{ autoSaveStatus }}
         </div>
       </div>
 
       <!-- Main Form Card -->
-      <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 md:p-8 shadow-xs space-y-6">
-        
+      <div
+        class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 md:p-8 shadow-xs space-y-6"
+      >
         <!-- Post Title -->
         <div class="space-y-2">
-          <label class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1">
+          <label
+            class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+          >
             Tiêu đề bài viết <span class="text-red-500">*</span>
           </label>
           <input
@@ -352,17 +399,23 @@ const handlePublish = async () => {
         <!-- BBCode Editor -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1">
+            <label
+              class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+            >
               Nội dung chi tiết <span class="text-red-500">*</span>
             </label>
-            
-            <div class="flex items-center gap-4 text-[10px] text-zinc-450 bg-gray-50 dark:bg-zinc-950 px-2.5 py-1 rounded-md border border-gray-200 dark:border-zinc-800 select-none">
-              <span class="font-bold flex items-center gap-1"><Info class="w-3 h-3 text-[#3498db]" /> Cú pháp đặc biệt:</span>
+
+            <div
+              class="flex items-center gap-4 text-[10px] text-zinc-450 bg-gray-50 dark:bg-zinc-950 px-2.5 py-1 rounded-md border border-gray-200 dark:border-zinc-800 select-none"
+            >
+              <span class="font-bold flex items-center gap-1"
+                ><Info class="w-3 h-3 text-[#3498db]" /> Cú pháp đặc biệt:</span
+              >
               <span><code>[prebreak]tóm tắt[/prebreak]</code></span>
               <span><code>[similar]tag[/similar]</code></span>
             </div>
           </div>
-          
+
           <div class="rounded-xl overflow-hidden border border-gray-250 dark:border-zinc-800">
             <textarea
               id="sceditor-textarea"
@@ -382,7 +435,7 @@ const handlePublish = async () => {
             <Send class="w-4 h-4" />
             {{ isSubmitting ? 'Đang xử lý...' : 'Đăng bài viết' }}
           </button>
-          
+
           <button
             @click="handlePreview"
             class="px-5 py-3 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-950 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer select-none"
@@ -406,31 +459,42 @@ const handlePublish = async () => {
           class="border border-dashed border-gray-300 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-950/20 p-6 rounded-2xl animate-fadeIn space-y-4"
         >
           <div class="border-b border-gray-200 dark:border-zinc-800 pb-3 flex items-center gap-2">
-            <span class="text-xs font-extrabold uppercase tracking-widest text-[#3498db] dark:text-[#e74c3c]">Xem trước bài viết</span>
-            <span class="px-1.5 py-0.5 text-[9px] bg-gray-200 dark:bg-zinc-800 rounded font-bold text-gray-500 dark:text-gray-400 select-none">PREVIEW</span>
+            <span
+              class="text-xs font-extrabold uppercase tracking-widest text-[#3498db] dark:text-[#e74c3c]"
+              >Xem trước bài viết</span
+            >
+            <span
+              class="px-1.5 py-0.5 text-[9px] bg-gray-200 dark:bg-zinc-800 rounded font-bold text-gray-500 dark:text-gray-400 select-none"
+              >PREVIEW</span
+            >
           </div>
-          
+
           <!-- Mock Post Template inside Preview -->
           <article class="space-y-4 max-w-none">
             <h2 class="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-tight">
               {{ title || 'Chưa nhập tiêu đề bài viết' }}
             </h2>
-            
+
             <!-- Rendered HTML Content -->
             <div
               class="prose prose-zinc dark:prose-invert text-sm leading-relaxed space-y-3 pt-2"
-              v-html='previewHtml || `<p class="text-zinc-400 italic">Nhập nội dung để bắt đầu xem thử...</p>`'
+              v-html="
+                previewHtml ||
+                `<p class=&quot;text-zinc-400 italic&quot;>Nhập nội dung để bắt đầu xem thử...</p>`
+              "
             ></div>
           </article>
         </div>
 
         <!-- Tags Selection & Input -->
         <div class="border-t border-gray-150 dark:border-zinc-850 pt-6 space-y-4">
-          <label class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1.5">
+          <label
+            class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1.5"
+          >
             <Sparkles class="w-4 h-4 text-amber-500" />
             Gán thẻ bài viết (Tags)
           </label>
-          
+
           <!-- Custom Tags Adder -->
           <div class="flex gap-2">
             <input
@@ -464,16 +528,22 @@ const handlePublish = async () => {
 
           <!-- Predefined tags -->
           <div class="space-y-2 pt-2">
-            <p class="text-[10px] font-bold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider">Chọn thẻ có sẵn trong hệ thống:</p>
+            <p
+              class="text-[10px] font-bold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider"
+            >
+              Chọn thẻ có sẵn trong hệ thống:
+            </p>
             <div class="flex flex-wrap gap-1.5">
               <button
                 v-for="tag in systemTags"
                 :key="tag"
                 @click.prevent="toggleSystemTag(tag)"
                 class="px-2.5 py-1 text-[11px] font-semibold border rounded-lg transition-all cursor-pointer"
-                :class="selectedTags.includes(tag) 
-                  ? 'bg-[#3498db] dark:bg-[#e74c3c] text-white border-transparent' 
-                  : 'bg-transparent border-gray-200 dark:border-zinc-800 hover:border-gray-300 text-zinc-650 dark:text-zinc-400'"
+                :class="
+                  selectedTags.includes(tag)
+                    ? 'bg-[#3498db] dark:bg-[#e74c3c] text-white border-transparent'
+                    : 'bg-transparent border-gray-200 dark:border-zinc-800 hover:border-gray-300 text-zinc-650 dark:text-zinc-400'
+                "
               >
                 {{ tag }}
               </button>
@@ -484,11 +554,13 @@ const handlePublish = async () => {
         <!-- Post Scheduler -->
         <div class="border-t border-gray-150 dark:border-zinc-850 pt-6 space-y-4">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1.5 select-none">
+            <label
+              class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1.5 select-none"
+            >
               <Clock class="w-4 h-4 text-[#3498db] dark:text-[#e74c3c]" />
               Hẹn giờ đăng bài viết
             </label>
-            
+
             <input
               v-model="isScheduled"
               type="checkbox"
@@ -503,10 +575,11 @@ const handlePublish = async () => {
               type="datetime-local"
               class="w-full max-w-xs text-xs px-4 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50/50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
             />
-            <p class="text-[10px] text-zinc-450 italic">Hệ thống sẽ tự động xuất bản bài viết vào khung giờ bạn đã chọn bên trên.</p>
+            <p class="text-[10px] text-zinc-450 italic">
+              Hệ thống sẽ tự động xuất bản bài viết vào khung giờ bạn đã chọn bên trên.
+            </p>
           </div>
         </div>
-
       </div>
     </main>
     <Footer />
@@ -515,8 +588,14 @@ const handlePublish = async () => {
 
 <style scoped>
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;

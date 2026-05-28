@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Search, Menu, Facebook, Twitter, Instagram, Linkedin, TrendingUp, Cpu } from 'lucide-vue-next'
+import {
+  Search,
+  Menu,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  TrendingUp,
+  Cpu
+} from 'lucide-vue-next'
 import { useUserStore } from '@stores/user'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
@@ -28,8 +37,10 @@ const posts = ref<BlogPost[]>([
     publishDate: 'Hôm nay lúc 15:30',
     views: 890,
     comments: 4,
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-    summary: 'Dòng chip mới tích hợp NPU thế hệ mới giúp tăng cường tốc độ xử lý các tác vụ AI trực tiếp trên thiết bị mà không cần kết nối internet.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Dòng chip mới tích hợp NPU thế hệ mới giúp tăng cường tốc độ xử lý các tác vụ AI trực tiếp trên thiết bị mà không cần kết nối internet.',
     slug: 'intel-gioi-thieu-core-ultra-moi'
   },
   {
@@ -40,19 +51,23 @@ const posts = ref<BlogPost[]>([
     publishDate: 'Hôm qua lúc 10:15',
     views: 1240,
     comments: 8,
-    imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
-    summary: 'Sự trỗi dậy của các công cụ AI hỗ trợ code đang tối ưu hóa năng suất làm việc của kỹ sư phần mềm toàn cầu.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+    summary:
+      'Sự trỗi dậy của các công cụ AI hỗ trợ code đang tối ưu hóa năng suất làm việc của kỹ sư phần mềm toàn cầu.',
     slug: 'ai-thay-doi-cach-viet-code'
   },
   {
     id: '1',
-    title: 'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
+    title:
+      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
     category: 'Technology',
     author: 'Mr.X',
     publishDate: 'Hôm nay lúc 18:50',
     views: 406,
     comments: 1,
-    imageUrl: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
     summary:
       'TP. Hồ Chí Minh, ngày 29/01/2026 - realme chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam.',
     slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
@@ -78,19 +93,31 @@ const userStore = useUserStore()
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
       <!-- CATEGORY BANNER -->
-      <div class="bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden">
+      <div
+        class="bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl p-8 mb-6 text-white shadow-md relative overflow-hidden"
+      >
         <div class="absolute right-6 bottom-0 translate-y-6 opacity-10">
           <Cpu class="w-48 h-48" />
         </div>
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div
+          class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
           <div>
-            <span class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Chuyên mục</span>
+            <span
+              class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
+              >Chuyên mục</span
+            >
             <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Công nghệ</h1>
             <p class="text-sm text-blue-50 mt-2 max-w-xl">
-              Cập nhật những tin tức công nghệ mới nhất, sản phẩm đột phá, các nghiên cứu và xu hướng phát triển công nghệ trên toàn cầu.
+              Cập nhật những tin tức công nghệ mới nhất, sản phẩm đột phá, các nghiên cứu và xu
+              hướng phát triển công nghệ trên toàn cầu.
             </p>
           </div>
-          <div v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')">
+          <div
+            v-if="
+              userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
+            "
+          >
             <NuxtLink
               to="/blog/publish?category=technology"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-600 hover:bg-blue-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"

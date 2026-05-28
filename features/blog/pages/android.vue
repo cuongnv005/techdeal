@@ -86,7 +86,9 @@ const userStore = useUserStore()
         <div class="absolute right-6 bottom-0 translate-y-6 opacity-10">
           <Smartphone class="w-48 h-48" />
         </div>
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div
+          class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
@@ -94,11 +96,15 @@ const userStore = useUserStore()
             >
             <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Android</h1>
             <p class="text-sm text-emerald-50 mt-2 max-w-xl">
-              Tin tức mới nhất về hệ điều hành Android, tùy biến giao diện, mẹo sử dụng điện thoại và
-              các ứng dụng, game hấp dẫn trên Google Play.
+              Tin tức mới nhất về hệ điều hành Android, tùy biến giao diện, mẹo sử dụng điện thoại
+              và các ứng dụng, game hấp dẫn trên Google Play.
             </p>
           </div>
-          <div v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')">
+          <div
+            v-if="
+              userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
+            "
+          >
             <NuxtLink
               to="/blog/publish?category=android"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-teal-600 hover:bg-teal-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer"

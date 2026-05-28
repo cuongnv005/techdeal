@@ -23,7 +23,7 @@ onMounted(() => {
   if (props.isGoogleAd) {
     try {
       // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+      ;(window.adsbygoogle = window.adsbygoogle || []).push({})
     } catch (e) {
       console.warn('Google Adsense push error:', e)
     }
@@ -40,14 +40,16 @@ onMounted(() => {
       :style="{ maxWidth: width || '970px', minHeight: height || '90px' }"
     >
       <!-- Visual Indicator for Local Testing -->
-      <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 z-10">
+      <span
+        class="text-[9px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 z-10"
+      >
         Google Ad (Test Mode)
       </span>
-      
+
       <!-- Actual Google Ins Element -->
       <ins
         class="adsbygoogle"
-        style="display:block; width:100%;"
+        style="display: block; width: 100%"
         :style="{ height: height || 'auto' }"
         data-ad-client="ca-pub-3940256099942544"
         :data-ad-slot="slotId"
@@ -56,12 +58,14 @@ onMounted(() => {
       ></ins>
 
       <!-- Mock Banner Fallback displayed when Google Ads is unfilled or blocked -->
-      <div 
+      <div
         class="ad-mock-fallback absolute inset-0 bg-gray-200/80 dark:bg-zinc-800/80 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-100"
       >
         <div class="text-center p-4">
           <p class="text-xs font-bold text-gray-600 dark:text-gray-300">Google Test Ad Placement</p>
-          <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Size: {{ width || '100%' }} x {{ height || 'Auto' }}</p>
+          <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
+            Size: {{ width || '100%' }} x {{ height || 'Auto' }}
+          </p>
         </div>
       </div>
     </div>
@@ -97,9 +101,8 @@ onMounted(() => {
 
 <style scoped>
 /* Hide the placeholder block if Google AdSense loaded an ad successfully */
-ins.adsbygoogle[data-adsbygoogle-status="done"] ~ .ad-mock-fallback,
-ins.adsbygoogle[data-ad-status="filled"] ~ .ad-mock-fallback {
+ins.adsbygoogle[data-adsbygoogle-status='done'] ~ .ad-mock-fallback,
+ins.adsbygoogle[data-ad-status='filled'] ~ .ad-mock-fallback {
   display: none !important;
 }
 </style>
-

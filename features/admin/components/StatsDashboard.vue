@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Eye, BookOpen, MessageSquare, Users, BarChart3, TrendingUp, TrendingDown } from 'lucide-vue-next'
+import {
+  Eye,
+  BookOpen,
+  MessageSquare,
+  Users,
+  BarChart3,
+  TrendingUp,
+  TrendingDown
+} from 'lucide-vue-next'
 import type { StatItem, ChartDataPoint } from '../types/dashboard.type'
 
 interface Props {
@@ -28,13 +36,15 @@ const padding = 40
 const viewPoints = computed(() => {
   const data = activeChartData.value
   if (!data || data.length === 0) return ''
-  const maxViews = Math.max(...data.map(d => d.views), 1)
-  
-  return data.map((d, index) => {
-    const x = padding + (index / (data.length - 1)) * (svgWidth - padding * 2)
-    const y = svgHeight - padding - (d.views / maxViews) * (svgHeight - padding * 2)
-    return `${x},${y}`
-  }).join(' ')
+  const maxViews = Math.max(...data.map((d) => d.views), 1)
+
+  return data
+    .map((d, index) => {
+      const x = padding + (index / (data.length - 1)) * (svgWidth - padding * 2)
+      const y = svgHeight - padding - (d.views / maxViews) * (svgHeight - padding * 2)
+      return `${x},${y}`
+    })
+    .join(' ')
 })
 
 // Compute coordinates for posts bar chart
@@ -46,7 +56,7 @@ const barWidth = computed(() => {
 const postBars = computed(() => {
   const data = activeChartData.value
   if (!data || data.length === 0) return []
-  const maxPosts = Math.max(...data.map(d => d.posts), 1)
+  const maxPosts = Math.max(...data.map((d) => d.posts), 1)
   const barSpacing = (svgWidth - padding * 2) / data.length
 
   return data.map((d, index) => {
@@ -83,23 +93,39 @@ const getColorClass = (label: string) => {
   <div class="space-y-8 animate-fadeIn">
     <!-- Overview Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div 
-        v-for="stat in statsData.overview" 
-        :key="stat.label" 
+      <div
+        v-for="stat in statsData.overview"
+        :key="stat.label"
         class="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-xs group hover:shadow-md transition-all duration-300"
       >
-        <div class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-br opacity-5 group-hover:scale-110 transition-transform duration-500 rounded-bl-full" :class="getColorClass(stat.label)"></div>
-        
+        <div
+          class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-br opacity-5 group-hover:scale-110 transition-transform duration-500 rounded-bl-full"
+          :class="getColorClass(stat.label)"
+        ></div>
+
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-550">{{ stat.label }}</span>
-          <component :is="getIcon(stat.label)" class="w-5 h-5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-550"
+            >{{ stat.label }}</span
+          >
+          <component
+            :is="getIcon(stat.label)"
+            class="w-5 h-5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors"
+          />
         </div>
 
         <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white tracking-tight">{{ stat.value }}</span>
-          <span 
+          <span
+            class="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white tracking-tight"
+            >{{ stat.value }}</span
+          >
+          <span
             class="inline-flex items-center gap-0.5 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md"
-            :class="stat.isPositive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600'"
+            :class="
+              stat.isPositive
+                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                : 'bg-red-500/10 text-red-600'
+            "
           >
             <component :is="stat.isPositive ? TrendingUp : TrendingDown" class="w-3 h-3" />
             {{ stat.trend }}%
@@ -111,32 +137,75 @@ const getColorClass = (label: string) => {
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Views Line Chart Card -->
-      <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4">
+      <div
+        class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-tight">Thống kê Lượt xem</h3>
-            <p class="text-[10px] text-zinc-450 dark:text-zinc-550">Biểu đồ đường biểu diễn sự thay đổi lượt xem</p>
+            <h3 class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-tight">
+              Thống kê Lượt xem
+            </h3>
+            <p class="text-[10px] text-zinc-450 dark:text-zinc-550">
+              Biểu đồ đường biểu diễn sự thay đổi lượt xem
+            </p>
           </div>
-          <div class="flex bg-gray-100 dark:bg-zinc-950 p-1 rounded-xl border border-gray-200 dark:border-zinc-800">
-            <button 
-              @click="timeRange = 'week'" 
+          <div
+            class="flex bg-gray-100 dark:bg-zinc-950 p-1 rounded-xl border border-gray-200 dark:border-zinc-800"
+          >
+            <button
+              @click="timeRange = 'week'"
               class="px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
-              :class="timeRange === 'week' ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs' : 'text-zinc-500'"
-            >Tuần</button>
-            <button 
-              @click="timeRange = 'month'" 
+              :class="
+                timeRange === 'week'
+                  ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs'
+                  : 'text-zinc-500'
+              "
+            >
+              Tuần
+            </button>
+            <button
+              @click="timeRange = 'month'"
               class="px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
-              :class="timeRange === 'month' ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs' : 'text-zinc-500'"
-            >Tháng</button>
+              :class="
+                timeRange === 'month'
+                  ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs'
+                  : 'text-zinc-500'
+              "
+            >
+              Tháng
+            </button>
           </div>
         </div>
 
         <div class="relative w-full overflow-hidden">
           <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="w-full h-auto text-blue-500">
             <!-- Grid Lines -->
-            <line :x1="padding" :y1="padding" :x2="svgWidth - padding" :y2="padding" stroke="currentColor" stroke-dasharray="4" class="opacity-10" />
-            <line :x1="padding" :y1="(svgHeight - padding * 2) / 2 + padding" :x2="svgWidth - padding" :y2="(svgHeight - padding * 2) / 2 + padding" stroke="currentColor" stroke-dasharray="4" class="opacity-10" />
-            <line :x1="padding" :y1="svgHeight - padding" :x2="svgWidth - padding" :y2="svgHeight - padding" stroke="currentColor" class="opacity-20" />
+            <line
+              :x1="padding"
+              :y1="padding"
+              :x2="svgWidth - padding"
+              :y2="padding"
+              stroke="currentColor"
+              stroke-dasharray="4"
+              class="opacity-10"
+            />
+            <line
+              :x1="padding"
+              :y1="(svgHeight - padding * 2) / 2 + padding"
+              :x2="svgWidth - padding"
+              :y2="(svgHeight - padding * 2) / 2 + padding"
+              stroke="currentColor"
+              stroke-dasharray="4"
+              class="opacity-10"
+            />
+            <line
+              :x1="padding"
+              :y1="svgHeight - padding"
+              :x2="svgWidth - padding"
+              :y2="svgHeight - padding"
+              stroke="currentColor"
+              class="opacity-20"
+            />
 
             <!-- Line Path -->
             <polyline
@@ -177,13 +246,21 @@ const getColorClass = (label: string) => {
       </div>
 
       <!-- Posts Bar Chart Card -->
-      <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4">
+      <div
+        class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-tight">Thống kê Bài viết mới</h3>
-            <p class="text-[10px] text-zinc-450 dark:text-zinc-550">Biểu đồ cột biểu diễn số lượng bài viết xuất bản</p>
+            <h3 class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-tight">
+              Thống kê Bài viết mới
+            </h3>
+            <p class="text-[10px] text-zinc-450 dark:text-zinc-550">
+              Biểu đồ cột biểu diễn số lượng bài viết xuất bản
+            </p>
           </div>
-          <span class="inline-flex items-center gap-1 text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-1 rounded-lg">
+          <span
+            class="inline-flex items-center gap-1 text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-1 rounded-lg"
+          >
             <BarChart3 class="w-3.5 h-3.5" /> Auto-sync
           </span>
         </div>
@@ -191,8 +268,23 @@ const getColorClass = (label: string) => {
         <div class="relative w-full overflow-hidden">
           <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="w-full h-auto text-teal-500">
             <!-- Grid Lines -->
-            <line :x1="padding" :y1="padding" :x2="svgWidth - padding" :y2="padding" stroke="currentColor" stroke-dasharray="4" class="opacity-10" />
-            <line :x1="padding" :y1="svgHeight - padding" :x2="svgWidth - padding" :y2="svgHeight - padding" stroke="currentColor" class="opacity-20" />
+            <line
+              :x1="padding"
+              :y1="padding"
+              :x2="svgWidth - padding"
+              :y2="padding"
+              stroke="currentColor"
+              stroke-dasharray="4"
+              class="opacity-10"
+            />
+            <line
+              :x1="padding"
+              :y1="svgHeight - padding"
+              :x2="svgWidth - padding"
+              :y2="svgHeight - padding"
+              stroke="currentColor"
+              class="opacity-20"
+            />
 
             <!-- Bars -->
             <g v-for="(bar, idx) in postBars" :key="idx">

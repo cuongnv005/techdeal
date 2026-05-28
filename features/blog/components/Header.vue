@@ -153,7 +153,8 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
         >
           <template v-if="userStore.isAuthenticated">
             <span class="text-xs font-semibold text-zinc-550 dark:text-zinc-400">
-              Chào, <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+              Chào,
+              <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
             </span>
             <NuxtLink
               v-if="userStore.role === 'admin' || userStore.role === 'mod'"
