@@ -286,6 +286,11 @@ const recentSidebarPosts = ref<BlogPost[]>([
           <button class="text-zinc-500 dark:text-zinc-400 hover:text-red-500">
             <Search class="w-5 h-5" />
           </button>
+          <!-- Auth buttons -->
+          <div class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3">
+            <NuxtLink to="/login" class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#e74c3c] transition-colors">Đăng nhập</NuxtLink>
+            <NuxtLink to="/register" class="text-xs font-bold bg-[#e74c3c] hover:bg-[#c0392b] text-white px-3.5 py-1.5 rounded-full transition-colors">Đăng ký</NuxtLink>
+          </div>
           <button class="lg:hidden text-zinc-700 dark:text-white">
             <Menu class="w-6 h-6" />
           </button>

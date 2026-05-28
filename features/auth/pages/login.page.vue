@@ -27,12 +27,20 @@ const handleGoogleLogin = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-gray-150 dark:bg-zinc-950 transition-colors duration-300 font-display">
+  <div
+    class="min-h-screen flex bg-gray-150 dark:bg-zinc-950 transition-colors duration-300 font-display"
+  >
     <!-- Left side: Beautiful branding column (hidden on mobile) -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-tr from-sky-600 to-indigo-900 dark:from-red-950 dark:to-zinc-900 text-white p-12 flex-col justify-between relative overflow-hidden">
+    <div
+      class="hidden lg:flex lg:w-1/2 bg-gradient-to-tr from-sky-600 to-indigo-900 dark:from-red-950 dark:to-zinc-900 text-white p-12 flex-col justify-between relative overflow-hidden"
+    >
       <!-- Decorative background blur circles -->
-      <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-blue-500/20 dark:bg-red-500/10 blur-3xl"></div>
-      <div class="absolute bottom-20 right-10 w-72 h-72 rounded-full bg-purple-500/20 dark:bg-zinc-800/20 blur-3xl"></div>
+      <div
+        class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-blue-500/20 dark:bg-red-500/10 blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-72 h-72 rounded-full bg-purple-500/20 dark:bg-zinc-800/20 blur-3xl"
+      ></div>
 
       <!-- Top logo -->
       <div class="flex items-center gap-2 relative z-10">
@@ -48,7 +56,8 @@ const handleGoogleLogin = () => {
           Kết nối & Cập nhật thế giới Công nghệ - Game hàng đầu
         </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đăng nhập ngay để cá nhân hóa nguồn cấp tin tức của bạn, thảo luận cùng cộng đồng Zaira và nhận thông tin nóng hổi nhất.
+          Đăng nhập ngay để cá nhân hóa nguồn cấp tin tức của bạn, thảo luận cùng cộng đồng Zaira và
+          nhận thông tin nóng hổi nhất.
         </p>
       </div>
 
@@ -60,7 +69,9 @@ const handleGoogleLogin = () => {
 
     <!-- Right side: Authentication Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-      <div class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300">
+      <div
+        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300"
+      >
         <div class="text-center lg:text-left">
           <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
             Đăng nhập tài khoản
@@ -73,7 +84,9 @@ const handleGoogleLogin = () => {
         <form @submit.prevent="handleLogin" class="space-y-5">
           <!-- Username / Email Input -->
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">Username hoặc Email</label>
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
+              >Username hoặc Email</label
+            >
             <div class="relative">
               <span class="absolute left-3 top-3 text-zinc-400">
                 <User class="w-4 h-4" />
@@ -92,7 +105,9 @@ const handleGoogleLogin = () => {
           <div class="space-y-1.5">
             <div class="flex justify-between items-center">
               <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Mật khẩu</label>
-              <a href="#" class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline">Quên mật khẩu?</a>
+              <NuxtLink to="/forgot-password" class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline"
+                >Quên mật khẩu?</NuxtLink
+              >
             </div>
             <div class="relative">
               <span class="absolute left-3 top-3 text-zinc-400">
@@ -123,14 +138,19 @@ const handleGoogleLogin = () => {
             class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span v-if="isLoading">Đang đăng nhập...</span>
-            <span v-else class="flex items-center gap-1.5">Đăng nhập <ArrowRight class="w-4 h-4" /></span>
+            <span v-else class="flex items-center gap-1.5"
+              >Đăng nhập <ArrowRight class="w-4 h-4"
+            /></span>
           </button>
         </form>
 
         <!-- Divider -->
         <div class="relative flex py-2 items-center">
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
-          <span class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-semibold">Hoặc đăng nhập với</span>
+          <span
+            class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-semibold"
+            >Hoặc đăng nhập với</span
+          >
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
         </div>
 
@@ -165,7 +185,11 @@ const handleGoogleLogin = () => {
         <!-- Redirect path -->
         <p class="text-xs text-center text-zinc-500 dark:text-zinc-400">
           Chưa có tài khoản?
-          <NuxtLink to="/register" class="font-bold text-[#3498db] dark:text-red-400 hover:underline">Đăng ký ngay</NuxtLink>
+          <NuxtLink
+            to="/register"
+            class="font-bold text-[#3498db] dark:text-red-400 hover:underline"
+            >Đăng ký ngay</NuxtLink
+          >
         </p>
       </div>
     </div>

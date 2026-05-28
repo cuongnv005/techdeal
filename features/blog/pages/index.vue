@@ -194,6 +194,11 @@ const handleSearch = () => {
               <Search class="w-4 h-4" />
             </button>
           </form>
+          <!-- Auth buttons -->
+          <div class="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-zinc-800 pl-3">
+            <NuxtLink to="/login" class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-[#3498db] transition-colors">Đăng nhập</NuxtLink>
+            <NuxtLink to="/register" class="text-xs font-bold bg-[#3498db] hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-full transition-colors">Đăng ký</NuxtLink>
+          </div>
           <button class="lg:hidden text-zinc-700 dark:text-white">
             <Menu class="w-6 h-6" />
           </button>
