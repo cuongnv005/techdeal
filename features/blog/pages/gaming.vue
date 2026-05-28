@@ -11,7 +11,8 @@ import GamingSidebar from '../components/gaming/GamingSidebar.vue'
 // SEO optimization for Gaming Page
 useSeoMeta({
   title: 'Thế giới Game - Tin tức Game & Esports mới nhất',
-  description: 'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
+  description:
+    'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
   ogTitle: 'Thế giới Game - Zaira Gaming',
   ogDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
   ogType: 'website'
@@ -37,8 +38,10 @@ const bannerPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 4520,
     comments: 18,
-    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
-    summary: 'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+    summary:
+      'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
     slug: 'danh-gia-black-myth-wukong'
   },
   {
@@ -49,8 +52,10 @@ const bannerPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 3120,
     comments: 8,
-    imageUrl: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1000&q=80',
-    summary: 'Valve vừa tung ra bản cập nhật tối ưu hóa hiệu năng bắn súng chiến thuật cùng với cải tiến lớn cho bản đồ Mirage và Inferno.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1000&q=80',
+    summary:
+      'Valve vừa tung ra bản cập nhật tối ưu hóa hiệu năng bắn súng chiến thuật cùng với cải tiến lớn cho bản đồ Mirage và Inferno.',
     slug: 'cs2-ra-mat-ban-cap-nhat-lon'
   }
 ])
@@ -58,39 +63,46 @@ const bannerPosts = ref<BlogPost[]>([
 // Spotlight posts
 const spotlightBigPost = ref<BlogPost>({
   id: 'gs1',
-  title: 'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
+  title:
+    'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
   category: 'Esports',
   author: 'VCS Reporter',
   publishDate: '28 Tháng 5, 2026',
   views: 5800,
   comments: 32,
-  imageUrl: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
-  summary: 'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
+  imageUrl:
+    'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
+  summary:
+    'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
   slug: 'vcs-mua-he-2026-khoi-tranh'
 })
 
 const spotlightSmallPosts = ref<BlogPost[]>([
   {
     id: 'gs2',
-    title: 'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
+    title:
+      'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
     category: 'Action',
     author: 'Admin',
     publishDate: '28 Tháng 5, 2026',
     views: 1980,
     comments: 3,
-    imageUrl: 'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'fortnite-dat-ky-luc-nguoi-choi-moi'
   },
   {
     id: 'gs3',
-    title: 'GTA 6 lộ diện trailer tiếp theo: Thành phố Vice City chưa bao giờ sống động và chân thực đến thế',
+    title:
+      'GTA 6 lộ diện trailer tiếp theo: Thành phố Vice City chưa bao giờ sống động và chân thực đến thế',
     category: 'RPG',
     author: 'RockstarFan',
     publishDate: '27 Tháng 5, 2026',
     views: 10450,
     comments: 54,
-    imageUrl: 'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&w=400&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'gta-6-lo-dien-trailer-tiep-theo'
   },
@@ -102,7 +114,8 @@ const spotlightSmallPosts = ref<BlogPost[]>([
     publishDate: '27 Tháng 5, 2026',
     views: 4500,
     comments: 12,
-    imageUrl: 'https://images.unsplash.com/photo-1595169001925-51e18ede8436?auto=format&fit=crop&w=400&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1595169001925-51e18ede8436?auto=format&fit=crop&w=400&q=80',
     summary: '',
     slug: 'nintendo-switch-2-sap-cong-bo'
   }
@@ -118,7 +131,8 @@ const popularMediumPosts = ref<BlogPost[]>([
     publishDate: '28 Tháng 5, 2026',
     views: 1200,
     comments: 2,
-    imageUrl: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
     summary: '',
     slug: 'f1-esports-pro-series-2026'
   },
@@ -130,7 +144,8 @@ const popularMediumPosts = ref<BlogPost[]>([
     publishDate: '26 Tháng 5, 2026',
     views: 2900,
     comments: 11,
-    imageUrl: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=600&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=600&q=80',
     summary: '',
     slug: 'tu-tao-game-retro-bang-godot'
   }
@@ -145,7 +160,8 @@ const popularSmallPosts = ref<BlogPost[]>([
     publishDate: '25 Tháng 5, 2026',
     views: 3120,
     comments: 7,
-    imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
     summary: '',
     slug: 'phan-tich-cot-truyen-elden-ring-dlc'
   },
@@ -157,7 +173,8 @@ const popularSmallPosts = ref<BlogPost[]>([
     publishDate: '24 Tháng 5, 2026',
     views: 1850,
     comments: 3,
-    imageUrl: 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=300&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=300&q=80',
     summary: '',
     slug: 'cai-tien-hieu-nang-steam-deck-oled'
   },
@@ -169,7 +186,8 @@ const popularSmallPosts = ref<BlogPost[]>([
     publishDate: '23 Tháng 5, 2026',
     views: 4500,
     comments: 14,
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=300&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=300&q=80',
     summary: '',
     slug: 'game-indie-cot-truyen-hay-he-2026'
   }
@@ -205,12 +223,16 @@ const recentSidebarPosts = ref<BlogPost[]>([
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-[#0d0f12] text-zinc-800 dark:text-zinc-100 font-display transition-colors duration-300">
+  <div
+    class="min-h-screen bg-gray-100 dark:bg-[#0d0f12] text-zinc-800 dark:text-zinc-100 font-display transition-colors duration-300"
+  >
     <!-- Top Nav / Social Wrap (Dark themed) -->
     <div class="bg-zinc-900 text-xs py-2 border-b border-zinc-800 dark:border-zinc-900 text-white">
       <div class="container mx-auto px-4 flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <span class="bg-[#e74c3c] text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 animate-pulse">
+          <span
+            class="bg-[#e74c3c] text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 animate-pulse"
+          >
             💥 Esports
           </span>
           <span class="truncate max-w-[250px] sm:max-w-md text-zinc-350">
@@ -218,27 +240,39 @@ const recentSidebarPosts = ref<BlogPost[]>([
           </span>
         </div>
         <div class="hidden md:flex items-center gap-4 text-zinc-350">
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"><Facebook class="w-4 h-4" /></a>
+          <a href="#" class="hover:text-[#e74c3c] transition-colors"
+            ><Facebook class="w-4 h-4"
+          /></a>
           <a href="#" class="hover:text-[#e74c3c] transition-colors"><Twitter class="w-4 h-4" /></a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"><Instagram class="w-4 h-4" /></a>
-          <a href="#" class="hover:text-[#e74c3c] transition-colors"><Linkedin class="w-4 h-4" /></a>
+          <a href="#" class="hover:text-[#e74c3c] transition-colors"
+            ><Instagram class="w-4 h-4"
+          /></a>
+          <a href="#" class="hover:text-[#e74c3c] transition-colors"
+            ><Linkedin class="w-4 h-4"
+          /></a>
         </div>
       </div>
     </div>
 
     <!-- Main Navigation Header -->
-    <header class="bg-white dark:bg-[#13161c] border-b border-gray-200 dark:border-zinc-900 sticky top-0 z-50 shadow-md">
+    <header
+      class="bg-white dark:bg-[#13161c] border-b border-gray-200 dark:border-zinc-900 sticky top-0 z-50 shadow-md"
+    >
       <div class="container mx-auto px-4 py-4 flex items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center gap-2">
           <span class="text-3xl font-black tracking-tighter text-[#e74c3c]">
             ZAIRA<span class="text-[#f1c40f]">.</span>
           </span>
-          <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded">GAMING</span>
+          <span class="px-2 py-0.5 text-[10px] font-bold bg-[#e74c3c] text-white rounded"
+            >GAMING</span
+          >
         </div>
 
         <!-- Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300">
+        <nav
+          class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
+        >
           <NuxtLink to="/" class="hover:text-[#e74c3c] transition-colors">Trang chủ</NuxtLink>
           <NuxtLink to="/game" class="text-[#e74c3c]">Thế giới Game</NuxtLink>
           <a href="#" class="hover:text-[#e74c3c] transition-colors">Esports</a>
@@ -275,9 +309,11 @@ const recentSidebarPosts = ref<BlogPost[]>([
         <div class="grid grid-cols-1 lg:grid-cols-10 gap-8">
           <!-- Main Content (70%) -->
           <div class="lg:col-span-7 space-y-12">
-            
             <!-- GAMING SPOTLIGHT COMPONENT -->
-            <GamingSpotlight :spotlight-big-post="spotlightBigPost" :spotlight-small-posts="spotlightSmallPosts" />
+            <GamingSpotlight
+              :spotlight-big-post="spotlightBigPost"
+              :spotlight-small-posts="spotlightSmallPosts"
+            />
 
             <!-- MID AD BANNER 2 -->
             <AdBanner width="728px" height="90px" />
@@ -285,11 +321,13 @@ const recentSidebarPosts = ref<BlogPost[]>([
             <!-- POPULAR NEWS SECTION -->
             <div>
               <div class="border-b border-gray-250 dark:border-zinc-800 pb-3 mb-6">
-                <h3 class="text-lg font-black uppercase tracking-wider text-zinc-900 dark:text-white border-l-4 border-[#e74c3c] pl-3">
+                <h3
+                  class="text-lg font-black uppercase tracking-wider text-zinc-900 dark:text-white border-l-4 border-[#e74c3c] pl-3"
+                >
                   Tin game phổ biến nhất
                 </h3>
               </div>
-              
+
               <!-- 2 Medium overlay cards -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div
@@ -302,8 +340,12 @@ const recentSidebarPosts = ref<BlogPost[]>([
                     :alt="mPost.title"
                     class="w-full h-full object-cover opacity-70 group-hover:scale-102 transition-transform duration-500"
                   />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5">
-                    <span class="self-start bg-[#e74c3c] text-white text-[9px] font-bold px-1.5 py-0.5 rounded mb-2">
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5"
+                  >
+                    <span
+                      class="self-start bg-[#e74c3c] text-white text-[9px] font-bold px-1.5 py-0.5 rounded mb-2"
+                    >
                       {{ mPost.category }}
                     </span>
                     <h4 class="text-sm font-bold text-white hover:text-[#e74c3c] transition-colors">
@@ -321,14 +363,20 @@ const recentSidebarPosts = ref<BlogPost[]>([
                   class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-3 rounded-xl flex flex-col gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-all shadow-xs"
                 >
                   <div class="aspect-[16/9] w-full rounded overflow-hidden">
-                    <img :src="pPost.imageUrl" :alt="pPost.title" class="w-full h-full object-cover" />
+                    <img
+                      :src="pPost.imageUrl"
+                      :alt="pPost.title"
+                      class="w-full h-full object-cover"
+                    />
                   </div>
                   <div class="flex-grow flex flex-col justify-between">
                     <div>
                       <span class="text-[9px] font-bold text-[#e74c3c] uppercase block mb-1">
                         {{ pPost.category }}
                       </span>
-                      <h5 class="text-xs font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors">
+                      <h5
+                        class="text-xs font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors"
+                      >
                         <a href="#">{{ pPost.title }}</a>
                       </h5>
                     </div>
@@ -340,7 +388,6 @@ const recentSidebarPosts = ref<BlogPost[]>([
                 </div>
               </div>
             </div>
-
           </div>
 
           <!-- GAMING SIDEBAR COMPONENT -->

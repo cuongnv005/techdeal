@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import {
-  Search,
-  Menu,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  TrendingUp
-} from 'lucide-vue-next'
+import { Search, Menu, Facebook, Twitter, Instagram, Linkedin, TrendingUp } from 'lucide-vue-next'
 import type { BlogPost } from '../types/post.type'
 import PostCard from '../components/PostCard.vue'
 import AdBanner from '../components/AdBanner.vue'
@@ -60,8 +52,7 @@ const posts = ref<BlogPost[]>([
   },
   {
     id: '3',
-    title:
-      'Tim Cook hé lộ tính năng Apple Intelligence được yêu thích nhất, bạn có sử dụng?',
+    title: 'Tim Cook hé lộ tính năng Apple Intelligence được yêu thích nhất, bạn có sử dụng?',
     category: 'Technology',
     author: 'Mr.X',
     publishDate: 'Hôm nay lúc 13:06',
@@ -110,8 +101,7 @@ const featuredBigPost = ref<BlogPost>({
 const featuredSmallPosts = ref<BlogPost[]>([
   {
     id: 'f2',
-    title:
-      'Đánh giá chi tiết iPhone 17 Pro Max với những cải tiến mang tính cách mạng',
+    title: 'Đánh giá chi tiết iPhone 17 Pro Max với những cải tiến mang tính cách mạng',
     category: 'Mobile',
     author: 'Admin',
     publishDate: '27 Tháng 5, 2026',
@@ -139,8 +129,9 @@ const featuredSmallPosts = ref<BlogPost[]>([
 
 // Computed property for the most viewed posts of the month
 const mostViewedPosts = computed(() => {
-  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value]
-    .sort((a, b) => b.views - a.views)
+  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value].sort(
+    (a, b) => b.views - a.views
+  )
 })
 
 // Search query
@@ -178,7 +169,9 @@ const handleSearch = () => {
           class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
         >
           <NuxtLink to="/" class="text-[#3498db] hover:text-[#3498db]">Trang chủ</NuxtLink>
-          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors">Thế giới Game</NuxtLink>
+          <NuxtLink to="/game" class="hover:text-[#3498db] transition-colors"
+            >Thế giới Game</NuxtLink
+          >
           <a href="#" class="hover:text-[#3498db] transition-colors">Công nghệ</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Thiết bị di động</a>
           <a href="#" class="hover:text-[#3498db] transition-colors">Trí tuệ nhân tạo</a>
