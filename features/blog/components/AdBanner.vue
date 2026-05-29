@@ -18,6 +18,7 @@ const props = withDefaults(
     slotId: '1234567890'
   }
 )
+const adClientId = import.meta.env.VITE_AD_CLIENT_ID || 'ca-pub-3940256099942544'
 
 onMounted(() => {
   if (props.isGoogleAd) {
@@ -51,7 +52,7 @@ onMounted(() => {
         class="adsbygoogle"
         style="display: block; width: 100%"
         :style="{ height: height || 'auto' }"
-        data-ad-client="ca-pub-3940256099942544"
+        :data-ad-client="adClientId"
         :data-ad-slot="slotId"
         :data-ad-format="adFormat"
         data-full-width-responsive="true"

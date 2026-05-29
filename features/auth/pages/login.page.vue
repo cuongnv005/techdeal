@@ -1,24 +1,37 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Eye, EyeOff, Lock, Mail, User, ArrowRight } from 'lucide-vue-next'
 
-// State variables
-const loginIdentifier = ref('') // email or username
+import { Eye, EyeOff, Lock, User, ArrowRight } from 'lucide-vue-next'
+
+import { AuthRepository } from '../api/auth'
+
+import { useUserStore } from '@stores/user'
+
+const loginIdentifier = ref('') // matches email input
 const password = ref('')
 const showPassword = ref(false)
 const isLoading = ref(false)
 
-const handleLogin = () => {
+const userStore = useUserStore()
+const authRepo = new AuthRepository()
+
+const handleLogin = async () => {
   if (!loginIdentifier.value || !password.value) {
     alert('Vui lòng điền đầy đủ thông tin!')
     return
   }
   isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
-    alert(`Đăng nhập thành công với tài khoản: ${loginIdentifier.value}`)
+  try {
+    const data = await authRepo.login(loginIdentifier.value, password.value)
+    userStore.setAuth(data.token, data.user)
+    alert(`Đăng nhập thành công! Chào mừng ${data.user.username}`)
     navigateTo('/')
-  }, 1000)
+  } catch (e: any) {
+    console.error(e)
+    alert(e?.response?.data?.error || 'Đăng nhập thất bại!')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const handleGoogleLogin = () => {
@@ -88,7 +101,7 @@ const handleGoogleLogin = () => {
           <!-- Username / Email Input -->
           <div class="space-y-1.5">
             <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-              >Username hoặc Email</label
+              >Email đăng nhập</label
             >
             <div class="relative">
               <span class="absolute left-3 top-3 text-zinc-400">
@@ -96,9 +109,9 @@ const handleGoogleLogin = () => {
               </span>
               <input
                 v-model="loginIdentifier"
-                type="text"
-                placeholder="Nhập tên đăng nhập hoặc email..."
-                class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                type="email"
+                placeholder="Nhập địa chỉ email đăng nhập..."
+                class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -122,7 +135,7 @@ const handleGoogleLogin = () => {
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Nhập mật khẩu của bạn..."
-                class="w-full text-xs pl-10 pr-10 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-10 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
               <button
@@ -153,7 +166,7 @@ const handleGoogleLogin = () => {
         <div class="relative flex py-2 items-center">
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
           <span
-            class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-semibold"
+            class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-550 uppercase font-semibold"
             >Hoặc đăng nhập với</span
           >
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
@@ -163,7 +176,7 @@ const handleGoogleLogin = () => {
         <button
           type="button"
           @click="handleGoogleLogin"
-          class="w-full py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 text-xs font-bold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors shadow-xs cursor-pointer"
+          class="w-full py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-955 text-zinc-700 dark:text-zinc-300 text-xs font-bold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors shadow-xs cursor-pointer"
         >
           <!-- SVG Google Icon -->
           <svg class="w-4 h-4" viewBox="0 0 24 24">

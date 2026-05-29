@@ -9,4 +9,5 @@ export interface BlogPost {
   imageUrl: string
   summary: string
   slug: string
+  content?: string
 }

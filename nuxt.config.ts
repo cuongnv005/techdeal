@@ -75,7 +75,7 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544',
+          src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env['VITE_AD_CLIENT_ID'] || 'ca-pub-3940256099942544'}`,
           async: true,
           crossorigin: 'anonymous'
         }

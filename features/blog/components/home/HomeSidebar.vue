@@ -9,8 +9,10 @@ import {
   Bookmark,
   ChevronRight
 } from 'lucide-vue-next'
-import type { BlogPost } from '../../types/post.type'
+
 import AdBanner from '../AdBanner.vue'
+
+import type { BlogPost } from '../../types/post.type'
 
 defineProps<{
   mostViewedPosts: BlogPost[]

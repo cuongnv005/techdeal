@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Menu,
@@ -10,12 +11,16 @@ import {
   TrendingUp,
   Monitor
 } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
-import HomeSidebar from '../components/home/HomeSidebar.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -27,37 +32,11 @@ useSeoMeta({
   ogType: 'website'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: 'w1',
-    title: 'Microsoft ra mắt bản cập nhật Windows 11 thế hệ mới với loạt tính năng AI độc quyền',
-    category: 'Windows',
-    author: 'Admin',
-    publishDate: 'Hôm nay lúc 11:20',
-    views: 1450,
-    comments: 12,
-    imageUrl:
-      'https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Bản cập nhật mới mang lại cải tiến sâu sắc cho Copilot, tối ưu hóa giao diện file explorer và tăng hiệu năng chơi game trên PC.',
-    slug: 'microsoft-cap-nhat-windows-11-ai-doc-quyen'
-  },
-  {
-    id: 'w2',
-    title: '5 thủ thuật tối ưu hóa Windows giúp máy tính chơi game mượt mà hơn',
-    category: 'Windows',
-    author: 'GamerX',
-    publishDate: '2 ngày trước',
-    views: 3400,
-    comments: 25,
-    imageUrl:
-      'https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Cách tắt các dịch vụ chạy ngầm thừa thãi, tinh chỉnh chế độ Game Mode và dọn dẹp phân mảnh hệ điều hành Windows cực nhanh.',
-    slug: 'thu-thuat-toi-uu-windows-choi-game'
-  }
-])
+// Fetch articles dynamically
+const { data: categoryPosts } = await useAsyncData('posts-windows', () =>
+  blogRepository.getPosts({ category: 'windows', limit: 12 })
+)
+const posts = computed(() => categoryPosts.value || [])
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {

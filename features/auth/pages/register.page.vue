@@ -1,27 +1,34 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Eye, EyeOff, Lock, Mail, User, MapPin, Calendar, ArrowRight } from 'lucide-vue-next'
 
-// State variables
+import { Eye, EyeOff, Lock, Mail, User, ArrowRight } from 'lucide-vue-next'
+
+import { AuthRepository } from '../api/auth'
+
 const username = ref('')
 const email = ref('')
 const password = ref('')
-const age = ref<number | null>(null)
-const address = ref('')
 const showPassword = ref(false)
 const isLoading = ref(false)
 
-const handleRegister = () => {
-  if (!username.value || !email.value || !password.value || !age.value || !address.value) {
+const authRepo = new AuthRepository()
+
+const handleRegister = async () => {
+  if (!username.value || !email.value || !password.value) {
     alert('Vui lòng nhập đầy đủ các trường thông tin bắt buộc!')
     return
   }
   isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
-    alert(`Đăng ký thành công tài khoản: ${username.value}`)
+  try {
+    await authRepo.register(username.value, email.value, password.value)
+    alert(`Đăng ký thành công tài khoản: ${username.value}. Hãy đăng nhập!`)
     navigateTo('/login')
-  }, 1000)
+  } catch (e: any) {
+    console.error(e)
+    alert(e?.response?.data?.error || 'Đăng ký tài khoản thất bại!')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const handleGoogleLogin = () => {
@@ -31,7 +38,7 @@ const handleGoogleLogin = () => {
 
 <template>
   <div
-    class="min-h-screen flex bg-gray-155 dark:bg-zinc-950 transition-colors duration-300 font-display"
+    class="min-h-screen flex bg-gray-155 dark:bg-zinc-955 transition-colors duration-300 font-display"
   >
     <!-- Left side: Beautiful branding column (hidden on mobile) -->
     <div
@@ -101,7 +108,7 @@ const handleGoogleLogin = () => {
                 v-model="username"
                 type="text"
                 placeholder="Nhập tên tài khoản của bạn..."
-                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -118,7 +125,7 @@ const handleGoogleLogin = () => {
                 v-model="email"
                 type="email"
                 placeholder="Nhập địa chỉ email..."
-                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -135,7 +142,7 @@ const handleGoogleLogin = () => {
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)..."
-                class="w-full text-xs pl-10 pr-10 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-10 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 minlength="6"
                 required
               />
@@ -147,46 +154,6 @@ const handleGoogleLogin = () => {
                 <Eye v-if="!showPassword" class="w-4 h-4" />
                 <EyeOff v-else class="w-4 h-4" />
               </button>
-            </div>
-          </div>
-
-          <!-- Grid row for Age and Address -->
-          <div class="grid grid-cols-3 gap-4">
-            <!-- Age Input -->
-            <div class="col-span-1 space-y-1">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">Tuổi</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-zinc-400">
-                  <Calendar class="w-4 h-4" />
-                </span>
-                <input
-                  v-model="age"
-                  type="number"
-                  placeholder="Tuổi"
-                  class="w-full text-xs pl-10 pr-2 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
-                  min="1"
-                  required
-                />
-              </div>
-            </div>
-
-            <!-- Address Input -->
-            <div class="col-span-2 space-y-1">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-                >Địa chỉ</label
-              >
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-zinc-400">
-                  <MapPin class="w-4 h-4" />
-                </span>
-                <input
-                  v-model="address"
-                  type="text"
-                  placeholder="Nhập tỉnh/thành phố..."
-                  class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
-                  required
-                />
-              </div>
             </div>
           </div>
 
@@ -207,7 +174,7 @@ const handleGoogleLogin = () => {
         <div class="relative flex py-1 items-center">
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
           <span
-            class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-semibold"
+            class="flex-shrink mx-4 text-[10px] text-zinc-450 dark:text-zinc-550 uppercase font-semibold"
             >Hoặc tiếp tục với</span
           >
           <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>

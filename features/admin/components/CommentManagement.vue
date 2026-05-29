@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import { Search, Trash2, MessageSquare, User, FileText } from 'lucide-vue-next'
+
 import type { CommentItem } from '../types/dashboard.type'
 
 interface Props {

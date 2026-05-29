@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Menu,
@@ -10,12 +11,16 @@ import {
   TrendingUp,
   Monitor
 } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
-import HomeSidebar from '../components/home/HomeSidebar.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -27,38 +32,11 @@ useSeoMeta({
   ogType: 'website'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: 'pc1',
-    title: 'NVIDIA RTX 5090 chính thức lộ diện cấu hình khủng: Bộ nhớ 32GB GDDR7, điện năng 600W',
-    category: 'PC máy tính',
-    author: 'TechDeal Hardware',
-    publishDate: 'Hôm nay lúc 10:15',
-    views: 3890,
-    comments: 24,
-    imageUrl:
-      'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Thế hệ card đồ họa flagship Blackwell tiếp theo của NVIDIA hứa hẹn tăng gấp đôi hiệu suất xử lý ray tracing và tối ưu hóa tối đa cho các tác vụ AI.',
-    slug: 'nvidia-rtx-5090-lo-dien-cau-hinh'
-  },
-  {
-    id: 'pc2',
-    title:
-      'Đánh giá chi tiết CPU AMD Ryzen 9 9955X: Vị vua mới của phân khúc làm việc và sáng tạo nội dung',
-    category: 'PC máy tính',
-    author: 'Admin',
-    publishDate: 'Hôm qua lúc 14:30',
-    views: 2410,
-    comments: 18,
-    imageUrl:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Với kiến trúc Zen 5 tiến trình 4nm mới nhất, Ryzen 9955X mang lại hiệu năng đa nhân vượt trội trong khi lượng điện tiêu thụ tối ưu hơn nhiều so với thế hệ trước.',
-    slug: 'danh-gia-amd-ryzen-9-9955x'
-  }
-])
+// Fetch articles dynamically
+const { data: categoryPosts } = await useAsyncData('posts-pc', () =>
+  blogRepository.getPosts({ category: 'pc', limit: 12 })
+)
+const posts = computed(() => categoryPosts.value || [])
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {

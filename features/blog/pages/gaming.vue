@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
+import Header from '../components/Header.vue'
 import GamingBanner from '../components/gaming/GamingBanner.vue'
 import GamingCategories from '../components/gaming/GamingCategories.vue'
-import GamingSpotlight from '../components/gaming/GamingSpotlight.vue'
 import GamingSidebar from '../components/gaming/GamingSidebar.vue'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
+import GamingSpotlight from '../components/gaming/GamingSpotlight.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
 
@@ -33,106 +38,55 @@ const categories = ref([
   { name: 'RPG/Story', count: '150 bài', icon: '🧙‍♂️' }
 ])
 
-// Banner Posts (Big header layout)
-const bannerPosts = ref<BlogPost[]>([
-  {
-    id: 'gb1',
-    title: 'Đánh giá Black Myth: Wukong - Tuyệt tác game hành động nhập vai đỉnh cao nhất thập kỷ',
-    category: 'Fighter',
-    author: 'Admin',
-    publishDate: '27 Tháng 5, 2026',
-    views: 4520,
-    comments: 18,
-    imageUrl:
-      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
-    summary:
-      'Black Myth: Wukong mang lại trải nghiệm chiến đấu hoành tráng cùng đồ họa Unreal Engine 5 đỉnh cao, tái hiện chân thực thế giới Tây Du Ký.',
-    slug: 'danh-gia-black-myth-wukong'
-  }
-])
+// Fetch gaming articles dynamically
+const { data: gamingPosts } = await useAsyncData('posts-gaming', () =>
+  blogRepository.getPosts({ category: 'gaming', limit: 20 })
+)
 
-// Spotlight posts
-const spotlightBigPost = ref<BlogPost>({
-  id: 'gs1',
-  title:
-    'Giải đấu Liên Minh Huyền Thoại VCS Mùa Hè 2026 chính thức khởi tranh với tổng giải thưởng kỷ lục',
-  category: 'Esports',
-  author: 'VCS Reporter',
-  publishDate: '28 Tháng 5, 2026',
-  views: 5800,
-  comments: 32,
+const postsList = computed(() => gamingPosts.value || [])
+
+// Fallback post structure in case database has no posts yet
+const fallbackPost: BlogPost = {
+  id: 'fallback',
+  title: 'Chưa có bài viết mới',
+  category: 'Gaming',
+  author: 'Admin',
+  publishDate: 'Hôm nay',
+  views: 0,
+  comments: 0,
   imageUrl:
-    'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
-  summary:
-    'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
-  slug: 'vcs-mua-he-2026-khoi-tranh'
+    'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+  summary: 'Bài viết game mới đang được biên soạn. Vui lòng quay lại sau.',
+  slug: 'welcome-gaming'
+}
+
+// Banner Posts (Big header layout)
+const bannerPosts = computed<BlogPost[]>(() => {
+  return postsList.value.slice(0, 1).length > 0 ? postsList.value.slice(0, 1) : [fallbackPost]
 })
 
-const spotlightSmallPosts = ref<BlogPost[]>([
-  {
-    id: 'gs2',
-    title:
-      'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
-    category: 'Action',
-    author: 'Admin',
-    publishDate: '28 Tháng 5, 2026',
-    views: 1980,
-    comments: 3,
-    imageUrl:
-      'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
-    summary: '',
-    slug: 'fortnite-dat-ky-luc-nguoi-choi-moi'
-  }
-])
+// Spotlight posts
+const spotlightBigPost = computed<BlogPost>(() => {
+  return postsList.value[1] || fallbackPost
+})
+
+const spotlightSmallPosts = computed<BlogPost[]>(() => {
+  return postsList.value.slice(2, 4)
+})
 
 // Popular News list
-const popularMediumPosts = ref<BlogPost[]>([
-  {
-    id: 'gp1',
-    title: 'Giải đua xe ảo F1 Esports Pro Series 2026 khởi động chặng đua gay cấn đầu tiên',
-    category: 'Racing',
-    author: 'RacingPro',
-    publishDate: '28 Tháng 5, 2026',
-    views: 1200,
-    comments: 2,
-    imageUrl:
-      'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
-    summary: '',
-    slug: 'f1-esports-pro-series-2026'
-  }
-])
+const popularMediumPosts = computed<BlogPost[]>(() => {
+  return postsList.value.slice(4, 6)
+})
 
-const popularSmallPosts = ref<BlogPost[]>([
-  {
-    id: 'gp3',
-    title: 'The Magic of Elden Ring: Phân tích cốt truyện vùng đất Shadow of the Erdtree',
-    category: 'Lore',
-    author: 'LoreMaster',
-    publishDate: '25 Tháng 5, 2026',
-    views: 3120,
-    comments: 7,
-    imageUrl:
-      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=300&q=80',
-    summary: '',
-    slug: 'phan-tich-cot-truyen-elden-ring-dlc'
-  }
-])
+const popularSmallPosts = computed<BlogPost[]>(() => {
+  return postsList.value.slice(6, 9)
+})
 
 // Sidebar recent posts
-const recentSidebarPosts = ref<BlogPost[]>([
-  {
-    id: 'rs1',
-    title: 'Đánh giá tay cầm DualSense Edge sau 6 tháng sử dụng liên tục',
-    category: 'Accessory',
-    author: 'GamerX',
-    publishDate: '28 Tháng 5, 2026',
-    views: 890,
-    comments: 1,
-    imageUrl: '',
-    summary: '',
-    slug: 'danh-gia-tay-cam-dualsense-edge'
-  }
-])
+const recentSidebarPosts = computed<BlogPost[]>(() => {
+  return postsList.value.slice(9, 14)
+})
 </script>
 
 <template>
@@ -216,7 +170,7 @@ const recentSidebarPosts = ref<BlogPost[]>([
                       {{ mPost.category }}
                     </span>
                     <h4 class="text-sm font-bold text-white hover:text-[#e74c3c] transition-colors">
-                      <a href="#">{{ mPost.title }}</a>
+                      <NuxtLink :to="`/blog/${mPost.slug}.${mPost.id}`">{{ mPost.title }}</NuxtLink>
                     </h4>
                   </div>
                 </div>
@@ -230,11 +184,13 @@ const recentSidebarPosts = ref<BlogPost[]>([
                   class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-3 rounded-xl flex flex-col gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-all shadow-xs"
                 >
                   <div class="aspect-[16/9] w-full rounded overflow-hidden">
-                    <img
-                      :src="pPost.imageUrl"
-                      :alt="pPost.title"
-                      class="w-full h-full object-cover"
-                    />
+                    <NuxtLink :to="`/blog/${pPost.slug}.${pPost.id}`" class="block w-full h-full">
+                      <img
+                        :src="pPost.imageUrl"
+                        :alt="pPost.title"
+                        class="w-full h-full object-cover"
+                      />
+                    </NuxtLink>
                   </div>
                   <div class="flex-grow flex flex-col justify-between">
                     <div>
@@ -244,7 +200,9 @@ const recentSidebarPosts = ref<BlogPost[]>([
                       <h5
                         class="text-xs font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors"
                       >
-                        <a href="#">{{ pPost.title }}</a>
+                        <NuxtLink :to="`/blog/${pPost.slug}.${pPost.id}`">{{
+                          pPost.title
+                        }}</NuxtLink>
                       </h5>
                     </div>
                     <div class="flex items-center gap-1 text-[10px] text-zinc-555 mt-2">

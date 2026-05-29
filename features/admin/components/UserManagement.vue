@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import { Search, UserCheck, ShieldAlert, Calendar, Mail, User } from 'lucide-vue-next'
+
 import type { UserItem } from '../types/dashboard.type'
 
 interface Props {

@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Search, Trash2, Calendar, Eye, MessageSquare, Plus } from 'lucide-vue-next'
+
+import {
+  Search,
+  Trash2,
+  Calendar,
+  Eye,
+  MessageSquare,
+  Plus,
+  CheckCircle,
+  XCircle,
+  Pencil
+} from 'lucide-vue-next'
+
 import type { PostItem } from '../types/dashboard.type'
 
 interface Props {
@@ -11,10 +23,29 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'delete', id: string): void
+  (e: 'approve', id: string): void
+  (e: 'unpublish', id: string): void
+  (e: 'edit', id: string): void
 }>()
 
 const searchQuery = ref('')
 const categoryFilter = ref('')
+const statusFilter = ref('')
+
+const statusConfig = {
+  pending: {
+    label: 'Chờ duyệt',
+    cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+  },
+  published: {
+    label: 'Đã đăng',
+    cls: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+  },
+  unpublished: {
+    label: 'Hủy đăng',
+    cls: 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700'
+  }
+}
 
 const filteredPosts = computed(() => {
   return props.postsList.filter((post) => {
@@ -23,8 +54,9 @@ const filteredPosts = computed(() => {
       post.author.toLowerCase().includes(searchQuery.value.toLowerCase())
 
     const matchesCategory = !categoryFilter.value || post.category === categoryFilter.value
+    const matchesStatus = !statusFilter.value || post.status === statusFilter.value
 
-    return matchesSearch && matchesCategory
+    return matchesSearch && matchesCategory && matchesStatus
   })
 })
 
@@ -36,6 +68,12 @@ const categories = computed(() => {
 const confirmDelete = (id: string, title: string) => {
   if (confirm(`Bạn có chắc chắn muốn xóa bài viết: "${title}"? Action này không thể hoàn tác.`)) {
     emit('delete', id)
+  }
+}
+
+const confirmUnpublish = (id: string, title: string) => {
+  if (confirm(`Hủy đăng bài viết: "${title}"?`)) {
+    emit('unpublish', id)
   }
 }
 </script>
@@ -65,6 +103,16 @@ const confirmDelete = (id: string, title: string) => {
           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
         </select>
 
+        <select
+          v-model="statusFilter"
+          class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
+        >
+          <option value="">Tất cả trạng thái</option>
+          <option value="pending">Chờ duyệt</option>
+          <option value="published">Đã đăng</option>
+          <option value="unpublished">Hủy đăng</option>
+        </select>
+
         <NuxtLink
           to="/blog/publish"
           class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer select-none"
@@ -87,6 +135,7 @@ const confirmDelete = (id: string, title: string) => {
               <th class="px-6 py-4">Bài viết</th>
               <th class="px-6 py-4">Tác giả</th>
               <th class="px-6 py-4">Chuyên mục</th>
+              <th class="px-6 py-4">Trạng thái</th>
               <th class="px-6 py-4">Thống kê</th>
               <th class="px-6 py-4 text-right">Hành động</th>
             </tr>
@@ -121,6 +170,16 @@ const confirmDelete = (id: string, title: string) => {
                 </span>
               </td>
               <td class="px-6 py-4">
+                <span
+                  :class="[
+                    'inline-block text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full',
+                    statusConfig[post.status]?.cls ?? ''
+                  ]"
+                >
+                  {{ statusConfig[post.status]?.label ?? post.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
                 <div class="flex items-center gap-3 text-[10px] text-zinc-500">
                   <span class="flex items-center gap-1"
                     ><Eye class="w-3.5 h-3.5" /> {{ post.views }}</span
@@ -131,18 +190,47 @@ const confirmDelete = (id: string, title: string) => {
                 </div>
               </td>
               <td class="px-6 py-4 text-right">
-                <button
-                  @click="confirmDelete(post.id, post.title)"
-                  class="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all cursor-pointer"
-                  title="Xóa bài viết"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
+                <div class="flex items-center justify-end gap-1">
+                  <!-- Duyệt bài (chỉ hiện khi pending hoặc unpublished) -->
+                  <button
+                    v-if="post.status !== 'published'"
+                    @click="emit('approve', post.id)"
+                    class="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all cursor-pointer"
+                    title="Duyệt bài viết"
+                  >
+                    <CheckCircle class="w-4 h-4" />
+                  </button>
+                  <!-- Hủy đăng (chỉ hiện khi published) -->
+                  <button
+                    v-if="post.status === 'published'"
+                    @click="confirmUnpublish(post.id, post.title)"
+                    class="p-2 text-zinc-400 hover:text-amber-500 hover:bg-amber-500/10 rounded-xl transition-all cursor-pointer"
+                    title="Hủy đăng bài viết"
+                  >
+                    <XCircle class="w-4 h-4" />
+                  </button>
+                  <!-- Chỉnh sửa -->
+                  <button
+                    @click="emit('edit', post.id)"
+                    class="p-2 text-zinc-400 hover:text-[#3498db] hover:bg-[#3498db]/10 rounded-xl transition-all cursor-pointer"
+                    title="Chỉnh sửa bài viết"
+                  >
+                    <Pencil class="w-4 h-4" />
+                  </button>
+                  <!-- Xóa -->
+                  <button
+                    @click="confirmDelete(post.id, post.title)"
+                    class="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all cursor-pointer"
+                    title="Xóa bài viết"
+                  >
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                </div>
               </td>
             </tr>
 
             <tr v-if="filteredPosts.length === 0">
-              <td colspan="5" class="px-6 py-12 text-center text-xs text-zinc-400 italic">
+              <td colspan="6" class="px-6 py-12 text-center text-xs text-zinc-400 italic">
                 Không tìm thấy bài viết nào phù hợp...
               </td>
             </tr>

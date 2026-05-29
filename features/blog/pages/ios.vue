@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Menu,
@@ -10,12 +11,16 @@ import {
   TrendingUp,
   Smartphone
 } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
-import HomeSidebar from '../components/home/HomeSidebar.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -27,38 +32,11 @@ useSeoMeta({
   ogType: 'website'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: 'i1',
-    title: 'Apple phát hành iOS 19.5: Cải thiện hiệu năng pin và nâng cấp Siri thông minh hơn',
-    category: 'iOS',
-    author: 'Admin',
-    publishDate: 'Hôm nay lúc 09:15',
-    views: 1890,
-    comments: 15,
-    imageUrl:
-      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Bản nâng cấp iOS mới chính thức cho tải về toàn cầu, sửa lỗi nóng máy trên dòng iPhone 16 và tối ưu hóa kết nối sóng.',
-    slug: 'apple-phat-hanh-ios-19-5-pin-tot-hon'
-  },
-  {
-    id: '4',
-    title:
-      '(iOS/Android) Nhận key gói Premium ứng dụng giúp thư giãn, ngủ ngon, chữa bệnh trị giá $399.99',
-    category: 'Mobile',
-    author: 'Nguyễn Cường',
-    publishDate: 'Hôm nay lúc 20:31',
-    views: 9805,
-    comments: 5,
-    imageUrl:
-      'https://images.unsplash.com/photo-1511295742364-92b9345f8e00?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Nếu bạn đang tìm kiếm một giải pháp để thư giãn tâm trí, ngủ ngon hơn, giảm căng thẳng thì Calm chính là ứng dụng không thể bỏ qua.',
-    slug: 'nhan-key-premium-ung-dung-thu-gian-ngu-ngon'
-  }
-])
+// Fetch articles dynamically
+const { data: categoryPosts } = await useAsyncData('posts-ios', () =>
+  blogRepository.getPosts({ category: 'ios', limit: 12 })
+)
+const posts = computed(() => categoryPosts.value || [])
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {

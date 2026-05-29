@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Facebook, Twitter, Instagram, Youtube, ArrowRight } from 'lucide-vue-next'
-import type { BlogPost } from '../../types/post.type'
+
 import AdBanner from '../AdBanner.vue'
+
+import type { BlogPost } from '../../types/post.type'
 
 defineProps<{
   recentSidebarPosts: BlogPost[]

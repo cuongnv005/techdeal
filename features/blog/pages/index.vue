@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import { TrendingUp } from 'lucide-vue-next'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
+import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
 import HomeHero from '../components/home/HomeHero.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
+
+import type { BlogPost } from '../types/post.type'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -20,63 +24,51 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: '1',
-    title:
-      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
-    category: 'Technology',
-    author: 'Mr.X',
-    publishDate: 'Hôm nay lúc 18:50',
-    views: 406,
-    comments: 1,
-    imageUrl:
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'TP. Hồ Chí Minh, ngày 29/01/2026 - realme, thương hiệu smartphone tăng trưởng nhanh hàng đầu thế giới, chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam.',
-    slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
-  }
-])
+// Fetch posts from API using useAsyncData
+const { data: allPosts } = await useAsyncData('public-posts', () =>
+  blogRepository.getPosts({ limit: 20 })
+)
+
+const postsList = computed<BlogPost[]>(() => allPosts.value || [])
+
+// Fallback post structure in case database has no posts yet
+const fallbackPost: BlogPost = {
+  id: 'fallback',
+  title: 'Chào mừng bạn đến với TechDeal',
+  category: 'Technology',
+  author: 'TechDeal',
+  publishDate: 'Hôm nay',
+  views: 0,
+  comments: 0,
+  imageUrl:
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+  summary:
+    'Hệ thống đang được cập nhật thêm các bài viết công nghệ mới nhất. Xin vui lòng quay lại sau.',
+  slug: 'welcome'
+}
 
 // Featured Posts (Hero Section)
-const featuredBigPost = ref<BlogPost>({
-  id: 'f1',
-  title:
-    'Cuộc cách mạng thực tế ảo tiếp theo: Kỷ nguyên mới cho ngành công nghiệp game và thực tế hỗn hợp',
-  category: 'Technology',
-  author: 'TechDeal Editor',
-  publishDate: '28 Tháng 5, 2026',
-  views: 1250,
-  comments: 4,
-  imageUrl:
-    'https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=1200&q=80',
-  summary:
-    'Công nghệ thực tế ảo và thực tế hỗn hợp đang tiến gần hơn tới đời sống thường nhật với hàng loạt kính thông minh tích hợp trí tuệ nhân tạo ra đời trong năm 2026.',
-  slug: 'cuoc-cach-mang-thuc-te-ao-tiep-theo'
+const featuredBigPost = computed<BlogPost>(() => {
+  return postsList.value[0] || fallbackPost
 })
 
-const featuredSmallPosts = ref<BlogPost[]>([
-  {
-    id: 'f2',
-    title: 'Đánh giá chi tiết iPhone 17 Pro Max với những cải tiến mang tính cách mạng',
-    category: 'Mobile',
-    author: 'Admin',
-    publishDate: '27 Tháng 5, 2026',
-    views: 890,
-    comments: 2,
-    imageUrl:
-      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=400&q=80',
-    summary: '',
-    slug: 'danh-gia-chi-tiet-iphone-17-pro-max'
+const featuredSmallPosts = computed<BlogPost[]>(() => {
+  if (postsList.value.length <= 1) return []
+  return postsList.value.slice(1, 3)
+})
+
+// Articles list at bottom
+const posts = computed<BlogPost[]>(() => {
+  if (postsList.value.length <= 3) {
+    // If we don't have enough posts to fill hero, show all of them in list too
+    return postsList.value
   }
-])
+  return postsList.value.slice(3)
+})
 
 // Computed property for the most viewed posts of the month
 const mostViewedPosts = computed(() => {
-  return [...posts.value, featuredBigPost.value, ...featuredSmallPosts.value].sort(
-    (a, b) => b.views - a.views
-  )
+  return [...postsList.value].sort((a, b) => b.views - a.views)
 })
 
 // Search query

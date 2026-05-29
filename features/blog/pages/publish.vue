@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+
 import { useRoute } from '#app'
 import {
   ArrowLeft,
@@ -14,8 +15,10 @@ import {
   Sparkles,
   Info
 } from 'lucide-vue-next'
-import Header from '../components/Header.vue'
+
+import { blogRepository } from '../api/blog'
 import Footer from '../components/Footer.vue'
+import Header from '../components/Header.vue'
 
 // Load SCEditor CDN dependencies
 useHead({
@@ -312,18 +315,21 @@ const handlePublish = async () => {
       content,
       category: categoryId.value,
       tags: selectedTags.value,
-      scheduledAt: isScheduled.value ? scheduleDate.value : null
+      scheduledAt:
+        isScheduled.value && scheduleDate.value ? new Date(scheduleDate.value).toISOString() : null
     }
 
-    // Simulate API save
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const response = await blogRepository.createPost(postData)
 
-    alert(
-      `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
-    )
-
-    // Redirect back to category page
-    await navigateTo(categoryId.value === 'gaming' ? '/game' : `/${categoryId.value}`)
+    if (response && response.success) {
+      alert(
+        `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
+      )
+      // Redirect back to category page
+      await navigateTo(categoryId.value === 'gaming' ? '/game' : `/${categoryId.value}`)
+    } else {
+      alert(response?.message || 'Có lỗi xảy ra khi đăng bài viết!')
+    }
   } catch (e) {
     alert('Có lỗi xảy ra khi đăng bài viết!')
   } finally {

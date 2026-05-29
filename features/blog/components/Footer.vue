@@ -24,12 +24,12 @@ const textMutedClass = computed(() => (isBlue.value ? 'text-zinc-500' : 'text-zi
 const titleText = computed(() => (isBlue.value ? 'TECHDEAL.' : 'TECHDEAL GAMING.'))
 const descriptionText = computed(() =>
   isBlue.value
-    ? 'Trang tin tức cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
+    ? 'Trang blog cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
     : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
 )
 const middleColTitle = computed(() => (isBlue.value ? 'Liên kết hữu ích' : 'Danh mục phổ biến'))
 const supportEmail = computed(() => (isBlue.value ? 'contact@techdeal.com' : 'gaming@techdeal.com'))
-const supportPhone = computed(() => (isBlue.value ? '+84 (0) 123 456 789' : '+84 (0) 987 654 321'))
+const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822144589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
   isBlue.value
     ? '© 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.'

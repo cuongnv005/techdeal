@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Menu,
@@ -10,12 +11,16 @@ import {
   TrendingUp,
   Cpu
 } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
-import HomeSidebar from '../components/home/HomeSidebar.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -27,52 +32,11 @@ useSeoMeta({
   ogType: 'website'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: 't1',
-    title: 'Intel chính thức giới thiệu thế hệ vi xử lý Core Ultra mới hiệu năng vượt trội',
-    category: 'Technology',
-    author: 'TechDeal Editor',
-    publishDate: 'Hôm nay lúc 15:30',
-    views: 890,
-    comments: 4,
-    imageUrl:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Dòng chip mới tích hợp NPU thế hệ mới giúp tăng cường tốc độ xử lý các tác vụ AI trực tiếp trên thiết bị mà không cần kết nối internet.',
-    slug: 'intel-gioi-thieu-core-ultra-moi'
-  },
-  {
-    id: 't2',
-    title: 'Trí tuệ nhân tạo (AI) đang thay đổi cách lập trình viên viết code như thế nào?',
-    category: 'Technology',
-    author: 'Mr.X',
-    publishDate: 'Hôm qua lúc 10:15',
-    views: 1240,
-    comments: 8,
-    imageUrl:
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Sự trỗi dậy của các công cụ AI hỗ trợ code đang tối ưu hóa năng suất làm việc của kỹ sư phần mềm toàn cầu.',
-    slug: 'ai-thay-doi-cach-viet-code'
-  },
-  {
-    id: '1',
-    title:
-      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
-    category: 'Technology',
-    author: 'Mr.X',
-    publishDate: 'Hôm nay lúc 18:50',
-    views: 406,
-    comments: 1,
-    imageUrl:
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'TP. Hồ Chí Minh, ngày 29/01/2026 - realme chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam.',
-    slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
-  }
-])
+// Fetch articles dynamically
+const { data: categoryPosts } = await useAsyncData('posts-technology', () =>
+  blogRepository.getPosts({ category: 'technology', limit: 12 })
+)
+const posts = computed(() => categoryPosts.value || [])
 
 // Computed property for sidebar (popular posts)
 const mostViewedPosts = computed(() => {

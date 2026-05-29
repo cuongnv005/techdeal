@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Menu,
@@ -10,12 +11,16 @@ import {
   TrendingUp,
   Smartphone
 } from 'lucide-vue-next'
-import { useUserStore } from '@stores/user'
-import type { BlogPost } from '../types/post.type'
-import PostCard from '../components/PostCard.vue'
+
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
-import HomeSidebar from '../components/home/HomeSidebar.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
+import HomeSidebar from '../components/home/HomeSidebar.vue'
+
+import type { BlogPost } from '../types/post.type'
+
+import { useUserStore } from '@stores/user'
 
 // Set page meta for SEO optimization
 useSeoMeta({
@@ -27,39 +32,11 @@ useSeoMeta({
   ogType: 'website'
 })
 
-// Mock Articles
-const posts = ref<BlogPost[]>([
-  {
-    id: 'a1',
-    title:
-      'Google ra mắt bản thử nghiệm Android 16: Tập trung vào bảo mật và quản lý pin thông minh',
-    category: 'Android',
-    author: 'Admin',
-    publishDate: 'Hôm nay lúc 08:30',
-    views: 1210,
-    comments: 9,
-    imageUrl:
-      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Bản Preview đầu tiên của Android 16 mang đến tính năng chia sẻ tài nguyên phần cứng thông minh và kiểm soát quyền riêng tư chặt chẽ hơn.',
-    slug: 'google-ra-mat-android-16-thu-nghiem'
-  },
-  {
-    id: '4',
-    title:
-      '(iOS/Android) Nhận key gói Premium ứng dụng giúp thư giãn, ngủ ngon, chữa bệnh trị giá $399.99',
-    category: 'Mobile',
-    author: 'Nguyễn Cường',
-    publishDate: 'Hôm nay lúc 20:31',
-    views: 9805,
-    comments: 5,
-    imageUrl:
-      'https://images.unsplash.com/photo-1511295742364-92b9345f8e00?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Nếu bạn đang tìm kiếm một giải pháp để thư giãn tâm trí, ngủ ngon hơn, giảm căng thẳng thì Calm chính là ứng dụng không thể bỏ qua.',
-    slug: 'nhan-key-premium-ung-dung-thu-gian-ngu-ngon'
-  }
-])
+// Fetch articles dynamically
+const { data: categoryPosts } = await useAsyncData('posts-android', () =>
+  blogRepository.getPosts({ category: 'android', limit: 12 })
+)
+const posts = computed(() => categoryPosts.value || [])
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {

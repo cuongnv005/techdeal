@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { User, Calendar } from 'lucide-vue-next'
+
 import type { BlogPost } from '../../types/post.type'
 
 defineProps<{
@@ -31,7 +32,7 @@ defineProps<{
           <h2
             class="text-lg md:text-2xl font-bold text-white hover:text-[#e74c3c] transition-colors leading-tight mb-3"
           >
-            <a href="#">{{ bPost.title }}</a>
+            <NuxtLink :to="`/blog/${bPost.slug}.${bPost.id}`">{{ bPost.title }}</NuxtLink>
           </h2>
           <div class="flex items-center gap-4 text-[11px] text-zinc-450">
             <span class="flex items-center gap-1"

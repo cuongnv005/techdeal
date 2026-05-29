@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { BlogPost } from '../types/post.type'
 import { User, Calendar, Eye, MessageSquare } from 'lucide-vue-next'
+
+import type { BlogPost } from '../types/post.type'
 
 const props = defineProps<{
   post: BlogPost

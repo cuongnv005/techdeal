@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from '#app'
+import { ref, computed, watch } from 'vue'
+
+import { useRoute, useAsyncData } from '#app'
 import {
   User,
   Calendar,
@@ -15,286 +16,196 @@ import {
   Send,
   Sparkles
 } from 'lucide-vue-next'
-import type { BlogPost } from '../types/post.type'
+
+import { blogRepository, type ApiComment } from '../api/blog'
 import Header from '../components/Header.vue'
 
-const route = useRoute()
-// URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
-const rawParam = computed(() => route.params.slug as string)
+import type { BlogPost } from '../types/post.type'
 
-// Extract id: everything after the last dot
-const postId = computed(() => {
-  const parts = rawParam.value.split('.')
-  return parts.length > 1 ? parts[parts.length - 1] : parts[0]
-})
+import { useUserStore } from '@stores/user'
+
+const route = useRoute()
+const userStore = useUserStore()
+
+// Initialize authentication from cookies
+if (process.client) {
+  userStore.initializeAuth()
+}
+
+// URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
+const rawParam = computed(() => (route.params.slug as string) || '')
 
 // Extract text slug: everything before the last dot
-const slug = computed(() => {
+const slugText = computed(() => {
   const parts = rawParam.value.split('.')
   return parts.length > 1 ? parts.slice(0, -1).join('.') : rawParam.value
 })
 
-// Combined list of mock posts from index.vue and gaming.vue to search from
-const mockPosts: BlogPost[] = [
-  {
-    id: '1',
-    title:
-      'realme 16 Pro và realme 16 5G ra mắt: trải nghiệm nhiếp ảnh chân dung di động độc đáo cùng Camera đa tiêu cự 200M',
-    category: 'Technology',
-    author: 'Mr.X',
-    publishDate: 'Hôm nay lúc 18:50',
-    views: 406,
-    comments: 1,
-    imageUrl:
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'TP. Hồ Chí Minh, ngày 29/01/2026 - realme, thương hiệu smartphone tăng trưởng nhanh hàng đầu thế giới, chính thức ra mắt bộ đôi realme 16 Pro và realme 16 5G tại thị trường Việt Nam, mở ra kỷ nguyên mới của nhiếp ảnh di động với camera đa tiêu cự 200MP, thiết kế thanh lịch đột phá với gương selfie, cùng nhiều tính năng AI thông minh, với viên pin Titan 7000mAh nhưng vẫn giữ được độ mỏng nhẹ đầy ấn tượng.',
-    slug: 'realme-16-pro-va-realme-16-5g-ra-mat'
-  },
-  {
-    id: '2',
-    title:
-      'Tai nghe soundcore R60i NC: tai nghe chống ồn dưới 1 triệu, pin trâu, có cả dịch thuật tiếng Việt, đáng tiền!',
-    category: 'Gadget',
-    author: 'TRKD',
-    publishDate: 'Hôm nay lúc 13:41',
-    views: 1355,
-    comments: 2,
-    imageUrl:
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Nếu chỉ có ngân sách dưới 1 triệu đồng nhưng vẫn muốn có 1 chiếc tai nghe chống ồn "xịn", pin khủng và nhiều tính năng từ 1 thương hiệu đáng tin cậy thì soundcore R60i NC là 1 lựa chọn rất đáng cân nhắc. Đặc biệt, nếu so với mẫu R50i NC, chiếc tai nghe này có sự nâng cấp rất mạnh mẽ.',
-    slug: 'tai-nghe-soundcore-r60i-nc-chong-on-duoi-1-trieu'
-  },
-  {
-    id: '3',
-    title: 'Tim Cook hé lộ tính năng Apple Intelligence được yêu thích nhất, bạn có sử dụng?',
-    category: 'Technology',
-    author: 'Mr.X',
-    publishDate: 'Hôm nay lúc 13:06',
-    views: 210,
-    comments: 0,
-    imageUrl:
-      'https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Sau khi công bố kết quả kinh doanh quý I năm tài chính 2026 với nhiều tín hiệu tích cực, CEO Apple Tim Cook đã tham gia buổi họp với giới phân tích và chia sẻ thêm về mức độ đón nhận của Apple Intelligence trên iPhone. Theo ông, tính năng được người dùng sử dụng nhiều nhất hiện nay không phải Siri, mà là Visual Intelligence - một công cụ trí tuệ nhân tạo dựa trên camera, có cách dùng khá tương đồng với Google Lens.',
-    slug: 'tim-cook-he-lo-tinh-nang-apple-intelligence-duoc-yeu-thich'
-  },
-  {
-    id: '4',
-    title:
-      '(iOS/Android) Nhận key gói Premium ứng dụng giúp thư giãn, ngủ ngon, chữa bệnh trị giá $399.99',
-    category: 'Mobile',
-    author: 'Nguyễn Cường',
-    publishDate: 'Hôm nay lúc 20:31',
-    views: 9805,
-    comments: 5,
-    imageUrl:
-      'https://images.unsplash.com/photo-1511295742364-92b9345f8e00?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Nếu bạn đang tìm kiếm một giải pháp để thư giãn tâm trí, ngủ ngon hơn, giảm căng thẳng và lấy lại sự cân bằng trong cuộc sống, thì Calm chính là ứng dụng không thể bỏ qua. Calm hiện đang là ứng dụng số 1 thế giới về thiền, giấc ngủ và sức khỏe tinh thần, được hàng triệu người tin dùng mỗi ngày để tìm lại sự bình yên bên trong mình.',
-    slug: 'nhan-key-premium-ung-dung-thu-gian-ngu-ngon'
-  },
-  {
-    id: 'f1',
-    title:
-      'Cuộc cách mạng thực tế ảo tiếp theo: Kỷ nguyên mới cho ngành công nghiệp game và thực tế hỗn hợp',
-    category: 'Technology',
-    author: 'TechDeal Editor',
-    publishDate: '28 Tháng 5, 2026',
-    views: 1250,
-    comments: 4,
-    imageUrl:
-      'https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=1200&q=80',
-    summary:
-      'Công nghệ thực tế ảo và thực tế hỗn hợp đang tiến gần hơn tới đời sống thường nhật với hàng loạt kính thông minh tích hợp trí tuệ nhân tạo ra đời trong năm 2026.',
-    slug: 'cuoc-cach-mang-thuc-te-ao-tiep-theo'
-  },
-  {
-    id: 'gs1',
-    title:
-      'VCS Mùa Hè 2026 chính thức khởi tranh: Cuộc chiến khốc liệt giành vé đi Chung Kết Thế Giới',
-    category: 'Esports',
-    author: 'LeagueFan',
-    publishDate: '28 Tháng 5, 2026',
-    views: 5800,
-    comments: 32,
-    imageUrl:
-      'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
-    summary:
-      'Mùa giải mới quy tụ các đội tuyển Liên Minh hàng đầu Việt Nam tranh tài cho tấm vé đi chung kết thế giới.',
-    slug: 'vcs-mua-he-2026-khoi-tranh'
-  },
-  {
-    id: 'gs2',
-    title:
-      'Fortnite đạt kỷ lục người chơi cùng lúc mới nhờ sự kiện kết hợp đặc biệt với vũ trụ Marvel',
-    category: 'Action',
-    author: 'Admin',
-    publishDate: '28 Tháng 5, 2026',
-    views: 1980,
-    comments: 3,
-    imageUrl:
-      'https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=400&q=80',
-    summary:
-      'Sự kiện Marvel crossover mới nhất đã tạo nên cơn sốt lịch sử, kéo hàng triệu người chơi đăng nhập cùng một lúc.',
-    slug: 'fortnite-dat-ky-luc-nguoi-choi-moi'
-  },
-  {
-    id: 'gs3',
-    title:
-      'GTA 6 lộ diện trailer tiếp theo: Thành phố Vice City chưa bao giờ sống động và chân thực đến thế',
-    category: 'RPG',
-    author: 'RockstarFan',
-    publishDate: '27 Tháng 5, 2026',
-    views: 10450,
-    comments: 54,
-    imageUrl:
-      'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&w=400&q=80',
-    summary:
-      'Rockstar Games vừa làm rúng động cộng đồng game thủ thế giới khi tung ra đoạn trailer thứ 2 cho bom tấn Grand Theft Auto VI (GTA 6).',
-    slug: 'gta-6-lo-dien-trailer-tiep-theo'
-  },
-  {
-    id: 'gs4',
-    title: 'Nintendo Switch 2 sẽ chính thức công bố cấu hình và ngày phát hành vào cuối năm nay?',
-    category: 'Console',
-    author: 'NintendoNews',
-    publishDate: '27 Tháng 5, 2026',
-    views: 4500,
-    comments: 12,
-    imageUrl:
-      'https://images.unsplash.com/photo-1595169001925-51e18ede8436?auto=format&fit=crop&w=400&q=80',
-    summary:
-      'Tin đồn mới nhất cho thấy thiết bị chơi game thế hệ tiếp theo của Nintendo sẽ chính thức ra mắt cấu hình chi tiết cuối năm nay.',
-    slug: 'nintendo-switch-2-sap-cong-bo'
-  }
-]
+// Fetch post by slug using useAsyncData
+const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`, () =>
+  blogRepository.getPostBySlug(slugText.value)
+)
 
-// Find current post by id (from URL slug.id param)
 const post = computed<BlogPost>(() => {
-  // First try to find by id
-  const foundById = mockPosts.find((p) => p.id === postId.value)
-  if (foundById) return foundById
-
-  // Fallback: try by slug text
-  const foundBySlug = mockPosts.find((p) => p.slug === slug.value)
-  if (foundBySlug) return foundBySlug
-
-  // Last resort fallback
-  return {
-    id: 'fallback',
-    title: slug.value
-      ? slug.value
-          .split('-')
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ')
-      : 'Tin tức công nghệ mới cập nhật',
-    category: 'Technology',
-    author: 'TechDeal Editor',
-    publishDate: 'Vừa xong',
-    views: 99,
-    comments: 0,
-    imageUrl:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-    summary:
-      'Thông tin chi tiết về sản phẩm công nghệ đang thu hút sự chú ý của giới công nghệ trong và ngoài nước.',
-    slug: slug.value || 'tin-tuc-cong-nghe-moi'
-  }
+  return (
+    postDetail.value?.post || {
+      id: '',
+      title: 'Không tìm thấy bài viết',
+      category: 'Technology',
+      author: 'Admin',
+      publishDate: '',
+      views: 0,
+      comments: 0,
+      imageUrl:
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+      summary: 'Bài viết không tồn tại hoặc đã bị hạ xuống.',
+      slug: '',
+      content: ''
+    }
+  )
 })
 
-// Generate post content body based on slug
-const postContent = computed(() => {
-  const p = post.value
-  return {
-    intro: p.summary,
-    paragraphs: [
-      `Đây là bước chuyển dịch quan trọng trong xu hướng phát triển công nghệ hiện đại. Những sản phẩm như thế này không chỉ định hình lại cách chúng ta tương tác với thế giới số, mà còn mang đến trải nghiệm toàn diện và tiện lợi hơn cho người dùng.`,
-      `Theo đánh giá của các chuyên gia đầu ngành, việc áp dụng công nghệ mới đã đem lại những cải tiến rõ rệt về hiệu suất làm việc cũng như tính năng tiết kiệm năng lượng. Ngoài ra, thiết kế tối giản sang trọng kết hợp màu sắc trẻ trung sẽ giúp sản phẩm tiếp cận nhanh chóng phân khúc người dùng trẻ tuổi, năng động.`,
-      `Bên cạnh các nâng cấp vượt trội về phần cứng, khả năng tối ưu hóa phần mềm tích hợp trí tuệ nhân tạo (AI) chính là điểm cộng lớn. Từ việc dự đoán hành vi người dùng, tối ưu hóa thời gian sử dụng pin cho đến nâng cao khả năng bảo mật dữ liệu cá nhân, tất cả đều được xử lý một cách thông minh và tự động.`
-    ],
-    quote: `Sự sáng tạo không nằm ở việc tạo ra thứ gì đó hoàn toàn mới, mà là cải tiến những thứ bình thường để mang lại giá trị phi thường cho người sử dụng hàng ngày.`,
-    conclusion: `Nhìn chung, với mức giá hợp lý đi kèm vô vàn tính năng hiện đại, đây chắc chắn sẽ là một sản phẩm rất đáng để đầu tư và sở hữu trong thời gian tới. Hãy cùng TechDeal theo dõi những chuyển động tiếp theo để xem liệu sản phẩm này có tạo nên một cơn sốt mua sắm mới hay không.`
-  }
+const relatedPosts = computed<BlogPost[]>(() => {
+  return postDetail.value?.relatedPosts || []
 })
 
-// Related articles (exclude current by id, take 3)
-const relatedPosts = computed(() => {
-  return mockPosts.filter((p) => p.id !== post.value.id).slice(0, 3)
+// Local comments state
+const comments = ref<ApiComment[]>([])
+
+// Populate local comments when API returns data
+watch(
+  () => postDetail.value?.comments,
+  (newComments) => {
+    if (newComments) {
+      comments.value = [...newComments]
+    }
+  },
+  { immediate: true }
+)
+
+// Parse BBCode helpers
+const parseBBCode = (bbcode: string) => {
+  if (!bbcode) return ''
+
+  let html = bbcode
+
+  // Escape HTML tags to prevent XSS during preview
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+  // Parse [prebreak]...[/prebreak] to highlight summary / lead card paragraph
+  html = html.replace(
+    /\[prebreak\]([\s\S]*?)\[\/prebreak\]/gi,
+    '<div class="bg-blue-500/5 dark:bg-blue-500/10 border-l-4 border-[#3498db] dark:border-[#e74c3c] p-4 my-4 rounded-r-xl font-semibold text-zinc-900 dark:text-zinc-100 flex gap-3"><span class="text-xl">💡</span><div><p class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-550 font-bold mb-1">Đoạn tóm tắt (Prebreak)</p><p>$1</p></div></div>'
+  )
+
+  // Remove [similar] tags completely from raw html output inside main layout content body
+  // because it will be processed and rendered at the bottom in the "Related Posts" section
+  html = html.replace(/\[similar\]([\s\S]*?)\[\/similar\]/gi, '')
+
+  // Basic tags
+  html = html.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<strong>$1</strong>')
+  html = html.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>')
+  html = html.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>')
+  html = html.replace(/\[strike\]([\s\S]*?)\[\/strike\]/gi, '<s>$1</s>')
+
+  // Align
+  html = html.replace(/\[left\]([\s\S]*?)\[\/left\]/gi, '<div class="text-left">$1</div>')
+  html = html.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, '<div class="text-center">$1</div>')
+  html = html.replace(/\[right\]([\s\S]*?)\[\/right\]/gi, '<div class="text-right">$1</div>')
+
+  // Custom links and images
+  html = html.replace(
+    /\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi,
+    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline font-bold">$2</a>'
+  )
+  html = html.replace(
+    /\[url\]([\s\S]*?)\[\/url\]/gi,
+    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline">$1</a>'
+  )
+  html = html.replace(
+    /\[img\]([\s\S]*?)\[\/img\]/gi,
+    '<div class="my-4 flex justify-center"><img src="$1" class="max-w-full h-auto rounded-xl shadow-md border border-gray-100 dark:border-zinc-800" /></div>'
+  )
+
+  // Blockquote / code block
+  html = html.replace(
+    /\[quote\]([\s\S]*?)\[\/quote\]/gi,
+    '<blockquote class="border-l-4 border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900/50 p-4 my-4 italic rounded-r text-zinc-650 dark:text-zinc-400">$1</blockquote>'
+  )
+  html = html.replace(
+    /\[code\]([\s\S]*?)\[\/code\]/gi,
+    '<pre class="bg-gray-100 dark:bg-zinc-900 p-4 rounded-lg overflow-x-auto font-mono text-xs my-4 border border-gray-200 dark:border-zinc-800">$1</pre>'
+  )
+
+  // Convert newlines to br
+  html = html.replace(/\n/g, '<br>')
+
+  return html
+}
+
+const parsedContentHtml = computed(() => {
+  if (post.value.content) {
+    return parseBBCode(post.value.content)
+  }
+  return ''
+})
+
+// Mapped comments for UI list
+const mappedComments = computed(() => {
+  return comments.value.map((c) => ({
+    id: c.id,
+    author: c.author_name || 'Thành viên',
+    avatar:
+      c.avatar_url ||
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
+    date: new Date(c.created_at).toLocaleString('vi-VN'),
+    content: c.content
+  }))
 })
 
 // Popular posts for sidebar
-const popularSidebarPosts = computed(() => {
-  return [...mockPosts].sort((a, b) => b.views - a.views).slice(0, 5)
-})
+const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
+  blogRepository.getPosts({ limit: 5 })
+)
+const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
 // Comments State
-interface Comment {
-  id: number
-  author: string
-  avatar: string
-  date: string
-  content: string
-  likes: number
-}
-
-const comments = ref<Comment[]>([
-  {
-    id: 1,
-    author: 'Hoàng Long',
-    avatar:
-      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
-    date: '3 giờ trước',
-    content:
-      'Bài viết phân tích rất chi tiết và khách quan. Mình cũng đang tính gom lúa để lên đời sản phẩm này, hy vọng sẽ đúng như kỳ vọng.',
-    likes: 8
-  },
-  {
-    id: 2,
-    author: 'Minh Thư',
-    avatar:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80',
-    date: '1 giờ trước',
-    content:
-      'Thiết kế đẹp thực sự, nhìn rất cao cấp. Mong là bản thương mại chính thức tại Việt Nam sẽ giữ nguyên được cấu hình và các ưu đãi quà tặng.',
-    likes: 3
-  }
-])
-
-const newCommentAuthor = ref('')
 const newCommentContent = ref('')
 const isCommentSubmitting = ref(false)
 
-const handleAddComment = () => {
-  if (!newCommentAuthor.value.trim() || !newCommentContent.value.trim()) {
-    alert('Vui lòng nhập tên và nội dung bình luận!')
+const handleAddComment = async () => {
+  if (!userStore.isAuthenticated) {
+    alert('Vui lòng đăng nhập trước khi bình luận!')
+    return
+  }
+
+  if (!newCommentContent.value.trim()) {
+    alert('Vui lòng nhập nội dung bình luận!')
     return
   }
 
   isCommentSubmitting.value = true
 
-  setTimeout(() => {
-    comments.value.unshift({
-      id: Date.now(),
-      author: newCommentAuthor.value,
-      avatar:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&h=80&q=80',
-      date: 'Vừa xong',
-      content: newCommentContent.value,
-      likes: 0
-    })
-
-    newCommentContent.value = ''
+  try {
+    const newComment = await blogRepository.submitComment(post.value.id, newCommentContent.value)
+    if (newComment) {
+      comments.value.unshift(newComment)
+      newCommentContent.value = ''
+    } else {
+      alert('Không thể gửi bình luận. Vui lòng kiểm tra lại trạng thái đăng nhập.')
+    }
+  } catch (e) {
+    console.error(e)
+    alert('Có lỗi xảy ra khi gửi bình luận!')
+  } finally {
     isCommentSubmitting.value = false
-  }, 600)
+  }
 }
 
-// Like Comment
-const handleLikeComment = (id: number) => {
-  const comment = comments.value.find((c) => c.id === id)
-  if (comment) {
-    comment.likes++
-  }
+// Local Likes Tracker
+const commentLikes = ref<Record<string | number, number>>({})
+const handleLikeComment = (id: string | number) => {
+  commentLikes.value[id] = (commentLikes.value[id] || 0) + 1
 }
 
 // Share status
@@ -355,7 +266,7 @@ const handleSubscribe = () => {
           <!-- Back button -->
           <NuxtLink
             to="/"
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-550 dark:text-zinc-400 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors group mb-2"
+            class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-555 dark:text-zinc-400 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors group mb-2"
           >
             <ArrowLeft class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             Quay lại trang chủ
@@ -409,27 +320,9 @@ const handleSubscribe = () => {
 
           <!-- Post Content Body -->
           <div
-            class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6"
-          >
-            <p
-              class="text-base font-semibold text-zinc-900 dark:text-white leading-relaxed first-letter:text-4xl first-letter:font-black first-letter:float-left first-letter:mr-2"
-            >
-              {{ postContent.intro }}
-            </p>
-
-            <p>{{ postContent.paragraphs[0] }}</p>
-
-            <!-- Pull Quote Block -->
-            <blockquote
-              class="border-l-4 border-[#3498db] dark:border-[#e74c3c] bg-gray-100 dark:bg-zinc-900 p-5 rounded-r-xl my-6 italic text-zinc-700 dark:text-zinc-300 font-medium"
-            >
-              "{{ postContent.quote }}"
-            </blockquote>
-
-            <p>{{ postContent.paragraphs[1] }}</p>
-            <p>{{ postContent.paragraphs[2] }}</p>
-            <p>{{ postContent.conclusion }}</p>
-          </div>
+            class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
+            v-html="parsedContentHtml"
+          ></div>
 
           <!-- Sharing Actions -->
           <div
@@ -474,28 +367,23 @@ const handleSubscribe = () => {
               class="text-lg font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-2"
             >
               <MessageSquare class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" />
-              Bình luận ({{ comments.length }})
+              Bình luận ({{ mappedComments.length }})
             </h3>
 
-            <!-- Comment Form -->
+            <!-- Comment Form (Shown only if authenticated) -->
             <form
+              v-if="userStore.isAuthenticated"
               @submit.prevent="handleAddComment"
               class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4"
             >
               <span
-                class="text-xs font-bold text-zinc-700 dark:text-zinc-300 flex items-center gap-1"
+                class="text-xs font-bold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5"
               >
-                <Sparkles class="w-4 h-4 text-[#f1c40f]" /> Gửi ý kiến của bạn
+                <Sparkles class="w-4 h-4 text-[#f1c40f]" />
+                Gửi ý kiến của bạn (Bình luận dưới tên:
+                <strong class="text-[#3498db]">{{ userStore.username }}</strong
+                >)
               </span>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  v-model="newCommentAuthor"
-                  type="text"
-                  placeholder="Tên của bạn..."
-                  class="w-full text-xs px-4 py-2.5 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
-                  required
-                />
-              </div>
               <textarea
                 v-model="newCommentContent"
                 placeholder="Nhập nội dung bình luận ở đây..."
@@ -513,10 +401,26 @@ const handleSubscribe = () => {
               </button>
             </form>
 
+            <!-- Login Prompt (Shown if not authenticated) -->
+            <div
+              v-else
+              class="bg-blue-50 dark:bg-zinc-900/60 p-6 rounded-2xl border border-dashed border-blue-200 dark:border-zinc-800 text-center space-y-3"
+            >
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                Bạn cần đăng nhập để gửi ý kiến phản hồi về bài viết này.
+              </p>
+              <NuxtLink
+                to="/login"
+                class="inline-block px-5 py-2.5 bg-[#3498db] hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
+              >
+                Đăng nhập ngay
+              </NuxtLink>
+            </div>
+
             <!-- Comments List -->
             <div class="space-y-4">
               <div
-                v-for="c in comments"
+                v-for="c in mappedComments"
                 :key="c.id"
                 class="flex gap-4 p-5 rounded-2xl bg-white dark:bg-zinc-900/50 border border-gray-150 dark:border-zinc-900 transition-all duration-300"
               >
@@ -530,7 +434,7 @@ const handleSubscribe = () => {
                     <h5 class="text-xs font-bold text-zinc-900 dark:text-white">{{ c.author }}</h5>
                     <span class="text-[10px] text-zinc-400">{{ c.date }}</span>
                   </div>
-                  <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">
                     {{ c.content }}
                   </p>
 
@@ -539,7 +443,7 @@ const handleSubscribe = () => {
                       @click="handleLikeComment(c.id)"
                       class="text-[10px] font-bold text-zinc-500 hover:text-red-500 transition-colors flex items-center gap-1 cursor-pointer"
                     >
-                      👍 Thích ({{ c.likes }})
+                      👍 Thích ({{ commentLikes[c.id] || 0 }})
                     </button>
                   </div>
                 </div>
@@ -592,7 +496,7 @@ const handleSubscribe = () => {
             <h4 class="text-base font-black uppercase tracking-tight relative z-10">
               Bản tin TechDeal
             </h4>
-            <p class="text-xs text-zinc-200 leading-relaxed relative z-10">
+            <p class="text-xs text-zinc-200 relative z-10">
               Đăng ký nhận thông tin công nghệ, game và khuyến mãi sớm nhất từ tòa soạn của chúng
               tôi.
             </p>
@@ -619,7 +523,7 @@ const handleSubscribe = () => {
         <h3 class="text-xl font-black uppercase text-zinc-900 dark:text-white tracking-tight">
           📚 Bài viết liên quan
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div
             v-for="rp in relatedPosts"
             :key="rp.id"
@@ -634,7 +538,7 @@ const handleSubscribe = () => {
                 />
               </NuxtLink>
             </div>
-            <div class="p-5 flex-grow flex flex-col justify-between">
+            <div class="p-4 flex-grow flex flex-col justify-between">
               <div>
                 <span
                   class="text-[9px] font-extrabold uppercase tracking-wider text-[#3498db] mb-2 inline-block"
@@ -642,13 +546,13 @@ const handleSubscribe = () => {
                   {{ rp.category }}
                 </span>
                 <h4
-                  class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
+                  class="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
                 >
                   <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
                 </h4>
               </div>
               <div
-                class="flex items-center justify-between text-[10px] text-zinc-500 pt-3 mt-4 border-t border-gray-100 dark:border-zinc-850/50"
+                class="flex items-center justify-between text-[9px] text-zinc-500 pt-2.5 mt-3 border-t border-gray-100 dark:border-zinc-850/50"
               >
                 <span>{{ rp.publishDate }}</span>
                 <span class="text-red-500 dark:text-red-400 font-medium">👁️ {{ rp.views }}</span>

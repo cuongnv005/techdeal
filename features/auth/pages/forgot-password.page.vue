@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import { Mail, ArrowLeft, ArrowRight } from 'lucide-vue-next'
 
 const email = ref('')

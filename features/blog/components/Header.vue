@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import { Search, Menu } from 'lucide-vue-next'
+
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()

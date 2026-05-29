@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Eye,
   BookOpen,
@@ -9,6 +10,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-vue-next'
+
 import type { StatItem, ChartDataPoint } from '../types/dashboard.type'
 
 interface Props {

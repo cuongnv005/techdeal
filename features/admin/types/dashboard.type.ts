@@ -19,6 +19,7 @@ export interface PostItem {
   publishDate: string
   views: number
   comments: number
+  status: 'pending' | 'published' | 'unpublished'
 }
 
 export interface CommentItem {
