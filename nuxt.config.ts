@@ -162,7 +162,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: process.env['NITRO_PRESET'] as any || 'vercel',
+    preset: (process.env['NITRO_PRESET'] as any) || 'vercel',
     routeRules: {
       '/blog/**': { ssr: true }
     }

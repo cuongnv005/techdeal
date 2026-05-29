@@ -94,7 +94,7 @@ const handleSearch = () => {
       <HomeHero :featured-big-post="featuredBigPost" :featured-small-posts="featuredSmallPosts" />
 
       <!-- AD BANNER BLOCK -->
-      <AdBanner width="970px" height="90px" />
+      <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
       <!-- GRID LAYOUT: MAIN LIST vs SIDEBAR -->
       <div class="grid grid-cols-1 lg:grid-cols-10 gap-8 mt-6">
@@ -117,7 +117,7 @@ const handleSearch = () => {
 
           <!-- Bottom Ad Banner -->
           <div class="mt-8">
-            <AdBanner width="728px" height="90px" />
+            <AdBanner width="728px" height="90px" :is-google-ad="true" />
           </div>
         </div>
 

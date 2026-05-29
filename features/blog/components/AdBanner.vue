@@ -19,6 +19,7 @@ const props = withDefaults(
   }
 )
 const adClientId = import.meta.env.VITE_AD_CLIENT_ID || 'ca-pub-3940256099942544'
+const isDevMode = import.meta.env.VITE_DEV_MODE === 'develop'
 
 onMounted(() => {
   if (props.isGoogleAd) {
@@ -58,8 +59,9 @@ onMounted(() => {
         data-full-width-responsive="true"
       ></ins>
 
-      <!-- Mock Banner Fallback displayed when Google Ads is unfilled or blocked -->
+      <!-- Mock Banner Fallback displayed when Google Ads is unfilled or blocked (only in dev mode) -->
       <div
+        v-if="isDevMode"
         class="ad-mock-fallback absolute inset-0 bg-gray-200/80 dark:bg-zinc-800/80 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-100"
       >
         <div class="text-center p-4">

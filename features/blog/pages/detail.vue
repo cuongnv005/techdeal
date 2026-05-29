@@ -19,6 +19,7 @@ import {
 
 import { blogRepository, type ApiComment } from '../api/blog'
 import Header from '../components/Header.vue'
+import AdBanner from '../components/AdBanner.vue'
 
 import type { BlogPost } from '../types/post.type'
 
@@ -454,6 +455,9 @@ const handleSubscribe = () => {
 
         <!-- Right Column: Sidebar (4 cols) -->
         <aside class="lg:col-span-4 space-y-8">
+          <!-- Sidebar Ad Banner -->
+          <AdBanner width="300px" height="250px" :is-google-ad="true" slot-id="sidebar-ad" ad-format="rectangle" />
+
           <!-- Popular news widget -->
           <div
             class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
