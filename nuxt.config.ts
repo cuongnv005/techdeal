@@ -165,11 +165,6 @@ export default defineNuxtConfig({
     routeRules: {
       '/blog/**': { ssr: true }
     },
-    // CRITICAL: Prevent Rollup from trying to parse .vue files in the server bundle
-    // Sentry's rollup plugin scans all source files including Vue components
-    rollupConfig: {
-      external: (id: string) => id.endsWith('.vue')
-    }
   },
 
   sentry: {
@@ -180,5 +175,9 @@ export default defineNuxtConfig({
 
   sourcemap: {
     client: 'hidden'
-  }
+  },
+  components: [
+    { path: '~/shared/ui', prefix: 'Ui' },
+    '~/components'
+  ],
 })
