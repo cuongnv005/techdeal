@@ -27,16 +27,6 @@ useHead({
       rel: 'stylesheet',
       href: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/themes/default.min.css'
     }
-  ],
-  script: [
-    {
-      src: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js',
-      defer: true
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/formats/bbcode.js',
-      defer: true
-    }
   ]
 })
 
@@ -127,16 +117,48 @@ const initEditor = () => {
   }
 }
 
+const loadScript = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (typeof document === 'undefined') {
+      resolve()
+      return
+    }
+    const existing = document.querySelector(`script[src="${src}"]`)
+    if (existing) {
+      resolve()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = src
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`))
+    document.head.appendChild(script)
+  })
+}
+
 // Check and wait for SCEditor scripts load
 let scriptCheckTimer: any = null
-onMounted(() => {
-  scriptCheckTimer = setInterval(() => {
+onMounted(async () => {
+  try {
+    await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js')
+    await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/formats/bbcode.js')
+    
+    // Check if sceditor is fully initialized
     // @ts-ignore
     if (window.sceditor && window.sceditor.formats && window.sceditor.formats.bbcode) {
-      clearInterval(scriptCheckTimer)
       initEditor()
+    } else {
+      scriptCheckTimer = setInterval(() => {
+        // @ts-ignore
+        if (window.sceditor && window.sceditor.formats && window.sceditor.formats.bbcode) {
+          clearInterval(scriptCheckTimer)
+          initEditor()
+        }
+      }, 100)
     }
-  }, 100)
+  } catch (err) {
+    console.error('Failed to load SCEditor scripts dynamically:', err)
+  }
 
   // Start auto-save timer (every 1 minute)
   autoSaveTimer = setInterval(triggerAutoSave, 60000)
