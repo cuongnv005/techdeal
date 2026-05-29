@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useUserStore } from '@stores/user'
+
+const userStore = useUserStore()
+userStore.initializeAuth()
+</script>
 
 <template>
   <nuxt-layout>
