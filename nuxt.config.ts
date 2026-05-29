@@ -85,9 +85,6 @@ export default defineNuxtConfig({
 
   ssr: true,
 
-  // work when ssr: false
-  spaLoadingTemplate: './app-loading.html',
-
   css: ['~/assets/styles/index.scss', '~/assets/styles/tailwind.css'],
 
   modules: [
@@ -104,6 +101,7 @@ export default defineNuxtConfig({
     prefix: '',
     componentDir: '@shared/ui'
   },
+
   site: {
     url: process.env['APP_URL'] || '',
     name: process.env['APP_NAME'] || ''
@@ -121,7 +119,6 @@ export default defineNuxtConfig({
         } as any
       }
     },
-
     plugins: [tailwindcss()]
   },
 
@@ -136,8 +133,6 @@ export default defineNuxtConfig({
     strict: true,
     tsConfig: {}
   },
-
-  build: {},
 
   devServer: {
     host: '0.0.0.0',
@@ -166,13 +161,7 @@ export default defineNuxtConfig({
     }
   },
 
-  // Nitro: force /blog/** to be treated as app routes (not static files)
-  // This prevents Nitro from interpreting ".id" suffix as a file extension
   nitro: {
-    // Use NITRO_PRESET env var to override (e.g. cloudflare-pages)
-    // Vercel auto-detects via VERCEL=1 env var
-    // Local dev uses node-server (set in .env)
-    preset: (process.env['NITRO_PRESET'] as any) || 'node-server',
     routeRules: {
       '/blog/**': { ssr: true }
     },
@@ -186,11 +175,10 @@ export default defineNuxtConfig({
   sentry: {
     org: 'bekisoft-40',
     project: 'javascript-nuxt',
-    // Disable auto server-side instrumentation to avoid Rollup parsing .vue files
     autoInjectServerSentry: 'top-level-import'
   },
 
   sourcemap: {
     client: 'hidden'
   }
-}) // Hot reload trigger for new routes
+})
