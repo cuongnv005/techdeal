@@ -174,8 +174,14 @@ export default defineNuxtConfig({
     preset: (process.env['NITRO_PRESET'] as any) || 'cloudflare-pages',
     routeRules: {
       '/blog/**': { ssr: true }
+    },
+    // CRITICAL: Prevent Rollup from trying to parse .vue files in the server bundle
+    // Sentry's rollup plugin scans all source files including Vue components
+    rollupConfig: {
+      external: (id: string) => id.endsWith('.vue')
     }
   },
+
 
   sentry: {
     org: 'bekisoft-40',
