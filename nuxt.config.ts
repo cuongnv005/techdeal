@@ -72,6 +72,13 @@ export default defineNuxtConfig({
           crossorigin: 'anonymous'
         },
         { rel: 'shortcut icon', href: '/favicon.ico' }
+      ],
+      script: [
+        {
+          src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env['VITE_AD_CLIENT_ID'] || 'ca-pub-3940256099942544'}`,
+          async: true,
+          crossorigin: 'anonymous'
+        }
       ]
     },
     pageTransition: { name: 'page', mode: 'out-in' }
@@ -153,6 +160,21 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-11-04',
 
+  // Allow dots (.) in dynamic route params - needed for /blog/{slug}.{id} URL format
+  router: {
+    options: {
+      strict: false
+    }
+  },
+
+  // Nitro: force /blog/** to be treated as app routes (not static files)
+  // This prevents Nitro from interpreting ".id" suffix as a file extension
+  nitro: {
+    routeRules: {
+      '/blog/**': { ssr: true }
+    }
+  },
+
   sentry: {
     org: 'bekisoft-40',
     project: 'javascript-nuxt'
@@ -161,4 +183,4 @@ export default defineNuxtConfig({
   sourcemap: {
     client: 'hidden'
   }
-})
+}) // Hot reload trigger for new routes

@@ -2,7 +2,7 @@
 import LoginPage from '@features/auth/pages/login.page.vue'
 
 useSeoMeta({
-  title: 'Login',
+  title: 'Đăng nhập tài khoản - TechDeal',
   robots: 'noindex, nofollow'
 })
 </script>

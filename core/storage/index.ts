@@ -19,7 +19,7 @@ class StorageService implements IStorageAdapter {
   getStorage(key: string): string | null {
     switch (this.type) {
       case 'cookie':
-        return Cookies.get(key)
+        return Cookies.get(key) || null
       case 'storage':
         return localStorage.getItem(key)
       case 'session':

@@ -1,5 +1,4 @@
-import type { AxiosResponse } from 'axios'
-import axios, { type AxiosError, type AxiosInstance } from 'axios'
+import axios, { type AxiosError, type AxiosInstance, type AxiosResponse } from 'axios'
 
 interface HttpErrorPayload {
   message?: string
