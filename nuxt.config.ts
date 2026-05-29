@@ -174,7 +174,7 @@ export default defineNuxtConfig({
     preset: (process.env['NITRO_PRESET'] as any) || 'cloudflare-pages',
     routeRules: {
       '/blog/**': { ssr: true }
-    },
+    }
   },
 
   sentry: {

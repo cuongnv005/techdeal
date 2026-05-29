@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ThemeToggle from '../shared/ui/ThemeToggle.vue'
+import ThemeToggle from '@shared/ui/ThemeToggle.vue'
 </script>
 
 <template>
