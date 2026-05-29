@@ -1,7 +1,9 @@
+import { useUserStore } from '@stores/user'
 import { AdminRepoImpl } from '../api/dashboard'
 
 export async function useAdminStats() {
   const adminRepo = new AdminRepoImpl()
+  const userStore = useUserStore()
 
   const {
     data: stats,
@@ -11,12 +13,15 @@ export async function useAdminStats() {
   } = await useAsyncData(
     'admin-stats',
     async () => {
+      if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
+        return { overview: [], weekly: [], monthly: [] }
+      }
       const overview = await adminRepo.getOverviewStats()
       const weekly = await adminRepo.getWeeklyChartData()
       const monthly = await adminRepo.getMonthlyChartData()
       return { overview, weekly, monthly }
     },
-    { server: true, default: () => ({ overview: [], weekly: [], monthly: [] }) }
+    { server: false, default: () => ({ overview: [], weekly: [], monthly: [] }) }
   )
 
   return { stats, isLoadingStats, statsError, refreshStats }
@@ -24,6 +29,7 @@ export async function useAdminStats() {
 
 export async function useAdminPosts() {
   const adminRepo = new AdminRepoImpl()
+  const userStore = useUserStore()
 
   const {
     data: posts,
@@ -33,9 +39,12 @@ export async function useAdminPosts() {
   } = await useAsyncData(
     'admin-posts',
     async () => {
+      if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
+        return []
+      }
       return await adminRepo.getPosts()
     },
-    { server: true, default: () => [] }
+    { server: false, default: () => [] }
   )
 
   const deletePost = async (id: string) => {
@@ -48,6 +57,7 @@ export async function useAdminPosts() {
 
 export async function useAdminComments() {
   const adminRepo = new AdminRepoImpl()
+  const userStore = useUserStore()
 
   const {
     data: comments,
@@ -57,9 +67,12 @@ export async function useAdminComments() {
   } = await useAsyncData(
     'admin-comments',
     async () => {
+      if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
+        return []
+      }
       return await adminRepo.getComments()
     },
-    { server: true, default: () => [] }
+    { server: false, default: () => [] }
   )
 
   const deleteComment = async (id: string) => {
@@ -72,6 +85,7 @@ export async function useAdminComments() {
 
 export async function useAdminUsers() {
   const adminRepo = new AdminRepoImpl()
+  const userStore = useUserStore()
 
   const {
     data: users,
@@ -81,9 +95,12 @@ export async function useAdminUsers() {
   } = await useAsyncData(
     'admin-users',
     async () => {
+      if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
+        return []
+      }
       return await adminRepo.getUsers()
     },
-    { server: true, default: () => [] }
+    { server: false, default: () => [] }
   )
 
   const updateUserRole = async (id: string, role: 'admin' | 'mod' | 'user') => {

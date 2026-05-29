@@ -42,7 +42,10 @@ const viewPoints = computed(() => {
 
   return data
     .map((d, index) => {
-      const x = padding + (index / (data.length - 1)) * (svgWidth - padding * 2)
+      const x =
+        data.length === 1
+          ? padding + (svgWidth - padding * 2) / 2
+          : padding + (index / (data.length - 1)) * (svgWidth - padding * 2)
       const y = svgHeight - padding - (d.views / maxViews) * (svgHeight - padding * 2)
       return `${x},${y}`
     })
@@ -236,7 +239,7 @@ const getColorClass = (label: string) => {
             <text
               v-for="(d, idx) in activeChartData"
               :key="idx"
-              :x="padding + (idx / (activeChartData.length - 1)) * (svgWidth - padding * 2)"
+              :x="activeChartData.length === 1 ? padding + (svgWidth - padding * 2) / 2 : padding + (idx / (activeChartData.length - 1)) * (svgWidth - padding * 2)"
               :y="svgHeight - 15"
               text-anchor="middle"
               class="text-[10px] font-semibold fill-zinc-500"
