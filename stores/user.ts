@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
+import { useCookie } from '#app'
 
 import { HttpService } from '@core/api/service'
-import { CookieStorage } from '@core/storage'
 
 interface UserState {
   id: string | null
@@ -31,24 +31,27 @@ export const useUserStore = defineStore('user', {
 
   actions: {
     initializeAuth() {
-      if (process.client) {
-        const token = CookieStorage.getStorage('token')
-        const savedUser = CookieStorage.getStorage('user_info')
-        if (token && savedUser) {
-          try {
-            const parsed = JSON.parse(savedUser)
-            this.id = parsed.id
-            this.username = parsed.username
-            this.email = parsed.email
-            this.role = parsed.role
-            this.isAuthenticated = true
-            // Set header cho HttpService Axios instance
+      const tokenCookie = useCookie<string | null>('token')
+      const userCookie = useCookie<any>('user_info')
+      const token = tokenCookie.value
+      const savedUser = userCookie.value
+
+      if (token && savedUser) {
+        try {
+          const parsed = typeof savedUser === 'string' ? JSON.parse(savedUser) : savedUser
+          this.id = parsed.id
+          this.username = parsed.username
+          this.email = parsed.email
+          this.role = parsed.role
+          this.isAuthenticated = true
+          
+          if (process.client) {
             HttpService.setHeaders({
               Authorization: `Bearer ${token}`
             })
-          } catch (e) {
-            this.logout()
           }
+        } catch (e) {
+          this.logout()
         }
       }
     },
@@ -63,9 +66,12 @@ export const useUserStore = defineStore('user', {
       this.role = user.role
       this.isAuthenticated = true
 
+      const tokenCookie = useCookie('token', { maxAge: 60 * 60 * 24 * 7 })
+      const userCookie = useCookie('user_info', { maxAge: 60 * 60 * 24 * 7 })
+      tokenCookie.value = token
+      userCookie.value = JSON.stringify(user)
+
       if (process.client) {
-        CookieStorage.setStorage('token', token)
-        CookieStorage.setStorage('user_info', JSON.stringify(user))
         HttpService.setHeaders({
           Authorization: `Bearer ${token}`
         })
@@ -79,9 +85,12 @@ export const useUserStore = defineStore('user', {
       this.role = null
       this.isAuthenticated = false
 
+      const tokenCookie = useCookie('token')
+      const userCookie = useCookie('user_info')
+      tokenCookie.value = null
+      userCookie.value = null
+
       if (process.client) {
-        CookieStorage.deleteStorage('token')
-        CookieStorage.deleteStorage('user_info')
         HttpService.setHeaders({})
       }
     }

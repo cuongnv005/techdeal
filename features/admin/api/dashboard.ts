@@ -1,3 +1,4 @@
+import type { AxiosResponse } from 'axios'
 import type {
   StatItem,
   ChartDataPoint,
@@ -76,10 +77,14 @@ interface WorkerUser {
 export class AdminRepoImpl implements AdminRepository {
   async getOverviewStats(): Promise<StatItem[]> {
     try {
-      const response = await HttpService.get<unknown, ApiResponse<WorkerStatsOverview>>(
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerStatsOverview>>>(
         '/admin/stats/overview'
       )
-      const stats = response.data
+      const stats = response.data?.data
+      if (!stats || typeof stats !== 'object' || !('total_published_posts' in stats)) {
+        console.error('getOverviewStats: response.data.data is not a valid stats object', stats)
+        throw new Error('Invalid overview stats format')
+      }
       return [
         {
           label: 'Tổng lượt xem bài viết',
@@ -109,10 +114,15 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getWeeklyChartData(): Promise<ChartDataPoint[]> {
     try {
-      const response = await HttpService.get<unknown, ApiResponse<WorkerChartPoint[]>>(
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerChartPoint[]>>>(
         '/admin/stats/chart'
       )
-      return response.data.map((item) => ({
+      const list = response.data?.data
+      if (!Array.isArray(list)) {
+        console.error('getWeeklyChartData: response.data.data is not an array', list)
+        return []
+      }
+      return list.map((item) => ({
         label: item.view_date,
         views: item.total_views,
         posts: 0
@@ -130,8 +140,13 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getPosts(): Promise<PostItem[]> {
     try {
-      const response = await HttpService.get<unknown, ApiResponse<WorkerPost[]>>('/admin/posts')
-      return response.data.map((post) => ({
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerPost[]>>>('/admin/posts')
+      const list = response.data?.data
+      if (!Array.isArray(list)) {
+        console.error('getPosts: response.data.data is not an array', list)
+        return []
+      }
+      return list.map((post) => ({
         id: post.id,
         title: post.title,
         author: post.author_name,
@@ -153,10 +168,15 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getComments(): Promise<CommentItem[]> {
     try {
-      const response = await HttpService.get<unknown, ApiResponse<WorkerComment[]>>(
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerComment[]>>>(
         '/admin/comments'
       )
-      return response.data.map((comment) => ({
+      const list = response.data?.data
+      if (!Array.isArray(list)) {
+        console.error('getComments: response.data.data is not an array', list)
+        return []
+      }
+      return list.map((comment) => ({
         id: comment.id,
         content: comment.content,
         author: comment.author_name,
@@ -175,8 +195,13 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getUsers(): Promise<UserItem[]> {
     try {
-      const response = await HttpService.get<unknown, ApiResponse<WorkerUser[]>>('/admin/users')
-      return response.data.map((user) => ({
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerUser[]>>>('/admin/users')
+      const list = response.data?.data
+      if (!Array.isArray(list)) {
+        console.error('getUsers: response.data.data is not an array', list)
+        return []
+      }
+      return list.map((user) => ({
         id: user.id,
         username: user.username,
         email: user.email,

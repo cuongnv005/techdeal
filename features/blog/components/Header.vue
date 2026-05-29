@@ -163,43 +163,45 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
         </form>
 
         <!-- Auth buttons -->
-        <div
-          class="hidden sm:flex items-center gap-3 border-l pl-3 border-gray-200 dark:border-zinc-800"
-        >
-          <template v-if="userStore.isAuthenticated">
-            <span class="text-xs font-semibold text-zinc-550 dark:text-zinc-400">
-              Chào,
-              <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
-            </span>
-            <NuxtLink
-              v-if="userStore.role === 'admin' || userStore.role === 'mod'"
-              to="/admin/dashboard"
-              class="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
-            >
-              Dashboard
-            </NuxtLink>
-            <button
-              @click="handleLogout"
-              class="text-xs font-bold text-zinc-550 hover:text-red-500 transition-colors cursor-pointer"
-            >
-              Đăng xuất
-            </button>
-          </template>
-          <template v-else>
-            <NuxtLink
-              to="/login"
-              class="text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-colors"
-              :class="textHoverClass"
-              >Đăng nhập</NuxtLink
-            >
-            <NuxtLink
-              to="/register"
-              class="text-xs font-bold text-white px-3.5 py-1.5 rounded-full transition-colors"
-              :class="[bgPrimaryClass, bgHoverClass]"
-              >Đăng ký</NuxtLink
-            >
-          </template>
-        </div>
+        <ClientOnly>
+          <div
+            class="hidden sm:flex items-center gap-3 border-l pl-3 border-gray-200 dark:border-zinc-800"
+          >
+            <template v-if="userStore.isAuthenticated">
+              <span class="text-xs font-semibold text-zinc-550 dark:text-zinc-400">
+                Chào,
+                <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+              </span>
+              <NuxtLink
+                v-if="userStore.role === 'admin' || userStore.role === 'mod'"
+                to="/admin/dashboard"
+                class="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
+              >
+                Dashboard
+              </NuxtLink>
+              <button
+                @click="handleLogout"
+                class="text-xs font-bold text-zinc-550 hover:text-red-500 transition-colors cursor-pointer"
+              >
+                Đăng xuất
+              </button>
+            </template>
+            <template v-else>
+              <NuxtLink
+                to="/login"
+                class="text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-colors"
+                :class="textHoverClass"
+                >Đăng nhập</NuxtLink
+              >
+              <NuxtLink
+                to="/register"
+                class="text-xs font-bold text-white px-3.5 py-1.5 rounded-full transition-colors"
+                :class="[bgPrimaryClass, bgHoverClass]"
+                >Đăng ký</NuxtLink
+              >
+            </template>
+          </div>
+        </ClientOnly>
         <button
           @click="isSidebarOpen = true"
           class="lg:hidden text-zinc-700 dark:text-white focus:outline-none"
@@ -335,52 +337,54 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             </div>
 
             <!-- Mobile Auth / Bottom section -->
-            <div
-              class="mt-8 pt-6 border-t"
-              :class="isBlue ? 'border-gray-100 dark:border-zinc-850' : 'border-gray-150 dark:border-zinc-800'"
-            >
-              <template v-if="userStore.isAuthenticated">
-                <div class="flex flex-col gap-4">
-                  <div class="text-sm">
-                    Chào,
-                    <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+            <ClientOnly>
+              <div
+                class="mt-8 pt-6 border-t"
+                :class="isBlue ? 'border-gray-100 dark:border-zinc-850' : 'border-gray-150 dark:border-zinc-800'"
+              >
+                <template v-if="userStore.isAuthenticated">
+                  <div class="flex flex-col gap-4">
+                    <div class="text-sm">
+                      Chào,
+                      <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+                    </div>
+                    <NuxtLink
+                      v-if="userStore.role === 'admin' || userStore.role === 'mod'"
+                      to="/admin/dashboard"
+                      class="text-sm font-bold text-center px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
+                      @click="isSidebarOpen = false"
+                    >
+                      Dashboard
+                    </NuxtLink>
+                    <button
+                      @click="handleLogout(); isSidebarOpen = false"
+                      class="text-sm font-bold text-center px-4 py-2.5 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-550/10 transition-colors cursor-pointer"
+                    >
+                      Đăng xuất
+                    </button>
                   </div>
-                  <NuxtLink
-                    v-if="userStore.role === 'admin' || userStore.role === 'mod'"
-                    to="/admin/dashboard"
-                    class="text-sm font-bold text-center px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
-                    @click="isSidebarOpen = false"
-                  >
-                    Dashboard
-                  </NuxtLink>
-                  <button
-                    @click="handleLogout(); isSidebarOpen = false"
-                    class="text-sm font-bold text-center px-4 py-2.5 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-550/10 transition-colors cursor-pointer"
-                  >
-                    Đăng xuất
-                  </button>
-                </div>
-              </template>
-              <template v-else>
-                <div class="flex flex-col gap-3">
-                  <NuxtLink
-                    to="/login"
-                    class="text-sm font-bold text-center py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors"
-                    @click="isSidebarOpen = false"
-                  >
-                    Đăng nhập
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/register"
-                    class="text-sm font-bold text-center text-white py-2.5 rounded-xl transition-colors"
-                    :class="[bgPrimaryClass, bgHoverClass]"
-                    @click="isSidebarOpen = false"
-                  >
-                    Đăng ký
-                  </NuxtLink>
-                </div>
-              </template>
-            </div>
+                </template>
+                <template v-else>
+                  <div class="flex flex-col gap-3">
+                    <NuxtLink
+                      to="/login"
+                      class="text-sm font-bold text-center py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors"
+                      @click="isSidebarOpen = false"
+                    >
+                      Đăng nhập
+                    </NuxtLink>
+                    <NuxtLink
+                      to="/register"
+                      class="text-sm font-bold text-center text-white py-2.5 rounded-xl transition-colors"
+                      :class="[bgPrimaryClass, bgHoverClass]"
+                      @click="isSidebarOpen = false"
+                    >
+                      Đăng ký
+                    </NuxtLink>
+                  </div>
+                </template>
+              </div>
+            </ClientOnly>
           </div>
         </div>
       </div>

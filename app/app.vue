@@ -10,6 +10,6 @@ userStore.initializeAuth()
     <nuxt-page />
   </nuxt-layout>
   <ClientOnly>
-    <LazyUiThemeToggle />
+    <UiThemeToggle />
   </ClientOnly>
 </template>

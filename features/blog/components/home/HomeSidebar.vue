@@ -100,7 +100,7 @@ defineProps<{
     <div
       class="bg-white dark:bg-zinc-900 p-3 rounded-xl border border-border shadow-sm flex flex-col items-center justify-center"
     >
-      <AdBanner width="300px" height="250px" />
+      <AdBanner width="300px" height="250px" :is-google-ad="true"/>
     </div>
 
     <!-- Hot categories list -->

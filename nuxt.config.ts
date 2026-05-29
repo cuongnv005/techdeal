@@ -161,11 +161,13 @@ export default defineNuxtConfig({
     }
   },
 
+  routeRules: {
+    '/blog/**': { ssr: true },
+    '/admin/**': { ssr: false }
+  },
+
   nitro: {
-    preset: (process.env['NITRO_PRESET'] as any) || 'vercel',
-    routeRules: {
-      '/blog/**': { ssr: true }
-    }
+    preset: (process.env['NITRO_PRESET'] as any) || 'vercel'
   },
 
   sentry: {
