@@ -1,8 +1,5 @@
 {
   "framework": "nuxtjs",
-  "buildCommand": "yarn build",
-  "installCommand": "yarn install",
-  "outputDirectory": ".output/public",
   "regions": ["sin1"],
   "headers": [
     {
