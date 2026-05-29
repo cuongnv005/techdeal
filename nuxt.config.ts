@@ -169,9 +169,10 @@ export default defineNuxtConfig({
   // Nitro: force /blog/** to be treated as app routes (not static files)
   // This prevents Nitro from interpreting ".id" suffix as a file extension
   nitro: {
-    // Use cloudflare-pages preset in production (Cloudflare Pages)
-    // Override with NITRO_PRESET=node-server for local dev
-    preset: (process.env['NITRO_PRESET'] as any) || 'cloudflare-pages',
+    // Use NITRO_PRESET env var to override (e.g. cloudflare-pages)
+    // Vercel auto-detects via VERCEL=1 env var
+    // Local dev uses node-server (set in .env)
+    preset: (process.env['NITRO_PRESET'] as any) || 'node-server',
     routeRules: {
       '/blog/**': { ssr: true }
     },
@@ -181,7 +182,6 @@ export default defineNuxtConfig({
       external: (id: string) => id.endsWith('.vue')
     }
   },
-
 
   sentry: {
     org: 'bekisoft-40',
