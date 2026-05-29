@@ -169,7 +169,9 @@ export default defineNuxtConfig({
   // Nitro: force /blog/** to be treated as app routes (not static files)
   // This prevents Nitro from interpreting ".id" suffix as a file extension
   nitro: {
-    preset: (process.env['NITRO_PRESET'] as any) || 'node-server',
+    // Use cloudflare-pages preset in production (Cloudflare Pages)
+    // Override with NITRO_PRESET=node-server for local dev
+    preset: (process.env['NITRO_PRESET'] as any) || 'cloudflare-pages',
     routeRules: {
       '/blog/**': { ssr: true }
     },
