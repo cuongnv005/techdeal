@@ -1,8 +1,0 @@
-# Cloudflare Pages configuration
-name = "techdeal"
-pages_build_output_dir = "dist"   
-compatibility_date = "2026-05-29"
-
-# Enable Node.js compatibility - required for Nuxt SSR on Cloudflare Pages
-# Without this flag, the worker crashes with 500 errors due to missing Node.js APIs
-compatibility_flags = ["nodejs_compat"]
