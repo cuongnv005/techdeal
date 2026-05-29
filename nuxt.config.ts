@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import path from 'path'
 
 import tailwindcss from '@tailwindcss/vite'
@@ -170,15 +169,21 @@ export default defineNuxtConfig({
   // Nitro: force /blog/** to be treated as app routes (not static files)
   // This prevents Nitro from interpreting ".id" suffix as a file extension
   nitro: {
-    preset: process.env['NITRO_PRESET'] || 'node-server',
+    preset: (process.env['NITRO_PRESET'] as any) || 'node-server',
     routeRules: {
       '/blog/**': { ssr: true }
+    },
+    // Prevent Rollup from trying to parse .vue files in the server bundle
+    rollupConfig: {
+      external: (id: string) => id.endsWith('.vue')
     }
   },
 
   sentry: {
     org: 'bekisoft-40',
-    project: 'javascript-nuxt'
+    project: 'javascript-nuxt',
+    // Disable auto server-side instrumentation to avoid Rollup parsing .vue files
+    autoInjectServerSentry: 'top-level-import'
   },
 
   sourcemap: {
