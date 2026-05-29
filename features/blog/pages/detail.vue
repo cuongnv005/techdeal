@@ -19,6 +19,7 @@ import {
 
 import { blogRepository, type ApiComment } from '../api/blog'
 import Header from '../components/Header.vue'
+import AdBanner from '../components/AdBanner.vue'
 
 import type { BlogPost } from '../types/post.type'
 
@@ -360,6 +361,7 @@ const handleSubscribe = () => {
               </button>
             </div>
           </div>
+          <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
           <!-- Comments Section -->
           <div class="space-y-6 pt-6">
@@ -454,6 +456,15 @@ const handleSubscribe = () => {
 
         <!-- Right Column: Sidebar (4 cols) -->
         <aside class="lg:col-span-4 space-y-8">
+          <!-- Sidebar Ad Banner -->
+          <AdBanner
+            width="300px"
+            height="250px"
+            :is-google-ad="true"
+            slot-id="sidebar-ad"
+            ad-format="rectangle"
+          />
+
           <!-- Popular news widget -->
           <div
             class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
@@ -486,34 +497,6 @@ const handleSubscribe = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- Newsletter Banner -->
-          <div
-            class="bg-gradient-to-tr from-sky-600 to-indigo-900 dark:from-red-950 dark:to-zinc-900 p-6 rounded-2xl text-white space-y-4 shadow-md relative overflow-hidden"
-          >
-            <div class="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-white/5 blur-2xl"></div>
-            <h4 class="text-base font-black uppercase tracking-tight relative z-10">
-              Bản tin TechDeal
-            </h4>
-            <p class="text-xs text-zinc-200 relative z-10">
-              Đăng ký nhận thông tin công nghệ, game và khuyến mãi sớm nhất từ tòa soạn của chúng
-              tôi.
-            </p>
-            <form @submit.prevent="handleSubscribe" class="space-y-2 relative z-10">
-              <input
-                type="email"
-                placeholder="Nhập email của bạn..."
-                class="w-full text-xs px-4 py-2.5 rounded-xl bg-white/10 placeholder-zinc-300 text-white focus:outline-none border border-white/20 focus:border-white"
-                required
-              />
-              <button
-                type="submit"
-                class="w-full py-2.5 bg-white text-zinc-900 hover:bg-gray-100 transition-colors text-xs font-bold rounded-xl cursor-pointer shadow-xs"
-              >
-                Đăng ký ngay
-              </button>
-            </form>
           </div>
         </aside>
       </div>
@@ -561,6 +544,7 @@ const handleSubscribe = () => {
           </div>
         </div>
       </div>
+      <AdBanner width="970px" height="90px" :is-google-ad="true" />
     </div>
 
     <!-- Footer -->

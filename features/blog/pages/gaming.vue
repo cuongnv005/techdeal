@@ -137,7 +137,7 @@ const recentSidebarPosts = computed<BlogPost[]>(() => {
             />
 
             <!-- MID AD BANNER 2 -->
-            <AdBanner width="728px" height="90px" />
+            <AdBanner width="728px" height="90px" :is-google-ad="true" />
 
             <!-- POPULAR NEWS SECTION -->
             <div>
