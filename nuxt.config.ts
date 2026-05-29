@@ -175,10 +175,6 @@ export default defineNuxtConfig({
     routeRules: {
       '/blog/**': { ssr: true }
     },
-    // Prevent Rollup from trying to parse .vue files in the server bundle
-    rollupConfig: {
-      external: (id: string) => id.endsWith('.vue')
-    }
   },
 
   sentry: {
