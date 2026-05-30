@@ -324,6 +324,25 @@ const parseBBCode = (bbcode: string) => {
     return `<${tag}${attrib} style="list-style-type: ${listStyle}; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${listItems}</${tag}>`
   })
 
+  // Support [ul] and [ol] lists with [li]
+  html = html.replace(/\[ul\]([\s\S]*?)\[\/ul\]/gi, (match: string, content: string) => {
+    let ulContent = content.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, (liMatch: string, liContent: string) => {
+      return `<li style="list-style: inherit;">${liContent.trim()}</li>`
+    })
+    ulContent = ulContent.replace(/\s*\n\s*/g, '')
+    return `<ul style="list-style-type: disc; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${ulContent}</ul>`
+  })
+
+  html = html.replace(/\[ol\]([\s\S]*?)\[\/ol\]/gi, (match: string, content: string) => {
+    let olContent = content.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, (liMatch: string, liContent: string) => {
+      return `<li style="list-style: inherit;">${liContent.trim()}</li>`
+    })
+    olContent = olContent.replace(/\s*\n\s*/g, '')
+    return `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${olContent}</ol>`
+  })
+
+  html = html.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, '<li style="list-style: inherit;">$1</li>')
+
   // Font color and size
   html = html.replace(/\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1">$2</span>')
   html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
