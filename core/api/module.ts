@@ -22,6 +22,20 @@ class HttpModule {
 
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
+        // Handle custom success: false response from API for invalid/expired tokens
+        if (response?.data && response.data.success === false) {
+          const err = response.data.error || response.data.message
+          if (err === 'Token không hợp lệ hoặc đã hết hạn') {
+            if (process.client) {
+              import('@stores/user').then(({ useUserStore }) => {
+                const userStore = useUserStore()
+                userStore.logout()
+                window.location.reload()
+              })
+            }
+          }
+        }
+
         if (response?.status !== 200) {
           Toast.error({ message: response.data.message })
           if (response?.status === 404) {
@@ -29,9 +43,13 @@ class HttpModule {
           } else if (response?.status === 500) {
             showError({ statusCode: 500 })
           } else if (response?.status === 401) {
-            console.log('UNAUTHORIZED')
-            // StorageService.clearStorage()
-            // window.location.reload()
+            if (process.client) {
+              import('@stores/user').then(({ useUserStore }) => {
+                const userStore = useUserStore()
+                userStore.logout()
+                window.location.reload()
+              })
+            }
           }
         }
         return response
@@ -40,6 +58,15 @@ class HttpModule {
         const message: string | undefined = (error?.response?.data as HttpErrorPayload)?.message
         if (message) {
           Toast.error({ message })
+        }
+        if (error.response?.status === 401) {
+          if (process.client) {
+            import('@stores/user').then(({ useUserStore }) => {
+              const userStore = useUserStore()
+              userStore.logout()
+              window.location.reload()
+            })
+          }
         }
         return Promise.reject(error)
       }

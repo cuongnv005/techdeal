@@ -46,6 +46,7 @@ export interface GetPostsParams {
   page?: number
   limit?: number
   q?: string
+  title?: string
 }
 
 export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
@@ -56,6 +57,30 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     const imgMatch = post.content.match(/\[img\]([\s\S]*?)\[\/img\]/i)
     if (imgMatch && imgMatch[1]) {
       imageUrl = imgMatch[1].trim()
+    }
+  }
+
+  let summary = post.summary || ''
+  if (!summary && post.content) {
+    const prebreakIndex = post.content.indexOf('[prebreak]')
+    if (prebreakIndex !== -1) {
+      const rawSummary = post.content.substring(0, prebreakIndex).trim()
+      summary = rawSummary
+        .replace(/\[center\]/gi, '')
+        .replace(/\[\/center\]/gi, '')
+        .replace(/\[left\]/gi, '')
+        .replace(/\[\/left\]/gi, '')
+        .replace(/\[right\]/gi, '')
+        .replace(/\[\/right\]/gi, '')
+        .replace(/\[b\]/gi, '')
+        .replace(/\[\/b\]/gi, '')
+        .replace(/\[i\]/gi, '')
+        .replace(/\[\/i\]/gi, '')
+        .replace(/\[u\]/gi, '')
+        .replace(/\[\/u\]/gi, '')
+        .replace(/\[img\][\s\S]*?\[\/img\]/gi, '') // Remove img tags
+        .replace(/\s+/g, ' ') // Normalize spaces
+        .trim()
     }
   }
 
@@ -74,7 +99,7 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     views: post.views || 0,
     comments: post.comment_count || 0,
     imageUrl: imageUrl,
-    summary: post.summary || '',
+    summary: summary,
     slug: post.slug,
     content: post.content
   }
@@ -88,11 +113,46 @@ export class BlogRepository {
         params
       )
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
-        return response.data.data.map(mapApiPostToBlogPost)
+        const posts = response.data.data.map(mapApiPostToBlogPost)
+        // Parallel fetch details to enrich list items with image and summary from content
+        const enrichedPosts = await Promise.all(
+          posts.map(async (post) => {
+            try {
+              const detail = await this.getPostBySlug(post.slug)
+              if (detail && detail.post) {
+                return {
+                  ...post,
+                  imageUrl: detail.post.imageUrl,
+                  summary: detail.post.summary,
+                  content: detail.post.content
+                }
+              }
+            } catch (err) {
+              console.error(`Error enriching post ${post.slug}:`, err)
+            }
+            return post
+          })
+        )
+        return enrichedPosts
       }
       return []
     } catch (error) {
       console.error('Error fetching posts:', error)
+      return []
+    }
+  }
+
+  async getComments(postId: string): Promise<ApiComment[]> {
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiComment[]>>>(
+        `/posts/${postId}/comments`
+      )
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        return response.data.data
+      }
+      return []
+    } catch (error) {
+      console.error(`Error fetching comments for post ${postId}:`, error)
       return []
     }
   }
@@ -129,10 +189,20 @@ export class BlogRepository {
     try {
       const response = await HttpService.post<
         { content: string },
-        AxiosResponse<ApiResponse<ApiComment>>
+        AxiosResponse<ApiResponse<{ id: string }>>
       >(`/posts/${postId}/comments`, { content })
-      if (response.data && response.data.success) {
-        return response.data.data
+      if (response.data && response.data.success && response.data.data) {
+        const { useUserStore } = await import('@stores/user')
+        const userStore = useUserStore()
+        return {
+          id: response.data.data.id,
+          post_id: postId,
+          author_id: userStore.id || '',
+          author_name: userStore.username || 'Thành viên',
+          avatar_url: undefined,
+          content: content,
+          created_at: new Date().toISOString()
+        }
       }
       return null
     } catch (error) {

@@ -77,9 +77,10 @@ interface WorkerUser {
 export class AdminRepoImpl implements AdminRepository {
   async getOverviewStats(): Promise<StatItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerStatsOverview>>>(
-        '/admin/stats/overview'
-      )
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<WorkerStatsOverview>>
+      >('/admin/stats/overview')
       const stats = response.data?.data
       if (!stats || typeof stats !== 'object' || !('total_published_posts' in stats)) {
         console.error('getOverviewStats: response.data.data is not a valid stats object', stats)
@@ -114,9 +115,10 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getWeeklyChartData(): Promise<ChartDataPoint[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerChartPoint[]>>>(
-        '/admin/stats/chart'
-      )
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<WorkerChartPoint[]>>
+      >('/admin/stats/chart')
       const list = response.data?.data
       if (!Array.isArray(list)) {
         console.error('getWeeklyChartData: response.data.data is not an array', list)
@@ -140,7 +142,9 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getPosts(): Promise<PostItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerPost[]>>>('/admin/posts')
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerPost[]>>>(
+        '/admin/posts'
+      )
       const list = response.data?.data
       if (!Array.isArray(list)) {
         console.error('getPosts: response.data.data is not an array', list)
@@ -195,7 +199,9 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getUsers(): Promise<UserItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerUser[]>>>('/admin/users')
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerUser[]>>>(
+        '/admin/users'
+      )
       const list = response.data?.data
       if (!Array.isArray(list)) {
         console.error('getUsers: response.data.data is not an array', list)

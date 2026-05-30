@@ -142,7 +142,7 @@ onMounted(async () => {
   try {
     await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js')
     await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/formats/bbcode.js')
-    
+
     // Check if sceditor is fully initialized
     // @ts-ignore
     if (window.sceditor && window.sceditor.formats && window.sceditor.formats.bbcode) {

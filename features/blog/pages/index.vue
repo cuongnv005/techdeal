@@ -75,8 +75,8 @@ const mostViewedPosts = computed(() => {
 const searchQuery = ref('')
 
 const handleSearch = () => {
-  if (searchQuery.value) {
-    alert(`Tìm kiếm với từ khóa: ${searchQuery.value}`)
+  if (searchQuery.value.trim()) {
+    navigateTo(`/search?q=${encodeURIComponent(searchQuery.value.trim())}`)
   }
 }
 </script>

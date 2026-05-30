@@ -3,7 +3,7 @@ import { User, Calendar, Eye, MessageSquare } from 'lucide-vue-next'
 
 import type { BlogPost } from '../types/post.type'
 
-const props = defineProps<{
+defineProps<{
   post: BlogPost
 }>()
 

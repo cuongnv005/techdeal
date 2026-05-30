@@ -73,12 +73,12 @@ const relatedPosts = computed<BlogPost[]>(() => {
 // Local comments state
 const comments = ref<ApiComment[]>([])
 
-// Populate local comments when API returns data
+// Populate local comments from comments API when post ID is available
 watch(
-  () => postDetail.value?.comments,
-  (newComments) => {
-    if (newComments) {
-      comments.value = [...newComments]
+  () => post.value.id,
+  async (newId) => {
+    if (newId) {
+      comments.value = await blogRepository.getComments(newId)
     }
   },
   { immediate: true }
@@ -93,11 +93,8 @@ const parseBBCode = (bbcode: string) => {
   // Escape HTML tags to prevent XSS during preview
   html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-  // Parse [prebreak]...[/prebreak] to highlight summary / lead card paragraph
-  html = html.replace(
-    /\[prebreak\]([\s\S]*?)\[\/prebreak\]/gi,
-    '<div class="bg-blue-500/5 dark:bg-blue-500/10 border-l-4 border-[#3498db] dark:border-[#e74c3c] p-4 my-4 rounded-r-xl font-semibold text-zinc-900 dark:text-zinc-100 flex gap-3"><span class="text-xl">💡</span><div><p class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-550 font-bold mb-1">Đoạn tóm tắt (Prebreak)</p><p>$1</p></div></div>'
-  )
+  // Parse [prebreak]...[/prebreak] to render as normal text without the box
+  html = html.replace(/\[prebreak\]([\s\S]*?)\[\/prebreak\]/gi, '$1')
 
   // Remove [similar] tags completely from raw html output inside main layout content body
   // because it will be processed and rendered at the bottom in the "Related Posts" section
@@ -211,13 +208,46 @@ const handleLikeComment = (id: string | number) => {
 
 // Share status
 const isCopied = ref(false)
-const copyUrl = () => {
-  if (process.client) {
-    navigator.clipboard.writeText(window.location.href)
+
+const fallbackCopyText = (text: string) => {
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.style.top = '0'
+  textArea.style.left = '0'
+  textArea.style.position = 'fixed'
+  document.body.appendChild(textArea)
+  textArea.focus()
+  textArea.select()
+  try {
+    document.execCommand('copy')
     isCopied.value = true
     setTimeout(() => {
       isCopied.value = false
     }, 2000)
+  } catch (err) {
+    console.error('Fallback copy failed:', err)
+  }
+  document.body.removeChild(textArea)
+}
+
+const copyUrl = () => {
+  if (process.client) {
+    const url = window.location.href
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          isCopied.value = true
+          setTimeout(() => {
+            isCopied.value = false
+          }, 2000)
+        })
+        .catch(() => {
+          fallbackCopyText(url)
+        })
+    } else {
+      fallbackCopyText(url)
+    }
   }
 }
 
@@ -310,13 +340,6 @@ const handleSubscribe = () => {
                 {{ comments.length }} bình luận
               </span>
             </div>
-          </div>
-
-          <!-- Feature Image -->
-          <div
-            class="relative rounded-2xl overflow-hidden aspect-video shadow-md border border-gray-100 dark:border-zinc-900"
-          >
-            <img :src="post.imageUrl" :alt="post.title" class="w-full h-full object-cover" />
           </div>
 
           <!-- Post Content Body -->
