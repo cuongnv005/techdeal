@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
           this.email = parsed.email
           this.role = parsed.role
           this.isAuthenticated = true
-          
+
           if (process.client) {
             HttpService.setHeaders({
               Authorization: `Bearer ${token}`

@@ -9,14 +9,13 @@ import { useUserStore } from '@stores/user'
 const userStore = useUserStore()
 
 const handleLogout = () => {
-  userStore.$patch({
-    isAuthenticated: false,
-    role: null,
-    username: null,
-    email: null,
-    id: null
-  })
+  userStore.logout()
   navigateTo('/')
+}
+
+const handleMobileLogout = () => {
+  handleLogout()
+  isSidebarOpen.value = false
 }
 
 interface Props {
@@ -30,8 +29,9 @@ const props = withDefaults(defineProps<Props>(), {
 // Search query
 const searchQuery = ref('')
 const handleSearch = () => {
-  if (searchQuery.value) {
-    alert(`Tìm kiếm với từ khóa: ${searchQuery.value}`)
+  if (searchQuery.value.trim()) {
+    navigateTo(`/search?q=${encodeURIComponent(searchQuery.value.trim())}`)
+    isSidebarOpen.value = false
   }
 }
 
@@ -233,7 +233,11 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           <!-- Sidebar Header -->
           <div
             class="p-4 border-b flex items-center justify-between"
-            :class="isBlue ? 'border-gray-100 dark:border-zinc-850' : 'border-gray-150 dark:border-zinc-800'"
+            :class="
+              isBlue
+                ? 'border-gray-100 dark:border-zinc-850'
+                : 'border-gray-150 dark:border-zinc-800'
+            "
           >
             <span class="text-2xl font-black tracking-tighter" :class="textPrimaryClass">
               TECHDEAL<span :class="dotColorClass">.</span>
@@ -340,13 +344,19 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             <ClientOnly>
               <div
                 class="mt-8 pt-6 border-t"
-                :class="isBlue ? 'border-gray-100 dark:border-zinc-850' : 'border-gray-150 dark:border-zinc-800'"
+                :class="
+                  isBlue
+                    ? 'border-gray-100 dark:border-zinc-850'
+                    : 'border-gray-150 dark:border-zinc-800'
+                "
               >
                 <template v-if="userStore.isAuthenticated">
                   <div class="flex flex-col gap-4">
                     <div class="text-sm">
                       Chào,
-                      <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+                      <strong class="text-zinc-850 dark:text-zinc-200">{{
+                        userStore.username
+                      }}</strong>
                     </div>
                     <NuxtLink
                       v-if="userStore.role === 'admin' || userStore.role === 'mod'"
@@ -357,7 +367,7 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                       Dashboard
                     </NuxtLink>
                     <button
-                      @click="handleLogout(); isSidebarOpen = false"
+                      @click="handleMobileLogout"
                       class="text-sm font-bold text-center px-4 py-2.5 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-550/10 transition-colors cursor-pointer"
                     >
                       Đăng xuất
