@@ -264,15 +264,32 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>')
   html = html.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>')
   html = html.replace(/\[strike\]([\s\S]*?)\[\/strike\]/gi, '<s>$1</s>')
+  html = html.replace(/\[s\]([\s\S]*?)\[\/s\]/gi, '<s>$1</s>')
+
+  // Font color and size
+  html = html.replace(/\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1">$2</span>')
+  html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
+    const sizeMap: Record<string, string> = {
+      '1': '10px',
+      '2': '12px',
+      '3': '14px',
+      '4': '16px',
+      '5': '18px',
+      '6': '24px',
+      '7': '32px'
+    }
+    const fontSize = sizeMap[size.trim()] || (isNaN(Number(size)) ? size.trim() : `${size.trim()}px`)
+    return `<span style="font-size: ${fontSize}">${content}</span>`
+  })
 
   // Align
   html = html.replace(/\[left\]([\s\S]*?)\[\/left\]/gi, '<div class="text-left">$1</div>')
   html = html.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, '<div class="text-center">$1</div>')
   html = html.replace(/\[right\]([\s\S]*?)\[\/right\]/gi, '<div class="text-right">$1</div>')
 
-  // Custom links and images
+  // Custom links and images (stripping optional surrounding quotes in url)
   html = html.replace(
-    /\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi,
+    /\[url=['"]?([^\]'"]+?)['"]?\]([\s\S]*?)\[\/url\]/gi,
     '<a href="$1" target="_blank" class="text-[#3498db] hover:underline font-bold">$2</a>'
   )
   html = html.replace(
@@ -287,7 +304,7 @@ const parseBBCode = (bbcode: string) => {
   // Blockquote / code block
   html = html.replace(
     /\[quote\]([\s\S]*?)\[\/quote\]/gi,
-    '<blockquote class="border-l-4 border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900/50 p-4 my-4 italic rounded-r text-zinc-600 dark:text-zinc-400">$1</blockquote>'
+    '<blockquote class="border-l-4 border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900/50 p-4 my-4 italic rounded-r text-zinc-650 dark:text-zinc-450">$1</blockquote>'
   )
   html = html.replace(
     /\[code\]([\s\S]*?)\[\/code\]/gi,
