@@ -10,4 +10,6 @@ export interface BlogPost {
   summary: string
   slug: string
   content?: string
+  authorId?: string
+  scheduledAt?: string | null
 }
