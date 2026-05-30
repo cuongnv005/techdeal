@@ -36,16 +36,74 @@ if (process.client) {
 // URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
 const rawParam = computed(() => (route.params.slug as string) || '')
 
-// Extract text slug: everything before the last dot
-const slugText = computed(() => {
+// Extract text slug: everything before the last dot. If empty (e.g. /blog/.id), use the ID (part after the dot)
+const slugText = computed<string>(() => {
   const parts = rawParam.value.split('.')
-  return parts.length > 1 ? parts.slice(0, -1).join('.') : rawParam.value
+  if (parts.length > 1) {
+    const slugPart = parts.slice(0, -1).join('.')
+    return slugPart || parts[parts.length - 1] || ''
+  }
+  return rawParam.value
 })
 
 // Fetch post by slug using useAsyncData
-const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`, () =>
-  blogRepository.getPostBySlug(slugText.value)
-)
+const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`, async () => {
+  const detail = await blogRepository.getPostBySlug(slugText.value)
+  if (detail && detail.post) {
+    let finalRelated: BlogPost[] = []
+
+    // 1. Try finding related posts by similar tag if [similar] is in content
+    if (detail.post.content) {
+      const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
+      if (similarMatch && similarMatch[1]) {
+        const tag = similarMatch[1].trim()
+        try {
+          const candidates = Array.from(
+            new Set([
+              tag,
+              tag.toLowerCase(),
+              tag.toUpperCase(),
+              tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+            ])
+          )
+          let tagPosts: BlogPost[] = []
+          for (const cand of candidates) {
+            tagPosts = await blogRepository.getPosts({ tag: cand })
+            if (tagPosts && tagPosts.length > 0) {
+              break
+            }
+          }
+          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id)
+        } catch (err) {
+          console.error('Error fetching similar tag posts:', err)
+        }
+      }
+    }
+
+    // 2. Fallback: If no related posts found by tag, get posts from the same category
+    if (finalRelated.length === 0 && detail.post.category) {
+      try {
+        const categoryMap: Record<string, string> = {
+          'thế giới game': 'gaming',
+          'android': 'android',
+          'ios': 'ios',
+          'công nghệ': 'technology',
+          'windows': 'windows'
+        }
+        const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
+        const catPosts = await blogRepository.getPosts({ category: categoryId })
+        finalRelated = catPosts.filter((p) => p.id !== detail.post.id)
+      } catch (err) {
+        console.error('Error fetching fallback category posts:', err)
+      }
+    }
+
+    detail.relatedPosts = finalRelated
+  }
+  return detail
+})
+
+const tags = computed<string[]>(() => postDetail.value?.tags || [])
 
 const post = computed<BlogPost>(() => {
   return (
@@ -347,6 +405,17 @@ const handleSubscribe = () => {
             class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
             v-html="parsedContentHtml"
           ></div>
+
+          <!-- Post Tags -->
+          <div v-if="tags.length > 0" class="flex flex-wrap gap-1.5 pt-4">
+            <span
+              v-for="tag in tags"
+              :key="tag"
+              class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#3498db]/5 text-[#3498db] dark:bg-[#e74c3c]/5 dark:text-[#e74c3c] border border-[#3498db]/10 dark:border-[#e74c3c]/10"
+            >
+              #{{ tag }}
+            </span>
+          </div>
 
           <!-- Sharing Actions -->
           <div
