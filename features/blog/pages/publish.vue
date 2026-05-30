@@ -31,7 +31,7 @@ useHead({
 })
 
 const route = useRoute()
-const categoryId = computed(() => (route.query.category as string) || 'technology')
+const categoryId = ref((route.query.category as string) || 'technology')
 
 // Map category key to Display Name
 const categoryName = computed(() => {
@@ -56,6 +56,48 @@ const categoryUrl = computed(() => {
   }
   return map[categoryId.value] || '/'
 })
+
+const editId = computed(() => route.query.edit as string | undefined)
+const isEditMode = computed(() => !!editId.value)
+
+const fetchPostToEdit = async () => {
+  if (!editId.value) return
+  try {
+    const detail = await blogRepository.getPostBySlug(editId.value)
+    if (detail && detail.post) {
+      title.value = detail.post.title
+      selectedTags.value = detail.tags || []
+      if (detail.post.category) {
+        const categoryMap: Record<string, string> = {
+          'thế giới game': 'gaming',
+          'android': 'android',
+          'ios': 'ios',
+          'công nghệ': 'technology',
+          'windows': 'windows'
+        }
+        categoryId.value = categoryMap[detail.post.category.toLowerCase()] || 'technology'
+      }
+      isScheduled.value = !!detail.post.scheduledAt
+      if (detail.post.scheduledAt) {
+        const dt = new Date(detail.post.scheduledAt)
+        const offset = dt.getTimezoneOffset() * 60000
+        const local = new Date(dt.getTime() - offset)
+        scheduleDate.value = local.toISOString().slice(0, 16)
+      }
+      
+      const content = detail.post.content || ''
+      const textarea = document.getElementById('sceditor-textarea') as HTMLTextAreaElement
+      if (textarea) {
+        textarea.value = content
+      }
+      if (editorInstance && typeof editorInstance.val === 'function') {
+        editorInstance.val(content)
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching post for editing:', err)
+  }
+}
 
 // Form fields state
 const title = ref('')
@@ -151,6 +193,9 @@ const loadScript = (src: string): Promise<void> => {
 // Check and wait for SCEditor scripts load
 let scriptCheckTimer: any = null
 onMounted(async () => {
+  if (isEditMode.value) {
+    fetchPostToEdit()
+  }
   try {
     await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js')
     await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/formats/bbcode.js')
@@ -266,6 +311,19 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[strike\]([\s\S]*?)\[\/strike\]/gi, '<s>$1</s>')
   html = html.replace(/\[s\]([\s\S]*?)\[\/s\]/gi, '<s>$1</s>')
 
+  // Lists [LIST] and [*]
+  html = html.replace(/\[list(?:=([^\]]+))?\]([\s\S]*?)\[\/list\]/gi, (match: string, type: string | undefined, listContent: string) => {
+    const items = listContent.split(/\[\*\]/)
+    const listItems = items
+      .slice(1)
+      .map((item: string) => `<li style="list-style: inherit;" data-xf-list-type="${type ? 'ol' : 'ul'}">${item.trim()}</li>`)
+      .join('')
+    const tag = type ? 'ol' : 'ul'
+    const attrib = type ? ` type="${type}"` : ''
+    const listStyle = type ? 'decimal' : 'disc'
+    return `<${tag}${attrib} style="list-style-type: ${listStyle}; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${listItems}</${tag}>`
+  })
+
   // Font color and size
   html = html.replace(/\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1">$2</span>')
   html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
@@ -370,11 +428,18 @@ const handlePublish = async () => {
         isScheduled.value && scheduleDate.value ? new Date(scheduleDate.value).toISOString() : null
     }
 
-    const response = await blogRepository.createPost(postData)
+    let response
+    if (isEditMode.value && editId.value) {
+      response = await blogRepository.updatePost(editId.value, postData)
+    } else {
+      response = await blogRepository.createPost(postData)
+    }
 
     if (response && response.success) {
       alert(
-        `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
+        isEditMode.value
+          ? 'Chúc mừng! Bài viết đã được cập nhật thành công!'
+          : `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
       )
       // Redirect to the post detail page if slug is available, otherwise to homepage
       if (response.data?.slug) {
@@ -383,10 +448,10 @@ const handlePublish = async () => {
         await navigateTo('/')
       }
     } else {
-      alert(response?.message || 'Có lỗi xảy ra khi đăng bài viết!')
+      alert(response?.message || 'Có lỗi xảy ra khi xử lý bài viết!')
     }
   } catch (e) {
-    alert('Có lỗi xảy ra khi đăng bài viết!')
+    alert('Có lỗi xảy ra khi xử lý bài viết!')
   } finally {
     isSubmitting.value = false
   }
@@ -419,10 +484,10 @@ const handlePublish = async () => {
             class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2"
           >
             <span class="p-1.5 bg-[#3498db]/10 text-[#3498db] rounded-lg">📝</span>
-            Đăng bài viết mới
+            {{ isEditMode ? 'Chỉnh sửa bài viết' : 'Đăng bài viết mới' }}
           </h1>
           <p class="text-xs text-zinc-550 mt-1">
-            Đăng bài trong chuyên mục:
+            {{ isEditMode ? 'Chỉnh sửa bài viết trong chuyên mục:' : 'Đăng bài trong chuyên mục:' }}
             <strong class="text-zinc-700 dark:text-zinc-300">{{ categoryName }}</strong>
           </p>
         </div>
@@ -494,7 +559,7 @@ const handlePublish = async () => {
             class="px-5 py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 select-none"
           >
             <Send class="w-4 h-4" />
-            {{ isSubmitting ? 'Đang xử lý...' : 'Đăng bài viết' }}
+            {{ isSubmitting ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật bài viết' : 'Đăng bài viết') }}
           </button>
 
           <button

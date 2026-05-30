@@ -14,7 +14,8 @@ import {
   Link,
   Check,
   Send,
-  Sparkles
+  Sparkles,
+  Pencil
 } from 'lucide-vue-next'
 
 import { blogRepository, type ApiComment } from '../api/blog'
@@ -27,6 +28,11 @@ import { useUserStore } from '@stores/user'
 
 const route = useRoute()
 const userStore = useUserStore()
+
+const isAuthor = computed(() => {
+  if (!userStore.isAuthenticated) return false
+  return userStore.id === post.value.authorId || userStore.username === post.value.author
+})
 
 // Initialize authentication from cookies
 if (process.client) {
@@ -164,6 +170,19 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>')
   html = html.replace(/\[strike\]([\s\S]*?)\[\/strike\]/gi, '<s>$1</s>')
   html = html.replace(/\[s\]([\s\S]*?)\[\/s\]/gi, '<s>$1</s>')
+
+  // Lists [LIST] and [*]
+  html = html.replace(/\[list(?:=([^\]]+))?\]([\s\S]*?)\[\/list\]/gi, (match: string, type: string | undefined, listContent: string) => {
+    const items = listContent.split(/\[\*\]/)
+    const listItems = items
+      .slice(1)
+      .map((item: string) => `<li style="list-style: inherit;" data-xf-list-type="${type ? 'ol' : 'ul'}">${item.trim()}</li>`)
+      .join('')
+    const tag = type ? 'ol' : 'ul'
+    const attrib = type ? ` type="${type}"` : ''
+    const listStyle = type ? 'decimal' : 'disc'
+    return `<${tag}${attrib} style="list-style-type: ${listStyle}; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${listItems}</${tag}>`
+  })
 
   // Font color and size
   html = html.replace(/\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1">$2</span>')
@@ -307,7 +326,7 @@ const fallbackCopyText = (text: string) => {
 
 const copyUrl = () => {
   if (process.client) {
-    const url = window.location.href
+    const url = `${window.location.origin}/blog/.${post.value.id}`
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(url)
@@ -468,6 +487,15 @@ const handleSubscribe = () => {
                 <Link v-else class="w-4 h-4" />
                 {{ isCopied ? 'Đã sao chép!' : 'Sao chép liên kết' }}
               </button>
+
+              <NuxtLink
+                v-if="isAuthor"
+                :to="`/blog/publish?edit=${post.id}`"
+                class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <Pencil class="w-4 h-4" />
+                Chỉnh sửa bài viết
+              </NuxtLink>
             </div>
           </div>
           <AdBanner width="970px" height="90px" :is-google-ad="true" />

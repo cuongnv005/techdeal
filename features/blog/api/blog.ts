@@ -16,6 +16,8 @@ export interface ApiPost {
   created_at: string
   updated_at: string
   comment_count?: number
+  author_id?: string
+  scheduled_at?: string | null
 }
 
 export interface ApiComment {
@@ -101,7 +103,9 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     imageUrl: imageUrl,
     summary: summary,
     slug: post.slug,
-    content: post.content
+    content: post.content,
+    authorId: post.author_id,
+    scheduledAt: post.scheduled_at
   }
 }
 
@@ -270,6 +274,44 @@ export class BlogRepository {
       return {
         success: false,
         message: error.response?.data?.message || 'Có lỗi xảy ra khi đăng bài viết!'
+      }
+    }
+  }
+
+  async updatePost(
+    id: string,
+    postData: {
+      title: string
+      content: string
+      category: string
+      tags: string[]
+      scheduledAt: string | null
+    }
+  ): Promise<{ success: boolean; message?: string; data?: { id: string; slug: string; status: string } } | null> {
+    try {
+      const response = await HttpService.put<unknown, AxiosResponse<ApiResponse<{ id: string; slug: string; status: string }>>>(
+        `/posts/${id}`,
+        {
+          title: postData.title,
+          content: postData.content,
+          category_id: postData.category,
+          tags: postData.tags,
+          scheduled_at: postData.scheduledAt
+        }
+      )
+      if (response.data) {
+        return {
+          success: response.data.success,
+          message: response.data.message,
+          data: response.data.data
+        }
+      }
+      return null
+    } catch (error: any) {
+      console.error('Error updating post:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật bài viết!'
       }
     }
   }
