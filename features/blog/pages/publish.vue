@@ -45,6 +45,18 @@ const categoryName = computed(() => {
   return map[categoryId.value] || 'Công nghệ'
 })
 
+// Map category key to Route URL
+const categoryUrl = computed(() => {
+  const map: Record<string, string> = {
+    gaming: '/game',
+    android: '/android',
+    ios: '/ios',
+    technology: '/cong-nghe',
+    windows: '/windows'
+  }
+  return map[categoryId.value] || '/'
+})
+
 // Form fields state
 const title = ref('')
 const selectedTags = ref<string[]>([])
@@ -347,8 +359,12 @@ const handlePublish = async () => {
       alert(
         `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
       )
-      // Redirect back to category page
-      await navigateTo(categoryId.value === 'gaming' ? '/game' : `/${categoryId.value}`)
+      // Redirect to the post detail page if slug is available, otherwise to homepage
+      if (response.data?.slug) {
+        await navigateTo(`/blog/${response.data.slug}`)
+      } else {
+        await navigateTo('/')
+      }
     } else {
       alert(response?.message || 'Có lỗi xảy ra khi đăng bài viết!')
     }
@@ -370,7 +386,7 @@ const handlePublish = async () => {
     <main class="container mx-auto px-4 py-8 max-w-4xl">
       <!-- Back Link -->
       <NuxtLink
-        :to="categoryId === 'gaming' ? '/game' : `/${categoryId}`"
+        :to="categoryUrl"
         class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors group mb-6"
       >
         <ArrowLeft class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
