@@ -14,14 +14,28 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 import type { BlogPost } from '../types/post.type'
 
 // Set page meta for SEO optimization
+const requestUrl = useRequestURL().href
+
 useSeoMeta({
   title: 'Trang chủ - Tin tức Công nghệ TechDeal',
   description:
     'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
   ogTitle: 'Trang chủ - Tin tức Công nghệ TechDeal',
   ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
+  ogUrl: requestUrl,
   ogType: 'website',
-  twitterCard: 'summary_large_image'
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Trang chủ - Tin tức Công nghệ TechDeal',
+  twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: requestUrl
+    }
+  ]
 })
 
 // Fetch posts from API using useAsyncData

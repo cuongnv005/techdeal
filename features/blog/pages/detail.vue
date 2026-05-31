@@ -365,12 +365,29 @@ const copyUrl = () => {
 }
 
 // SEO setting on mount/route change
+const requestUrl = useRequestURL().href
+
 useSeoMeta({
   title: () => `${post.value.title} - TechDeal`,
   description: () => post.value.summary,
   ogTitle: () => `${post.value.title} - TechDeal`,
   ogDescription: () => post.value.summary,
-  ogImage: () => post.value.imageUrl
+  ogImage: () => post.value.imageUrl,
+  ogUrl: requestUrl,
+  ogType: 'article',
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => `${post.value.title} - TechDeal`,
+  twitterDescription: () => post.value.summary,
+  twitterImage: () => post.value.imageUrl
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: requestUrl
+    }
+  ]
 })
 
 const handleSubscribe = () => {

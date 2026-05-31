@@ -21,15 +21,31 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 import type { BlogPost } from '../types/post.type'
 
 import { useUserStore } from '@stores/user'
+import Footer from '../components/Footer.vue'
 
 // Set page meta for SEO optimization
+const requestUrl = useRequestURL().href
+
 useSeoMeta({
   title: 'Windows - Tin tức Windows TechDeal',
   description:
     'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
   ogTitle: 'Chuyên mục Windows - TechDeal',
   ogDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.',
-  ogType: 'website'
+  ogUrl: requestUrl,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Chuyên mục Windows - TechDeal',
+  twitterDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.'
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: requestUrl
+    }
+  ]
 })
 
 // Fetch articles dynamically
@@ -126,39 +142,6 @@ const userStore = useUserStore()
     </main>
 
     <!-- Footer -->
-    <footer class="bg-zinc-900 text-zinc-400 text-xs py-10 mt-16 border-t border-zinc-800">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <NuxtLink to="/">
-              <h4
-                class="text-white text-lg font-black tracking-tight mb-4 hover:text-[#3498db] transition-colors"
-              >
-                TECHDEAL.
-              </h4>
-            </NuxtLink>
-            <p class="leading-relaxed text-zinc-500">
-              Trang tin tức cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.
-            </p>
-          </div>
-          <div>
-            <h4 class="text-white font-bold uppercase mb-4">Liên kết hữu ích</h4>
-            <ul class="space-y-2">
-              <li><a href="#" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Chính sách bảo mật</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Giới thiệu bản tin</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-bold uppercase mb-4">Liên hệ hỗ trợ</h4>
-            <p class="mb-2">Email: contact@techdeal.com</p>
-            <p>Điện thoại: +84 (0) 123 456 789</p>
-          </div>
-        </div>
-        <div class="border-t border-zinc-800 mt-8 pt-6 text-center text-[10px] text-zinc-600">
-          © 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.
-        </div>
-      </div>
-    </footer>
+    <Footer />
   </div>
 </template>
