@@ -107,7 +107,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: process.env['APP_URL'] || 'https://techdeal-bay.vercel.app',
+    url: 'https://techdeal-bay.vercel.app',
     name: process.env['APP_NAME'] || 'TechDeal'
   },
 
