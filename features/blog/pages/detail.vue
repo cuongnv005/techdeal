@@ -20,6 +20,7 @@ import {
 
 import { blogRepository, type ApiComment } from '../api/blog'
 import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 import AdBanner from '../components/AdBanner.vue'
 
 import type { BlogPost } from '../types/post.type'
