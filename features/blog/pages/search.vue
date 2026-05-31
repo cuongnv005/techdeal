@@ -35,19 +35,27 @@ useSeoMeta({
   ogType: 'website'
 })
 
+const currentPage = computed(() => Number(route.query.page) || 1)
+
 // Fetch search articles dynamically based on parameters
 const { data: searchResultPosts, refresh } = await useAsyncData(
-  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}`,
+  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}-all`,
   () =>
     blogRepository.getPosts({
       q: queryTerm.value || undefined,
       title: titleTerm.value || undefined,
-      tag: tagTerm.value || undefined,
-      limit: 20
+      tag: tagTerm.value || undefined
     })
 )
 
-const posts = computed(() => searchResultPosts.value || [])
+const postsList = computed(() => searchResultPosts.value || [])
+const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
+
+const posts = computed(() => {
+  const start = (currentPage.value - 1) * 10
+  const end = start + 10
+  return postsList.value.slice(start, end)
+})
 
 // Watch for search query changes and refetch
 watch(
@@ -59,7 +67,7 @@ watch(
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {
-  return [...posts.value].sort((a, b) => b.views - a.views)
+  return [...postsList.value].sort((a, b) => b.views - a.views)
 })
 </script>
 
@@ -90,8 +98,8 @@ const mostViewedPosts = computed(() => {
             <template v-else>Kết quả cho: "{{ queryTerm || titleTerm }}"</template>
           </h1>
           <p class="text-xs text-blue-50 mt-2 max-w-xl">
-            <template v-if="tagTerm">Tìm thấy {{ posts.length }} bài viết gắn thẻ #{{ tagTerm }}.</template>
-            <template v-else>Tìm thấy {{ posts.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template>
+            <template v-if="tagTerm">Tìm thấy {{ postsList.length }} bài viết gắn thẻ #{{ tagTerm }}.</template>
+            <template v-else>Tìm thấy {{ postsList.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template>
           </p>
         </div>
       </div>
@@ -131,6 +139,37 @@ const mostViewedPosts = computed(() => {
           <!-- Simplified News Grid (Using PostCard layout) -->
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+            <button
+              :disabled="currentPage <= 1"
+              @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Trước
+            </button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              @click="navigateTo({ query: { ...route.query, page: page } })"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer select-none"
+              :class="
+                currentPage === page
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                  : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855'
+              "
+            >
+              {{ page }}
+            </button>
+            <button
+              :disabled="currentPage >= totalPages"
+              @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Sau
+            </button>
           </div>
 
           <!-- Bottom Ad Banner -->

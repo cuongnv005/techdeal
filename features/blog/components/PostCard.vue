@@ -22,7 +22,7 @@ const getCategoryColors = (category: string) => {
 
 <template>
   <div
-    class="flex flex-col bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-850 overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300"
+    class="flex flex-col bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-border overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300"
   >
     <!-- Image aspect-[16/10] -->
     <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">

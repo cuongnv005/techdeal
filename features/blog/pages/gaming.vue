@@ -18,6 +18,8 @@ import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
 
+const requestUrl = useRequestURL().href
+
 // SEO optimization for Gaming Page
 useSeoMeta({
   title: 'Thế giới Game - Tin tức Game & Esports mới nhất',
@@ -25,7 +27,20 @@ useSeoMeta({
     'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
   ogTitle: 'Thế giới Game - TechDeal Gaming',
   ogDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
-  ogType: 'website'
+  ogUrl: requestUrl,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Thế giới Game - TechDeal Gaming',
+  twitterDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: requestUrl
+    }
+  ]
 })
 
 // Mock categories for gaming

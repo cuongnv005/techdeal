@@ -2,11 +2,20 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from '#imports'
 
-import { Search, Menu, X } from 'lucide-vue-next'
+import { Search, Menu, X, Sun, Moon } from 'lucide-vue-next'
+import { useDark, useToggle } from '@vueuse/core'
 
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
+
+const isDark = useDark({
+  selector: 'html',
+  attribute: 'class',
+  valueDark: 'dark',
+  valueLight: ''
+})
+const toggleDark = useToggle(isDark)
 
 const handleLogout = () => {
   userStore.logout()
@@ -162,6 +171,18 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           </button>
         </form>
 
+        <!-- Theme Toggle (Desktop) -->
+        <ClientOnly>
+          <button
+            @click="toggleDark()"
+            class="hidden sm:flex p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-zinc-550 dark:text-zinc-400 transition-colors cursor-pointer"
+            aria-label="Toggle Theme"
+          >
+            <Sun v-if="isDark" class="w-4 h-4 text-amber-500" />
+            <Moon v-else class="w-4 h-4 text-zinc-600" />
+          </button>
+        </ClientOnly>
+
         <!-- Auth buttons -->
         <ClientOnly>
           <div
@@ -242,13 +263,27 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             <span class="text-2xl font-black tracking-tighter" :class="textPrimaryClass">
               TECHDEAL<span :class="dotColorClass">.</span>
             </span>
-            <button
-              @click="isSidebarOpen = false"
-              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-              aria-label="Close menu"
-            >
-              <X class="w-6 h-6" />
-            </button>
+            <div class="flex items-center gap-1">
+              <!-- Theme Toggle (Mobile Sidebar) -->
+              <ClientOnly>
+                <button
+                  @click="toggleDark()"
+                  class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                  aria-label="Toggle Theme"
+                >
+                  <Sun v-if="isDark" class="w-5 h-5 text-amber-500" />
+                  <Moon v-else class="w-5 h-5 text-zinc-650" />
+                </button>
+              </ClientOnly>
+
+              <button
+                @click="isSidebarOpen = false"
+                class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                aria-label="Close menu"
+              >
+                <X class="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           <!-- Sidebar Body / Navigation Links -->

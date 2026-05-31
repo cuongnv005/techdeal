@@ -20,6 +20,10 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
       meta: [
         {
+          name: 'google-site-verification',
+          content: '5IYbs9tdevZ7SmaVUYza_dFxPiVJFsj2o_BxPNOC_aw'
+        },
+        {
           name: 'description',
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
         },

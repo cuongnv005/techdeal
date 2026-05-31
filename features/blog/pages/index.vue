@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { TrendingUp } from 'lucide-vue-next'
 
@@ -13,9 +13,11 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 
 import type { BlogPost } from '../types/post.type'
 
-// Set page meta for SEO optimization
+const route = useRoute()
+const currentPage = computed(() => Number(route.query.page) || 1)
 const requestUrl = useRequestURL().href
 
+// Set page meta for SEO optimization
 useSeoMeta({
   title: 'Trang chủ - Tin tức Công nghệ TechDeal',
   description:
@@ -39,8 +41,8 @@ useHead({
 })
 
 // Fetch posts from API using useAsyncData
-const { data: allPosts } = await useAsyncData('public-posts', () =>
-  blogRepository.getPosts({ limit: 20 })
+const { data: allPosts } = await useAsyncData('public-posts-all', () =>
+  blogRepository.getPosts()
 )
 
 const postsList = computed<BlogPost[]>(() => allPosts.value || [])
@@ -73,11 +75,20 @@ const featuredSmallPosts = computed<BlogPost[]>(() => {
 
 // Articles list at bottom
 const posts = computed<BlogPost[]>(() => {
-  if (postsList.value.length <= 3) {
-    // If we don't have enough posts to fill hero, show all of them in list too
-    return postsList.value
+  const start = 3 + (currentPage.value - 1) * 10
+  const end = start + 10
+  if (currentPage.value === 1) {
+    if (postsList.value.length <= 3) {
+      return []
+    }
+    return postsList.value.slice(3, 13)
   }
-  return postsList.value.slice(3)
+  return postsList.value.slice(start, end)
+})
+
+const totalPages = computed(() => {
+  if (postsList.value.length <= 3) return 1
+  return Math.ceil((postsList.value.length - 3) / 10)
 })
 
 // Computed property for the most viewed posts of the month
@@ -104,8 +115,8 @@ const handleSearch = () => {
 
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
-      <!-- HERO COMPONENT -->
-      <HomeHero :featured-big-post="featuredBigPost" :featured-small-posts="featuredSmallPosts" />
+      <!-- HERO COMPONENT (only show on page 1) -->
+      <HomeHero v-if="currentPage === 1" :featured-big-post="featuredBigPost" :featured-small-posts="featuredSmallPosts" />
 
       <!-- AD BANNER BLOCK -->
       <AdBanner width="970px" height="90px" :is-google-ad="true" />
@@ -127,6 +138,37 @@ const handleSearch = () => {
           <!-- Simplified News Grid (Using PostCard layout) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+            <button
+              :disabled="currentPage <= 1"
+              @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Trước
+            </button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              @click="navigateTo({ query: { ...route.query, page: page } })"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer select-none"
+              :class="
+                currentPage === page
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                  : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855'
+              "
+            >
+              {{ page }}
+            </button>
+            <button
+              :disabled="currentPage >= totalPages"
+              @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Sau
+            </button>
           </div>
 
           <!-- Bottom Ad Banner -->

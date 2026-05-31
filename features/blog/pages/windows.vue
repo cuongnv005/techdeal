@@ -48,15 +48,26 @@ useHead({
   ]
 })
 
+const route = useRoute()
+const currentPage = computed(() => Number(route.query.page) || 1)
+
 // Fetch articles dynamically
-const { data: categoryPosts } = await useAsyncData('posts-windows', () =>
-  blogRepository.getPosts({ category: 'windows', limit: 12 })
+const { data: allCategoryPosts } = await useAsyncData(
+  'posts-windows-all',
+  () => blogRepository.getPosts({ category: 'windows' })
 )
-const posts = computed(() => categoryPosts.value || [])
+const postsList = computed(() => allCategoryPosts.value || [])
+const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
+
+const posts = computed(() => {
+  const start = (currentPage.value - 1) * 10
+  const end = start + 10
+  return postsList.value.slice(start, end)
+})
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {
-  return [...posts.value].sort((a, b) => b.views - a.views)
+  return [...postsList.value].sort((a, b) => b.views - a.views)
 })
 
 // User store for checking roles
@@ -128,6 +139,37 @@ const userStore = useUserStore()
           <!-- Simplified News Grid (Using PostCard layout) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+            <button
+              :disabled="currentPage <= 1"
+              @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Trước
+            </button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              @click="navigateTo({ query: { ...route.query, page: page } })"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer select-none"
+              :class="
+                currentPage === page
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                  : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855'
+              "
+            >
+              {{ page }}
+            </button>
+            <button
+              :disabled="currentPage >= totalPages"
+              @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+            >
+              Sau
+            </button>
           </div>
 
           <!-- Bottom Ad Banner -->
