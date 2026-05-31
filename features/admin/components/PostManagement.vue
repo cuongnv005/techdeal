@@ -211,7 +211,7 @@ const confirmUnpublish = (id: string, title: string) => {
                   </button>
                   <!-- Chỉnh sửa -->
                   <button
-                    @click="emit('edit', post.id)"
+                    @click="navigateTo(`/blog/publish?edit=${post.id}`)"
                     class="p-2 text-zinc-400 hover:text-[#3498db] hover:bg-[#3498db]/10 rounded-xl transition-all cursor-pointer"
                     title="Chỉnh sửa bài viết"
                   >

@@ -63,9 +63,9 @@ const copyrightText = computed(() =>
         <div>
           <h4 class="text-white font-bold uppercase mb-4">{{ middleColTitle }}</h4>
           <ul v-if="isBlue" class="space-y-2">
-            <li><a href="#" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Chính sách bảo mật</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Giới thiệu bản tin</a></li>
+            <li><NuxtLink to="/terms" class="hover:text-white transition-colors">Terms of Service</NuxtLink></li>
+            <li><NuxtLink to="/privacy" class="hover:text-white transition-colors">Privacy Policy</NuxtLink></li>
+            <li><NuxtLink to="/about" class="hover:text-white transition-colors">About & Newsletter</NuxtLink></li>
           </ul>
           <ul v-else class="space-y-2">
             <li>

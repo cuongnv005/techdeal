@@ -16,25 +16,33 @@ const route = useRoute()
 
 const queryTerm = computed(() => (route.query.q as string) || '')
 const titleTerm = computed(() => (route.query.title as string) || '')
+const tagTerm = computed(() => (route.query.tag as string) || '')
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: computed(() => `Kết quả tìm kiếm cho "${queryTerm.value || titleTerm.value}" - TechDeal`),
-  description: computed(
-    () =>
-      `Kết quả tìm kiếm bài viết cho từ khóa "${queryTerm.value || titleTerm.value}" trên TechDeal.`
-  ),
-  ogTitle: computed(() => `Tìm kiếm: ${queryTerm.value || titleTerm.value} - TechDeal`),
+  title: computed(() => {
+    if (tagTerm.value) return `Bài viết về thẻ #${tagTerm.value} - TechDeal`
+    return `Kết quả tìm kiếm cho "${queryTerm.value || titleTerm.value}" - TechDeal`
+  }),
+  description: computed(() => {
+    if (tagTerm.value) return `Tổng hợp các bài viết gắn thẻ #${tagTerm.value} trên TechDeal.`
+    return `Kết quả tìm kiếm bài viết cho từ khóa "${queryTerm.value || titleTerm.value}" trên TechDeal.`
+  }),
+  ogTitle: computed(() => {
+    if (tagTerm.value) return `Thẻ: #${tagTerm.value} - TechDeal`
+    return `Tìm kiếm: ${queryTerm.value || titleTerm.value} - TechDeal`
+  }),
   ogType: 'website'
 })
 
 // Fetch search articles dynamically based on parameters
 const { data: searchResultPosts, refresh } = await useAsyncData(
-  () => `search-posts-${queryTerm.value}-${titleTerm.value}`,
+  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}`,
   () =>
     blogRepository.getPosts({
       q: queryTerm.value || undefined,
       title: titleTerm.value || undefined,
+      tag: tagTerm.value || undefined,
       limit: 20
     })
 )
@@ -43,7 +51,7 @@ const posts = computed(() => searchResultPosts.value || [])
 
 // Watch for search query changes and refetch
 watch(
-  () => [route.query.q, route.query.title],
+  () => [route.query.q, route.query.title, route.query.tag],
   () => {
     refresh()
   }
@@ -78,10 +86,12 @@ const mostViewedPosts = computed(() => {
             Tìm kiếm bài viết
           </span>
           <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight mt-3">
-            Kết quả cho: "{{ queryTerm || titleTerm }}"
+            <template v-if="tagTerm">Thẻ: #{{ tagTerm }}</template>
+            <template v-else>Kết quả cho: "{{ queryTerm || titleTerm }}"</template>
           </h1>
           <p class="text-xs text-blue-50 mt-2 max-w-xl">
-            Tìm thấy {{ posts.length }} bài viết khớp với từ khóa tìm kiếm của bạn.
+            <template v-if="tagTerm">Tìm thấy {{ posts.length }} bài viết gắn thẻ #{{ tagTerm }}.</template>
+            <template v-else>Tìm thấy {{ posts.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template>
           </p>
         </div>
       </div>

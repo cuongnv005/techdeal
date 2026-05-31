@@ -18,6 +18,7 @@ export interface ApiPost {
   comment_count?: number
   author_id?: string
   scheduled_at?: string | null
+  thumbnail?: string
 }
 
 export interface ApiComment {
@@ -49,13 +50,14 @@ export interface GetPostsParams {
   limit?: number
   q?: string
   title?: string
+  enrich?: boolean
 }
 
 export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
-  // Extract first image from BBCode [img]...[/img] if content exists
-  let imageUrl =
+  // Use backend thumbnail directly if available, fallback to extraction or default
+  let imageUrl = post.thumbnail ||
     'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
-  if (post.content) {
+  if (!post.thumbnail && post.content) {
     const imgMatch = post.content.match(/\[img\]([\s\S]*?)\[\/img\]/i)
     if (imgMatch && imgMatch[1]) {
       imageUrl = imgMatch[1].trim()
@@ -63,6 +65,24 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
   }
 
   let summary = post.summary || ''
+  if (summary) {
+    // Basic cleaning of BBCode tags in summary to show clean text in list cards
+    summary = summary
+      .replace(/\[center\][\s\S]*?\[\/center\]/gi, '')
+      .replace(/\[img\][\s\S]*?\[\/img\]/gi, '')
+      .replace(/\[b\]/gi, '')
+      .replace(/\[\/b\]/gi, '')
+      .replace(/\[i\]/gi, '')
+      .replace(/\[\/i\]/gi, '')
+      .replace(/\[u\]/gi, '')
+      .replace(/\[\/u\]/gi, '')
+      .replace(/\[url=['"]?[^\]'"]+?['"]?\]([\s\S]*?)\[\/url\]/gi, '$1')
+      .replace(/\[url\]([\s\S]*?)\[\/url\]/gi, '$1')
+      .replace(/\n+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  }
+
   if (!summary && post.content) {
     const prebreakIndex = post.content.indexOf('[prebreak]')
     if (prebreakIndex !== -1) {
@@ -119,12 +139,18 @@ export class BlogRepository {
 
   async getPosts(params?: GetPostsParams): Promise<BlogPost[]> {
     try {
+      const { enrich = false, ...apiParams } = params || {}
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPost[]>>>(
         '/posts',
-        params
+        apiParams
       )
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
         const posts = response.data.data.map(mapApiPostToBlogPost)
+        
+        if (!enrich) {
+          return posts
+        }
+
         // Parallel fetch details to enrich list items with image and summary from content
         const enrichedPosts = await Promise.all(
           posts.map(async (post) => {
