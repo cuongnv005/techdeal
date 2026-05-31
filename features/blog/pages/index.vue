@@ -40,12 +40,16 @@ useHead({
   ]
 })
 
-// Fetch posts from API using useAsyncData
-const { data: allPosts } = await useAsyncData('public-posts-all', () =>
-  blogRepository.getPosts()
+// Fetch posts from API using useAsyncData, watching the current page for server-side pagination
+const { data: allPosts, pending } = await useAsyncData(
+  'public-posts-all',
+  () => blogRepository.getPosts({ page: currentPage.value, limit: 10 }),
+  {
+    watch: [currentPage]
+  }
 )
 
-const postsList = computed<BlogPost[]>(() => allPosts.value || [])
+const postsList = computed<BlogPost[]>(() => allPosts.value?.items || [])
 
 // Fallback post structure in case database has no posts yet
 const fallbackPost: BlogPost = {
@@ -75,25 +79,34 @@ const featuredSmallPosts = computed<BlogPost[]>(() => {
 
 // Articles list at bottom
 const posts = computed<BlogPost[]>(() => {
-  const start = 3 + (currentPage.value - 1) * 10
-  const end = start + 10
   if (currentPage.value === 1) {
     if (postsList.value.length <= 3) {
       return []
     }
-    return postsList.value.slice(3, 13)
+    return postsList.value.slice(3)
   }
-  return postsList.value.slice(start, end)
+  return postsList.value
 })
 
 const totalPages = computed(() => {
-  if (postsList.value.length <= 3) return 1
-  return Math.ceil((postsList.value.length - 3) / 10)
+  return allPosts.value?.pagination?.total_pages || 1
 })
 
 // Computed property for the most viewed posts of the month
 const mostViewedPosts = computed(() => {
   return [...postsList.value].sort((a, b) => b.views - a.views)
+})
+
+// Watch page changes to scroll smoothly back to the list header
+watch(currentPage, () => {
+  if (process.client) {
+    nextTick(() => {
+      const el = document.getElementById('news-list-section')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  }
 })
 
 // Search query
@@ -126,6 +139,7 @@ const handleSearch = () => {
         <!-- Main News Column (70%) -->
         <div class="lg:col-span-7">
           <div
+            id="news-list-section"
             class="border-b-2 border-zinc-800 dark:border-zinc-700 pb-2 mb-6 flex justify-between items-center"
           >
             <h2
@@ -135,8 +149,14 @@ const handleSearch = () => {
             </h2>
           </div>
 
+          <!-- Spinning Loading Indicator -->
+          <div v-if="pending" class="flex flex-col items-center justify-center py-20 min-h-[350px]">
+            <div class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">Đang tải bài viết mới...</p>
+          </div>
+
           <!-- Simplified News Grid (Using PostCard layout) -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
           </div>
 

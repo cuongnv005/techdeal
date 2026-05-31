@@ -43,6 +43,13 @@ interface ApiResponse<T> {
   data: T
 }
 
+export interface ApiPagination {
+  current_page: number
+  per_page: number
+  total_items: number
+  total_pages: number
+}
+
 export interface GetPostsParams {
   category?: string
   tag?: string
@@ -137,56 +144,86 @@ export class BlogRepository {
     comments: ApiComment[]
   } | null>>()
 
-  async getPosts(params?: GetPostsParams): Promise<BlogPost[]> {
+  async getPosts(params?: GetPostsParams): Promise<{ items: BlogPost[]; pagination?: ApiPagination }> {
     try {
       const { enrich = false, ...apiParams } = params || {}
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPost[]>>>(
-        '/posts',
-        apiParams
-      )
-      if (response.data && response.data.success && Array.isArray(response.data.data)) {
-        const posts = response.data.data.map(mapApiPostToBlogPost)
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ items: ApiPost[]; pagination?: ApiPagination }>>
+      >('/posts', apiParams)
+
+      if (
+        response.data &&
+        response.data.success &&
+        response.data.data &&
+        Array.isArray(response.data.data.items)
+      ) {
+        const posts = response.data.data.items.map(mapApiPostToBlogPost)
         
-        if (!enrich) {
-          return posts
+        let finalPosts = posts
+        if (enrich) {
+          // Parallel fetch details to enrich list items with image and summary from content
+          finalPosts = await Promise.all(
+            posts.map(async (post) => {
+              try {
+                const detail = await this.getPostBySlug(post.slug)
+                if (detail && detail.post) {
+                  return {
+                    ...post,
+                    imageUrl: detail.post.imageUrl,
+                    summary: detail.post.summary,
+                    content: detail.post.content
+                  }
+                }
+              } catch (err) {
+                console.error(`Error enriching post ${post.slug}:`, err)
+              }
+              return post
+            })
+          )
         }
 
-        // Parallel fetch details to enrich list items with image and summary from content
-        const enrichedPosts = await Promise.all(
-          posts.map(async (post) => {
-            try {
-              const detail = await this.getPostBySlug(post.slug)
-              if (detail && detail.post) {
-                return {
-                  ...post,
-                  imageUrl: detail.post.imageUrl,
-                  summary: detail.post.summary,
-                  content: detail.post.content
-                }
-              }
-            } catch (err) {
-              console.error(`Error enriching post ${post.slug}:`, err)
-            }
-            return post
-          })
-        )
-        return enrichedPosts
+        return {
+          items: finalPosts,
+          pagination: response.data.data.pagination
+        }
       }
-      return []
+      
+      // Fallback for old array style response
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        return {
+          items: response.data.data.map(mapApiPostToBlogPost)
+        }
+      }
+      
+      return { items: [] }
     } catch (error) {
       console.error('Error fetching posts:', error)
-      return []
+      return { items: [] }
     }
   }
 
   async getComments(postId: string): Promise<ApiComment[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiComment[]>>>(
-        `/posts/${postId}/comments`
-      )
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ items: ApiComment[]; pagination?: ApiPagination }>>
+      >(`/posts/${postId}/comments`)
+
+      if (
+        response.data &&
+        response.data.success &&
+        response.data.data &&
+        Array.isArray(response.data.data.items)
+      ) {
+        return response.data.data.items
+      }
+
+      // Fallback for old array style response
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
         return response.data.data
       }
+
       return []
     } catch (error) {
       console.error(`Error fetching comments for post ${postId}:`, error)
@@ -209,8 +246,8 @@ export class BlogRepository {
         let querySlug = slug
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
         if (isUuid) {
-          const posts = await this.getPosts({ limit: 1000 })
-          const found = posts.find((p) => p.id === slug)
+          const postsRes = await this.getPosts({ limit: 1000 })
+          const found = postsRes.items.find((p) => p.id === slug)
           if (found && found.slug) {
             querySlug = found.slug
           } else {

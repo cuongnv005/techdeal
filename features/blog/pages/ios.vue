@@ -56,7 +56,7 @@ const { data: allCategoryPosts } = await useAsyncData(
   'posts-ios-all',
   () => blogRepository.getPosts({ category: 'ios' })
 )
-const postsList = computed(() => allCategoryPosts.value || [])
+const postsList = computed(() => allCategoryPosts.value?.items || [])
 const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
 
 const posts = computed(() => {

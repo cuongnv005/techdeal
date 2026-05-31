@@ -58,7 +58,7 @@ const { data: gamingPosts } = await useAsyncData('posts-gaming', () =>
   blogRepository.getPosts({ category: 'gaming', limit: 20 })
 )
 
-const postsList = computed(() => gamingPosts.value || [])
+const postsList = computed(() => gamingPosts.value?.items || [])
 
 // Fallback post structure in case database has no posts yet
 const fallbackPost: BlogPost = {

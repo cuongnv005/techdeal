@@ -48,7 +48,7 @@ const { data: searchResultPosts, refresh } = await useAsyncData(
     })
 )
 
-const postsList = computed(() => searchResultPosts.value || [])
+const postsList = computed(() => searchResultPosts.value?.items || [])
 const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
 
 const posts = computed(() => {

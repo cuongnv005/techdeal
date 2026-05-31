@@ -1,12 +1,24 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Eye } from 'lucide-vue-next'
 
 import type { BlogPost } from '../../types/post.type'
 
-defineProps<{
+const props = defineProps<{
   spotlightBigPost: BlogPost
   spotlightSmallPosts: BlogPost[]
 }>()
+
+const allSpotlightPosts = computed(() => {
+  const list = []
+  if (props.spotlightBigPost) {
+    list.push(props.spotlightBigPost)
+  }
+  if (props.spotlightSmallPosts && props.spotlightSmallPosts.length > 0) {
+    list.push(...props.spotlightSmallPosts)
+  }
+  return list
+})
 </script>
 
 <template>
@@ -18,15 +30,16 @@ defineProps<{
         Tiêu điểm hôm nay
       </h3>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-10 gap-6">
-      <!-- Big Post (Matches the user's specific requested layout) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        class="md:col-span-6 flex flex-col bg-white dark:bg-[#13161c] rounded-xl border border-gray-200 dark:border-zinc-850 overflow-hidden group shadow-xs"
+        v-for="post in allSpotlightPosts"
+        :key="post.id"
+        class="flex flex-col bg-white dark:bg-[#13161c] rounded-xl border border-gray-200 dark:border-zinc-850 overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300"
       >
         <div class="aspect-[16/10] overflow-hidden">
           <img
-            :src="spotlightBigPost.imageUrl"
-            :alt="spotlightBigPost.title"
+            :src="post.imageUrl"
+            :alt="post.title"
             class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
           />
         </div>
@@ -35,56 +48,28 @@ defineProps<{
             <span
               class="bg-[#e74c3c]/15 text-[#e74c3c] text-[10px] font-bold px-2.5 py-1 rounded mb-3 inline-block uppercase"
             >
-              {{ spotlightBigPost.category }}
+              {{ post.category }}
             </span>
             <h4
-              class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#e74c3c] transition-colors mb-3"
+              class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#e74c3c] transition-colors mb-3 line-clamp-2"
             >
-              <NuxtLink :to="`/blog/${spotlightBigPost.slug}.${spotlightBigPost.id}`">{{
-                spotlightBigPost.title
+              <NuxtLink :to="`/blog/${post.slug}.${post.id}`">{{
+                post.title
               }}</NuxtLink>
             </h4>
-            <p class="text-xs text-zinc-655 dark:text-zinc-400 line-clamp-3 mb-4 leading-relaxed">
-              {{ spotlightBigPost.summary }}
+            <p class="text-xs text-zinc-650 dark:text-zinc-400 line-clamp-3 mb-4 leading-relaxed">
+              {{ post.summary }}
             </p>
           </div>
           <div
             class="flex items-center gap-4 text-[10px] text-zinc-550 border-t border-gray-150 dark:border-zinc-850 pt-3"
           >
-            <span>Bởi {{ spotlightBigPost.author }}</span>
-            <span>{{ spotlightBigPost.publishDate }}</span>
+            <span>Bởi {{ post.author }}</span>
+            <span>{{ post.publishDate }}</span>
             <span class="flex items-center gap-1 ml-auto text-red-550 dark:text-red-400">
               <Eye class="w-3.5 h-3.5" :stroke-width="2.5" />
-              <span class="font-medium">{{ spotlightBigPost.views }}</span>
+              <span class="font-medium">{{ post.views }}</span>
             </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Small List -->
-      <div class="md:col-span-4 space-y-4">
-        <div
-          v-for="sPost in spotlightSmallPosts"
-          :key="sPost.id"
-          class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 rounded-xl p-3 flex gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-colors shadow-xs"
-        >
-          <div class="w-20 h-20 rounded overflow-hidden flex-shrink-0 bg-zinc-950">
-            <img
-              :src="sPost.imageUrl"
-              :alt="sPost.title"
-              class="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-          <div class="flex flex-col justify-between flex-grow">
-            <h5
-              class="text-xs font-bold text-zinc-800 dark:text-white line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors"
-            >
-              <NuxtLink :to="`/blog/${sPost.slug}.${sPost.id}`">{{ sPost.title }}</NuxtLink>
-            </h5>
-            <span class="text-[9px] font-semibold text-zinc-500 uppercase mt-2">{{
-              sPost.category
-            }}</span>
           </div>
         </div>
       </div>

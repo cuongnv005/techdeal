@@ -33,6 +33,7 @@ interface WorkerStatsOverview {
   total_pending_posts: number
   total_users: number
   total_comments: number
+  total_views: number
   top_post?: {
     title: string
     slug: string
@@ -89,7 +90,7 @@ export class AdminRepoImpl implements AdminRepository {
       return [
         {
           label: 'Tổng lượt xem bài viết',
-          value: stats.top_post ? stats.top_post.views : '0',
+          value: stats.total_views !== undefined ? stats.total_views : 0,
           trend: 0,
           isPositive: true
         },
@@ -142,12 +143,17 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getPosts(): Promise<PostItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerPost[]>>>(
-        '/admin/posts'
-      )
-      const list = response.data?.data
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ items: WorkerPost[]; pagination?: any }>>
+      >('/admin/posts')
+      const data = response.data?.data
+      const list = data && 'items' in data && Array.isArray(data.items) 
+        ? data.items 
+        : (Array.isArray(data) ? data : [])
+        
       if (!Array.isArray(list)) {
-        console.error('getPosts: response.data.data is not an array', list)
+        console.error('getPosts: response.data.data is not a valid list', list)
         return []
       }
       return list.map((post) => ({
@@ -172,12 +178,17 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getComments(): Promise<CommentItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerComment[]>>>(
-        '/admin/comments'
-      )
-      const list = response.data?.data
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ items: WorkerComment[]; pagination?: any }>>
+      >('/admin/comments')
+      const data = response.data?.data
+      const list = data && 'items' in data && Array.isArray(data.items) 
+        ? data.items 
+        : (Array.isArray(data) ? data : [])
+
       if (!Array.isArray(list)) {
-        console.error('getComments: response.data.data is not an array', list)
+        console.error('getComments: response.data.data is not a valid list', list)
         return []
       }
       return list.map((comment) => ({
@@ -199,12 +210,17 @@ export class AdminRepoImpl implements AdminRepository {
 
   async getUsers(): Promise<UserItem[]> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<WorkerUser[]>>>(
-        '/admin/users'
-      )
-      const list = response.data?.data
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ items: WorkerUser[]; pagination?: any }>>
+      >('/admin/users')
+      const data = response.data?.data
+      const list = data && 'items' in data && Array.isArray(data.items) 
+        ? data.items 
+        : (Array.isArray(data) ? data : [])
+
       if (!Array.isArray(list)) {
-        console.error('getUsers: response.data.data is not an array', list)
+        console.error('getUsers: response.data.data is not a valid list', list)
         return []
       }
       return list.map((user) => ({
