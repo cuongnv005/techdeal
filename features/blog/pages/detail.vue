@@ -228,16 +228,27 @@ const parseBBCode = (bbcode: string) => {
   // Custom links and images (stripping optional surrounding quotes in url)
   html = html.replace(
     /\[url=['"]?([^\]'"]+?)['"]?\]([\s\S]*?)\[\/url\]/gi,
-    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline font-bold">$2</a>'
+    '<a href="$1" target="_blank" class="text-[#e5127d] hover:text-[#3498db] underline md:no-underline hover:underline font-bold">$2</a>'
   )
   html = html.replace(
     /\[url\]([\s\S]*?)\[\/url\]/gi,
-    '<a href="$1" target="_blank" class="text-[#3498db] hover:underline">$1</a>'
+    '<a href="$1" target="_blank" class="text-[#e5127d] hover:text-[#3498db] underline md:no-underline hover:underline font-bold">$1</a>'
   )
   html = html.replace(
     /\[img\]([\s\S]*?)\[\/img\]/gi,
     '<div class="my-4 flex justify-center"><img src="$1" class="max-w-full h-auto rounded-xl shadow-md border border-gray-100 dark:border-zinc-800" /></div>'
   )
+
+  // YouTube tag parser
+  html = html.replace(/\[youtube\]([\s\S]*?)\[\/youtube\]/gi, (match, videoIdOrUrl) => {
+    const trimmed = videoIdOrUrl.trim()
+    let videoId = trimmed
+    const urlMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]+)/i)
+    if (urlMatch && urlMatch[1]) {
+      videoId = urlMatch[1]
+    }
+    return `<div class="my-4 flex justify-center"><div class="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-md border border-gray-100 dark:border-zinc-800"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div>`
+  })
 
   // Blockquote / code block
   html = html.replace(
