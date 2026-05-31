@@ -74,7 +74,7 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           )
           let tagPosts: BlogPost[] = []
           for (const cand of candidates) {
-            tagPosts = await blogRepository.getPosts({ tag: cand })
+            tagPosts = await blogRepository.getPosts({ tag: cand, enrich: false })
             if (tagPosts && tagPosts.length > 0) {
               break
             }
@@ -97,7 +97,7 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           'windows': 'windows'
         }
         const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
-        const catPosts = await blogRepository.getPosts({ category: categoryId })
+        const catPosts = await blogRepository.getPosts({ category: categoryId, enrich: false })
         finalRelated = catPosts.filter((p) => p.id !== detail.post.id)
       } catch (err) {
         console.error('Error fetching fallback category posts:', err)
@@ -276,7 +276,7 @@ const mappedComments = computed(() => {
 
 // Popular posts for sidebar
 const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
-  blogRepository.getPosts({ limit: 5 })
+  blogRepository.getPosts({ limit: 5, enrich: false })
 )
 const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
@@ -463,13 +463,14 @@ const handleSubscribe = () => {
 
           <!-- Post Tags -->
           <div v-if="tags.length > 0" class="flex flex-wrap gap-1.5 pt-4">
-            <span
+            <NuxtLink
               v-for="tag in tags"
               :key="tag"
-              class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#3498db]/5 text-[#3498db] dark:bg-[#e74c3c]/5 dark:text-[#e74c3c] border border-[#3498db]/10 dark:border-[#e74c3c]/10"
+              :to="`/search?tag=${encodeURIComponent(tag)}`"
+              class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#3498db]/5 text-[#3498db] dark:bg-[#e74c3c]/5 dark:text-[#e74c3c] border border-[#3498db]/10 dark:border-[#e74c3c]/10 hover:bg-[#3498db] hover:text-white dark:hover:bg-[#e74c3c] dark:hover:text-white transition-all cursor-pointer"
             >
               #{{ tag }}
-            </span>
+            </NuxtLink>
           </div>
 
           <!-- Sharing Actions -->
