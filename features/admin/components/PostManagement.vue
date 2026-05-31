@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import {
   Search,
@@ -31,6 +31,7 @@ const emit = defineEmits<{
 const searchQuery = ref('')
 const categoryFilter = ref('')
 const statusFilter = ref('')
+const currentPage = ref(1)
 
 const statusConfig = {
   pending: {
@@ -58,6 +59,20 @@ const filteredPosts = computed(() => {
 
     return matchesSearch && matchesCategory && matchesStatus
   })
+})
+
+const paginatedPosts = computed(() => {
+  const start = (currentPage.value - 1) * 10
+  const end = start + 10
+  return filteredPosts.value.slice(start, end)
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredPosts.value.length / 10) || 1
+})
+
+watch([searchQuery, categoryFilter, statusFilter], () => {
+  currentPage.value = 1
 })
 
 const categories = computed(() => {
@@ -142,7 +157,7 @@ const confirmUnpublish = (id: string, title: string) => {
           </thead>
           <tbody class="divide-y divide-gray-150 dark:divide-zinc-850">
             <tr
-              v-for="post in filteredPosts"
+              v-for="post in paginatedPosts"
               :key="post.id"
               class="hover:bg-gray-50/50 dark:hover:bg-zinc-950/30 transition-colors"
             >
@@ -180,7 +195,7 @@ const confirmUnpublish = (id: string, title: string) => {
                 </span>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center gap-3 text-[10px] text-zinc-500">
+                <div class="flex items-center gap-3 text-[10px] text-zinc-550">
                   <span class="flex items-center gap-1"
                     ><Eye class="w-3.5 h-3.5" /> {{ post.views }}</span
                   >
@@ -237,6 +252,37 @@ const confirmUnpublish = (id: string, title: string) => {
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Pagination controls -->
+    <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 pt-2 flex-wrap select-none">
+      <button
+        :disabled="currentPage <= 1"
+        @click="currentPage--"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Trước
+      </button>
+      <button
+        v-for="page in totalPages"
+        :key="page"
+        @click="currentPage = page"
+        class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+        :class="
+          currentPage === page
+            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+            : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
+        "
+      >
+        {{ page }}
+      </button>
+      <button
+        :disabled="currentPage >= totalPages"
+        @click="currentPage++"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Sau
+      </button>
     </div>
   </div>
 </template>

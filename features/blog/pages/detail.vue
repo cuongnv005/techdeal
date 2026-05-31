@@ -75,7 +75,8 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           )
           let tagPosts: BlogPost[] = []
           for (const cand of candidates) {
-            tagPosts = await blogRepository.getPosts({ tag: cand, enrich: false })
+            const tagPostsRes = await blogRepository.getPosts({ tag: cand, enrich: false })
+            tagPosts = tagPostsRes.items
             if (tagPosts && tagPosts.length > 0) {
               break
             }
@@ -98,7 +99,8 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           'windows': 'windows'
         }
         const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
-        const catPosts = await blogRepository.getPosts({ category: categoryId, enrich: false })
+        const catPostsRes = await blogRepository.getPosts({ category: categoryId, enrich: false })
+        const catPosts = catPostsRes.items
         finalRelated = catPosts.filter((p) => p.id !== detail.post.id)
       } catch (err) {
         console.error('Error fetching fallback category posts:', err)
@@ -290,7 +292,7 @@ const mappedComments = computed(() => {
 const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
   blogRepository.getPosts({ limit: 5, enrich: false })
 )
-const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
+const popularSidebarPosts = computed(() => popularSidebarPostsData.value?.items || [])
 
 // Comments State
 const newCommentContent = ref('')
