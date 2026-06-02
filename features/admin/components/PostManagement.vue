@@ -255,7 +255,10 @@ const confirmUnpublish = (id: string, title: string) => {
     </div>
 
     <!-- Pagination controls -->
-    <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 pt-2 flex-wrap select-none">
+    <div
+      v-if="totalPages > 1"
+      class="flex items-center justify-center gap-2 pt-2 flex-wrap select-none"
+    >
       <button
         :disabled="currentPage <= 1"
         @click="currentPage--"

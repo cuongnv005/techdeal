@@ -148,10 +148,13 @@ export class AdminRepoImpl implements AdminRepository {
         AxiosResponse<ApiResponse<{ items: WorkerPost[]; pagination?: any }>>
       >('/admin/posts')
       const data = response.data?.data
-      const list = data && 'items' in data && Array.isArray(data.items) 
-        ? data.items 
-        : (Array.isArray(data) ? data : [])
-        
+      const list =
+        data && 'items' in data && Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data)
+            ? data
+            : []
+
       if (!Array.isArray(list)) {
         console.error('getPosts: response.data.data is not a valid list', list)
         return []
@@ -183,9 +186,12 @@ export class AdminRepoImpl implements AdminRepository {
         AxiosResponse<ApiResponse<{ items: WorkerComment[]; pagination?: any }>>
       >('/admin/comments')
       const data = response.data?.data
-      const list = data && 'items' in data && Array.isArray(data.items) 
-        ? data.items 
-        : (Array.isArray(data) ? data : [])
+      const list =
+        data && 'items' in data && Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data)
+            ? data
+            : []
 
       if (!Array.isArray(list)) {
         console.error('getComments: response.data.data is not a valid list', list)
@@ -215,9 +221,12 @@ export class AdminRepoImpl implements AdminRepository {
         AxiosResponse<ApiResponse<{ items: WorkerUser[]; pagination?: any }>>
       >('/admin/users')
       const data = response.data?.data
-      const list = data && 'items' in data && Array.isArray(data.items) 
-        ? data.items 
-        : (Array.isArray(data) ? data : [])
+      const list =
+        data && 'items' in data && Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data)
+            ? data
+            : []
 
       if (!Array.isArray(list)) {
         console.error('getUsers: response.data.data is not a valid list', list)

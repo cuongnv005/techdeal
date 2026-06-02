@@ -27,7 +27,7 @@ import Footer from '../components/Footer.vue'
 const requestUrl = useRequestURL().href
 
 useSeoMeta({
-  title: 'Windows - Tin tức Windows TechDeal',
+  title: 'Windows - Tin tức Windows',
   description:
     'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
   ogTitle: 'Chuyên mục Windows - TechDeal',
@@ -52,9 +52,8 @@ const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch articles dynamically
-const { data: allCategoryPosts } = await useAsyncData(
-  'posts-windows-all',
-  () => blogRepository.getPosts({ category: 'windows' })
+const { data: allCategoryPosts } = await useAsyncData('posts-windows-all', () =>
+  blogRepository.getPosts({ category: 'windows' })
 )
 const postsList = computed(() => allCategoryPosts.value?.items || [])
 const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
@@ -142,7 +141,10 @@ const userStore = useUserStore()
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+          <div
+            v-if="totalPages > 1"
+            class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap"
+          >
             <button
               :disabled="currentPage <= 1"
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"

@@ -12,8 +12,19 @@ export default defineNuxtConfig({
     '@i18n': path.resolve(__dirname, './i18n')
   },
 
+  runtimeConfig: {
+    public: {
+      googleClientId:
+        process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID ||
+        '559334545172-uarhhls0lrd7rbgoa9538dm16p76kiv6.apps.googleusercontent.com'
+    }
+  },
+
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'vi'
+      },
       title: process.env['APP_NAME'] || '',
       titleTemplate: '%s | ' + (process.env['APP_NAME'] || ''),
       charset: 'utf-8',
@@ -41,7 +52,7 @@ export default defineNuxtConfig({
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
         },
         { property: 'og:image', content: process.env['APP_IMAGE'] || '/images/og-image.jpg' },
-        { property: 'og:locale', content: 'ja_JP' },
+        { property: 'og:locale', content: 'vi_VN' },
         { property: 'og:site_name', content: process.env['APP_NAME'] || '' },
         { name: 'fb:app_id', content: process.env['FB_APP_ID'] || '' },
 
@@ -95,7 +106,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
-    '@nuxtjs/i18n',
     '@nuxt/image',
     '@sentry/nuxt/module',
     'shadcn-nuxt'
@@ -141,19 +151,6 @@ export default defineNuxtConfig({
   devServer: {
     host: '0.0.0.0',
     port: Number(process.env['APP_PORT']) || 8000
-  },
-
-  i18n: {
-    defaultLocale: 'jp',
-    locales: [
-      { code: 'en', name: 'English', file: 'en.json' },
-      { code: 'jp', name: 'Japanese', file: 'jp.json' }
-    ],
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root'
-    }
   },
 
   compatibilityDate: '2024-11-04',

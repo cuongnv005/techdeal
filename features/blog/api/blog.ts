@@ -62,7 +62,8 @@ export interface GetPostsParams {
 
 export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
   // Use backend thumbnail directly if available, fallback to extraction or default
-  let imageUrl = post.thumbnail ||
+  let imageUrl =
+    post.thumbnail ||
     'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
   if (!post.thumbnail && post.content) {
     const imgMatch = post.content.match(/\[img\]([\s\S]*?)\[\/img\]/i)
@@ -137,14 +138,19 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
 }
 
 export class BlogRepository {
-  private detailCache = new Map<string, Promise<{
-    post: BlogPost
-    tags: string[]
-    relatedPosts: BlogPost[]
-    comments: ApiComment[]
-  } | null>>()
+  private detailCache = new Map<
+    string,
+    Promise<{
+      post: BlogPost
+      tags: string[]
+      relatedPosts: BlogPost[]
+      comments: ApiComment[]
+    } | null>
+  >()
 
-  async getPosts(params?: GetPostsParams): Promise<{ items: BlogPost[]; pagination?: ApiPagination }> {
+  async getPosts(
+    params?: GetPostsParams
+  ): Promise<{ items: BlogPost[]; pagination?: ApiPagination }> {
     try {
       const { enrich = false, ...apiParams } = params || {}
       const response = await HttpService.get<
@@ -159,7 +165,7 @@ export class BlogRepository {
         Array.isArray(response.data.data.items)
       ) {
         const posts = response.data.data.items.map(mapApiPostToBlogPost)
-        
+
         let finalPosts = posts
         if (enrich) {
           // Parallel fetch details to enrich list items with image and summary from content
@@ -188,14 +194,14 @@ export class BlogRepository {
           pagination: response.data.data.pagination
         }
       }
-      
+
       // Fallback for old array style response
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
         return {
           items: response.data.data.map(mapApiPostToBlogPost)
         }
       }
-      
+
       return { items: [] }
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -312,18 +318,22 @@ export class BlogRepository {
     category: string
     tags: string[]
     scheduledAt: string | null
-  }): Promise<{ success: boolean; message?: string; data?: { id: string; slug: string; status: string } } | null> {
+  }): Promise<{
+    success: boolean
+    message?: string
+    data?: { id: string; slug: string; status: string }
+  } | null> {
     try {
-      const response = await HttpService.post<unknown, AxiosResponse<ApiResponse<{ id: string; slug: string; status: string }>>>(
-        '/posts',
-        {
-          title: postData.title,
-          content: postData.content,
-          category_id: postData.category,
-          tags: postData.tags,
-          scheduled_at: postData.scheduledAt
-        }
-      )
+      const response = await HttpService.post<
+        unknown,
+        AxiosResponse<ApiResponse<{ id: string; slug: string; status: string }>>
+      >('/posts', {
+        title: postData.title,
+        content: postData.content,
+        category_id: postData.category,
+        tags: postData.tags,
+        scheduled_at: postData.scheduledAt
+      })
       if (response.data) {
         return {
           success: response.data.success,
@@ -350,18 +360,22 @@ export class BlogRepository {
       tags: string[]
       scheduledAt: string | null
     }
-  ): Promise<{ success: boolean; message?: string; data?: { id: string; slug: string; status: string } } | null> {
+  ): Promise<{
+    success: boolean
+    message?: string
+    data?: { id: string; slug: string; status: string }
+  } | null> {
     try {
-      const response = await HttpService.put<unknown, AxiosResponse<ApiResponse<{ id: string; slug: string; status: string }>>>(
-        `/posts/${id}`,
-        {
-          title: postData.title,
-          content: postData.content,
-          category_id: postData.category,
-          tags: postData.tags,
-          scheduled_at: postData.scheduledAt
-        }
-      )
+      const response = await HttpService.put<
+        unknown,
+        AxiosResponse<ApiResponse<{ id: string; slug: string; status: string }>>
+      >(`/posts/${id}`, {
+        title: postData.title,
+        content: postData.content,
+        category_id: postData.category,
+        tags: postData.tags,
+        scheduled_at: postData.scheduledAt
+      })
       if (response.data) {
         return {
           success: response.data.success,

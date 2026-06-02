@@ -21,8 +21,8 @@ const tagTerm = computed(() => (route.query.tag as string) || '')
 // Set page meta for SEO optimization
 useSeoMeta({
   title: computed(() => {
-    if (tagTerm.value) return `Bài viết về thẻ #${tagTerm.value} - TechDeal`
-    return `Kết quả tìm kiếm cho "${queryTerm.value || titleTerm.value}" - TechDeal`
+    if (tagTerm.value) return `Bài viết về thẻ #${tagTerm.value}`
+    return `Kết quả tìm kiếm cho "${queryTerm.value || titleTerm.value}"`
   }),
   description: computed(() => {
     if (tagTerm.value) return `Tổng hợp các bài viết gắn thẻ #${tagTerm.value} trên TechDeal.`
@@ -98,8 +98,12 @@ const mostViewedPosts = computed(() => {
             <template v-else>Kết quả cho: "{{ queryTerm || titleTerm }}"</template>
           </h1>
           <p class="text-xs text-blue-50 mt-2 max-w-xl">
-            <template v-if="tagTerm">Tìm thấy {{ postsList.length }} bài viết gắn thẻ #{{ tagTerm }}.</template>
-            <template v-else>Tìm thấy {{ postsList.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template>
+            <template v-if="tagTerm"
+              >Tìm thấy {{ postsList.length }} bài viết gắn thẻ #{{ tagTerm }}.</template
+            >
+            <template v-else
+              >Tìm thấy {{ postsList.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template
+            >
           </p>
         </div>
       </div>
@@ -142,7 +146,10 @@ const mostViewedPosts = computed(() => {
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+          <div
+            v-if="totalPages > 1"
+            class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap"
+          >
             <button
               :disabled="currentPage <= 1"
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"

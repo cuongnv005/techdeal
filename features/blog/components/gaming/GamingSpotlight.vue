@@ -53,9 +53,7 @@ const allSpotlightPosts = computed(() => {
             <h4
               class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#e74c3c] transition-colors mb-3 line-clamp-2"
             >
-              <NuxtLink :to="`/blog/${post.slug}.${post.id}`">{{
-                post.title
-              }}</NuxtLink>
+              <NuxtLink :to="`/blog/${post.slug}.${post.id}`">{{ post.title }}</NuxtLink>
             </h4>
             <p class="text-xs text-zinc-650 dark:text-zinc-400 line-clamp-3 mb-4 leading-relaxed">
               {{ post.summary }}
