@@ -596,7 +596,7 @@ const handleSubscribe = () => {
                 v-model="newCommentContent"
                 placeholder="Nhập nội dung bình luận ở đây..."
                 rows="4"
-                class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] resize-none"
+                class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] resize-none"
                 required
               ></textarea>
               <button
