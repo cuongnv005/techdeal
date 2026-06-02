@@ -133,7 +133,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="min-h-screen flex bg-gray-155 dark:bg-zinc-955 transition-colors duration-300 font-display"
+    class="min-h-screen flex bg-gray-155 dark:bg-zinc-950 transition-colors duration-300 font-display"
   >
     <!-- Left side: Beautiful branding column (hidden on mobile) -->
     <div
@@ -203,7 +203,7 @@ onMounted(() => {
                 v-model="username"
                 type="text"
                 placeholder="Nhập tên tài khoản của bạn..."
-                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -220,7 +220,7 @@ onMounted(() => {
                 v-model="email"
                 type="email"
                 placeholder="Nhập địa chỉ email..."
-                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-4 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -237,7 +237,7 @@ onMounted(() => {
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)..."
-                class="w-full text-xs pl-10 pr-10 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-955 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                class="w-full text-xs pl-10 pr-10 py-2.5 border border-gray-200 dark:border-zinc-850 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 minlength="6"
                 required
               />
