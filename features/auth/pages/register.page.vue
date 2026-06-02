@@ -115,10 +115,12 @@ onMounted(() => {
 
         const googleBtnEl = document.getElementById('google-btn-container')
         if (googleBtnEl) {
+          const parentWidth = googleBtnEl.offsetWidth || googleBtnEl.clientWidth || 380
+          const buttonWidth = Math.max(200, Math.min(380, parentWidth))
           g.accounts.id.renderButton(googleBtnEl, {
             theme: 'outline',
             size: 'large',
-            width: 380, // Set to standard max-width of form
+            width: buttonWidth,
             text: 'signup_with',
             shape: 'rectangular',
             logo_alignment: 'left'
