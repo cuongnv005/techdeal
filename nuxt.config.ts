@@ -82,7 +82,13 @@ export default defineNuxtConfig({
           rel: 'stylesheet',
           crossorigin: 'anonymous'
         },
-        { rel: 'shortcut icon', type: 'image/png', href: '/images/logo.png' }
+        { rel: 'shortcut icon', type: 'image/png', href: '/images/logo.png' },
+        {
+          rel: 'alternate',
+          type: 'application/rss+xml',
+          title: 'TechDeal RSS Feed',
+          href: '/rss.xml'
+        }
       ],
       script: [
         {
@@ -114,7 +120,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://techdeal-bay.vercel.app',
+    url: 'https://techdeal.io.vn',
     name: process.env['APP_NAME'] || 'TechDeal'
   },
 
