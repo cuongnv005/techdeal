@@ -23,10 +23,11 @@ export interface ApiPost {
 
 export interface ApiComment {
   id: string
-  post_id: string
-  author_id: string
+  post_id?: string
+  author_id?: string
   author_name: string
   avatar_url?: string
+  author_avatar?: string
   content: string
   created_at: string
 }
@@ -300,6 +301,7 @@ export class BlogRepository {
           post_id: postId,
           author_id: userStore.id || '',
           author_name: userStore.username || 'Thành viên',
+          author_avatar: undefined,
           avatar_url: undefined,
           content: content,
           created_at: new Date().toISOString()

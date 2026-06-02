@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import {
   Facebook,
   Twitter,
@@ -7,7 +8,8 @@ import {
   TrendingUp,
   Eye,
   Bookmark,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-vue-next'
 
 import AdBanner from '../AdBanner.vue'
@@ -17,6 +19,30 @@ import type { BlogPost } from '../../types/post.type'
 defineProps<{
   mostViewedPosts: BlogPost[]
 }>()
+
+onMounted(() => {
+  // Load Google SwG Basic SDK dynamically
+  if (process.client && !document.getElementById('google-swg-script')) {
+    const script = document.createElement('script')
+    script.id = 'google-swg-script'
+    script.async = true
+    script.type = 'application/javascript'
+    script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
+    script.onload = () => {
+      const selfWindow = window as any
+      selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
+      selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
+        basicSubscriptions.init({
+          type: 'NewsArticle',
+          isPartOfType: ['Product'],
+          isPartOfProductId: 'CAow6OXGDA:openaccess',
+          clientOptions: { theme: 'light', lang: 'vi' }
+        })
+      })
+    }
+    document.head.appendChild(script)
+  }
+})
 </script>
 
 <template>
@@ -53,6 +79,27 @@ defineProps<{
         >
           <Youtube class="w-4 h-4" /> YouTube
         </a>
+      </div>
+    </div>
+
+    <!-- Google Subscribe with Google Widget -->
+    <div
+      class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm bg-linear-to-tr from-sky-50/50 to-indigo-50/30 dark:from-zinc-900 dark:to-zinc-950"
+    >
+      <h3
+        class="text-sm font-bold uppercase tracking-wider border-b-2 border-red-500 pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2"
+      >
+        <Sparkles class="w-4 h-4 text-red-500" /> Bản tin TechDeal
+      </h3>
+      <div class="space-y-3">
+        <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Đăng ký để cập nhật những bài viết công nghệ mới nhất và độc quyền trực tiếp từ Google
+          News.
+        </p>
+        <div
+          class="swg-basic-subscription-button-placeholder w-full mt-2"
+          data-play-button="true"
+        ></div>
       </div>
     </div>
 

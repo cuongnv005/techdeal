@@ -1,36 +1,60 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from '#app'
+import { Lock, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-vue-next'
 
-import { Mail, ArrowLeft, ArrowRight } from 'lucide-vue-next'
-
-const email = ref('')
+const route = useRoute()
+const token = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 const isLoading = ref(false)
 const isSubmitted = ref(false)
+const errorMsg = ref('')
 
-const handleResetRequest = async () => {
-  if (!email.value) {
-    alert('Vui lòng nhập địa chỉ email!')
+onMounted(() => {
+  token.value = (route.query.token as string) || ''
+  if (!token.value) {
+    errorMsg.value =
+      'Mã xác nhận không hợp lệ hoặc đã thiếu. Vui lòng kiểm tra lại liên kết trong email của bạn.'
+  }
+})
+
+const handleResetPassword = async () => {
+  if (!token.value) {
+    alert('Mã token không hợp lệ!')
     return
   }
+
+  if (newPassword.value.length < 6) {
+    alert('Mật khẩu mới phải có ít nhất 6 ký tự!')
+    return
+  }
+
+  if (newPassword.value !== confirmPassword.value) {
+    alert('Mật khẩu xác nhận không khớp!')
+    return
+  }
+
   isLoading.value = true
+  errorMsg.value = ''
   try {
     const res = await fetch(
-      'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/forgot-password',
+      'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/reset-password',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email: email.value })
+        body: JSON.stringify({ token: token.value, password: newPassword.value })
       }
     )
     const data = await res.json()
     if (!res.ok || !data.success) {
-      throw new Error(data.message || 'Gửi yêu cầu khôi phục thất bại!')
+      throw new Error(data.message || 'Đặt lại mật khẩu thất bại!')
     }
     isSubmitted.value = true
   } catch (error: any) {
-    alert(error.message || 'Có lỗi xảy ra, vui lòng thử lại sau!')
+    errorMsg.value = error.message || 'Có lỗi xảy ra, vui lòng thử lại sau!'
   } finally {
     isLoading.value = false
   }
@@ -65,10 +89,10 @@ const handleResetRequest = async () => {
 
       <!-- Mid text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">Khôi phục tài khoản của bạn</h2>
+        <h2 class="text-4xl font-extrabold leading-tight">Đặt lại mật khẩu mới</h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đừng lo lắng! Chỉ cần điền địa chỉ email đã đăng ký, chúng tôi sẽ gửi liên kết để bạn
-          thiết lập lại mật khẩu mới.
+          Tạo mật khẩu mạnh để bảo vệ tài khoản tốt hơn. Mật khẩu nên kết hợp chữ, số và ký tự đặc
+          biệt.
         </p>
       </div>
 
@@ -78,7 +102,7 @@ const handleResetRequest = async () => {
       </div>
     </div>
 
-    <!-- Right side: Forgot Password Form -->
+    <!-- Right side: Reset Password Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
       <div
         class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300"
@@ -91,30 +115,63 @@ const handleResetRequest = async () => {
           <ArrowLeft class="w-4 h-4" /> Quay lại đăng nhập
         </NuxtLink>
 
-        <div v-if="!isSubmitted" class="space-y-6">
+        <!-- Error view if token invalid or loaded error -->
+        <div
+          v-if="errorMsg && !isSubmitted"
+          class="p-4 bg-red-500/10 text-red-500 rounded-xl text-xs space-y-3"
+        >
+          <p class="font-medium">{{ errorMsg }}</p>
+          <NuxtLink
+            to="/forgot-password"
+            class="inline-block text-xs font-bold underline hover:opacity-85"
+          >
+            Yêu cầu liên kết mới
+          </NuxtLink>
+        </div>
+
+        <div v-if="!isSubmitted && token" class="space-y-6">
           <div>
             <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
-              Quên mật khẩu?
+              Đặt lại mật khẩu
             </h1>
             <p class="text-xs text-zinc-550 dark:text-zinc-400 mt-2">
-              Nhập email để khôi phục mật khẩu.
+              Nhập mật khẩu mới của bạn bên dưới.
             </p>
           </div>
 
-          <form @submit.prevent="handleResetRequest" class="space-y-5">
-            <!-- Email Input -->
+          <form @submit.prevent="handleResetPassword" class="space-y-5">
+            <!-- Password Input -->
             <div class="space-y-1.5">
               <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-                >Địa chỉ Email</label
+                >Mật khẩu mới</label
               >
               <div class="relative">
                 <span class="absolute left-3 top-3 text-zinc-400">
-                  <Mail class="w-4 h-4" />
+                  <Lock class="w-4 h-4" />
                 </span>
                 <input
-                  v-model="email"
-                  type="email"
-                  placeholder="name@example.com"
+                  v-model="newPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Confirm Password Input -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
+                >Xác nhận mật khẩu mới</label
+              >
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-zinc-400">
+                  <Lock class="w-4 h-4" />
+                </span>
+                <input
+                  v-model="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
                   class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                   required
                 />
@@ -127,37 +184,34 @@ const handleResetRequest = async () => {
               :disabled="isLoading"
               class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              <span v-if="isLoading">Đang xử lý...</span>
+              <span v-if="isLoading">Đang lưu...</span>
               <span v-else class="flex items-center gap-1.5"
-                >Gửi liên kết khôi phục <ArrowRight class="w-4 h-4"
+                >Cập nhật mật khẩu <ArrowRight class="w-4 h-4"
               /></span>
             </button>
           </form>
         </div>
 
         <!-- Success view -->
-        <div v-else class="space-y-6 text-center lg:text-left">
+        <div v-else-if="isSubmitted" class="space-y-6 text-center lg:text-left">
           <div
             class="w-12 h-12 bg-green-500/10 text-green-500 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto lg:mx-0"
           >
-            <Mail class="w-6 h-6" :stroke-width="2.5" />
+            <CheckCircle2 class="w-6 h-6" :stroke-width="2.5" />
           </div>
           <div class="space-y-2">
-            <h2 class="text-xl font-bold text-zinc-900 dark:text-white">
-              Kiểm tra hộp thư của bạn
-            </h2>
+            <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Cập nhật thành công!</h2>
             <p class="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed">
-              Chúng tôi đã gửi một email khôi phục mật khẩu đến
-              <strong class="text-zinc-800 dark:text-white font-semibold">{{ email }}</strong
-              >. Vui lòng làm theo hướng dẫn trong email để đặt lại mật khẩu.
+              Mật khẩu của bạn đã được thay đổi thành công. Bây giờ bạn có thể đăng nhập vào tài
+              khoản của mình bằng mật khẩu mới này.
             </p>
           </div>
-          <button
-            @click="isSubmitted = false"
-            class="w-full py-3 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+          <NuxtLink
+            to="/login"
+            class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            Gửi lại email khác
-          </button>
+            Đăng nhập ngay
+          </NuxtLink>
         </div>
       </div>
     </div>
