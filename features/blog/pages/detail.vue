@@ -32,7 +32,11 @@ const userStore = useUserStore()
 
 const isAuthor = computed(() => {
   if (!userStore.isAuthenticated) return false
-  return userStore.id === post.value.authorId || userStore.username === post.value.author
+  return (
+    userStore.role === 'admin' ||
+    userStore.id === post.value.authorId ||
+    userStore.username === post.value.author
+  )
 })
 
 // Initialize authentication from cookies
@@ -218,25 +222,41 @@ const parseBBCode = (bbcode: string) => {
 
   html = html.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, '<li style="list-style: inherit;">$1</li>')
 
-  // Font color and size
-  html = html.replace(
-    /\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi,
-    '<span style="color: $1">$2</span>'
-  )
-  html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
-    const sizeMap: Record<string, string> = {
-      '1': '10px',
-      '2': '12px',
-      '3': '14px',
-      '4': '16px',
-      '5': '18px',
-      '6': '24px',
-      '7': '32px'
-    }
-    const fontSize =
-      sizeMap[size.trim()] || (isNaN(Number(size)) ? size.trim() : `${size.trim()}px`)
-    return `<span style="font-size: ${fontSize}">${content}</span>`
-  })
+  // Font family, color and size with nested tag support
+  let oldHtml
+  do {
+    oldHtml = html
+    html = html.replace(
+      /\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi,
+      '<span style="color: $1">$2</span>'
+    )
+  } while (html !== oldHtml)
+
+  do {
+    oldHtml = html
+    html = html.replace(/\[font=([^\]]+)\]([\s\S]*?)\[\/font\]/gi, (match, fontFace, content) => {
+      const safeFont = fontFace.replace(/"/g, "'")
+      return `<span style="font-family: ${safeFont}">${content}</span>`
+    })
+  } while (html !== oldHtml)
+
+  do {
+    oldHtml = html
+    html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
+      const sizeMap: Record<string, string> = {
+        '1': '10px',
+        '2': '12px',
+        '3': '14px',
+        '4': '16px',
+        '5': '18px',
+        '6': '24px',
+        '7': '32px'
+      }
+      const fontSize =
+        sizeMap[size.trim()] || (isNaN(Number(size)) ? size.trim() : `${size.trim()}px`)
+      return `<span style="font-size: ${fontSize}">${content}</span>`
+    })
+  } while (html !== oldHtml)
 
   // Align
   html = html.replace(/\[left\]([\s\S]*?)\[\/left\]/gi, '<div class="text-left">$1</div>')
@@ -252,6 +272,15 @@ const parseBBCode = (bbcode: string) => {
     /\[url\]([\s\S]*?)\[\/url\]/gi,
     '<a href="$1" target="_blank" class="text-[#e5127d] hover:text-[#3498db] underline md:no-underline hover:underline font-bold">$1</a>'
   )
+  // Gallery of multiple images horizontally aligned
+  html = html.replace(/\[gallery\]([\s\S]*?)\[\/gallery\]/gi, (match, content) => {
+    const imagesHtml = content.replace(
+      /\[img\]([\s\S]*?)\[\/img\]/gi,
+      '<img src="$1" class="h-[9.5rem] md:h-90 object-cover rounded-xl shadow-xs border border-gray-100 dark:border-zinc-850" />'
+    )
+    return `<div class="flex flex-wrap gap-2 justify-center my-4">${imagesHtml}</div>`
+  })
+
   html = html.replace(
     /\[img\]([\s\S]*?)\[\/img\]/gi,
     '<div class="my-4 flex justify-center"><img src="$1" class="max-w-full h-auto rounded-xl shadow-md border border-gray-100 dark:border-zinc-800" /></div>'
@@ -586,7 +615,7 @@ const handleSubscribe = () => {
             </span>
             <div class="flex items-center gap-2">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/ThuVienGame1"
                 target="_blank"
                 class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 title="Chia sẻ Facebook"
@@ -594,7 +623,7 @@ const handleSubscribe = () => {
                 <Facebook class="w-4 h-4" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://www.facebook.com/ThuVienGame1"
                 target="_blank"
                 class="p-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 title="Chia sẻ Twitter"
