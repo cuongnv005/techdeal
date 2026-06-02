@@ -75,13 +75,21 @@ const handleCredentialResponse = async (response: any) => {
 onMounted(() => {
   const route = useRoute()
   const token = route.query.token as string
-  const userParam = route.query.user as string
+  const userId = route.query.userId as string
+  const usernameParam = route.query.username as string
+  const roleParam = route.query.role as 'admin' | 'mod' | 'user'
 
-  if (token && userParam) {
+  if (token && userId && usernameParam) {
     try {
-      const user = JSON.parse(decodeURIComponent(userParam))
+      const decodedUsername = decodeURIComponent(usernameParam).replace(/\+/g, ' ')
+      const user = {
+        id: userId,
+        username: decodedUsername,
+        email: (route.query.email as string) || '',
+        role: roleParam || 'user'
+      }
       userStore.setAuth(token, user)
-      alert(`Đăng nhập thành công! Chào mừng ${user.username || user.email}`)
+      alert(`Đăng nhập thành công! Chào mừng ${user.username}`)
       navigateTo('/')
       return
     } catch (e) {
