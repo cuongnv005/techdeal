@@ -421,6 +421,33 @@ useHead({
       rel: 'canonical',
       href: requestUrl
     }
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: post.value.title,
+        description: post.value.summary,
+        image: [post.value.imageUrl],
+        datePublished: post.value.scheduledAt || new Date().toISOString(),
+        dateModified: post.value.scheduledAt || new Date().toISOString(),
+        author: {
+          '@type': 'Person',
+          name: post.value.author || 'Cuong'
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'TechDeal'
+        },
+        url: requestUrl,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': requestUrl
+        }
+      })
+    }
   ]
 })
 
