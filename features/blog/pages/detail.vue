@@ -299,6 +299,7 @@ const mappedComments = computed(() => {
     id: c.id,
     author: c.author_name || 'Thành viên',
     avatar:
+      c.author_avatar ||
       c.avatar_url ||
       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
     date: new Date(c.created_at).toLocaleString('vi-VN'),
@@ -396,7 +397,8 @@ const copyUrl = () => {
   }
 }
 
-// SEO setting on mount/route change
+import { onMounted } from 'vue'
+
 const requestUrl = useRequestURL().href
 
 useSeoMeta({
@@ -420,6 +422,30 @@ useHead({
       href: requestUrl
     }
   ]
+})
+
+onMounted(() => {
+  // Load Google SwG Basic SDK dynamically
+  if (process.client && !document.getElementById('google-swg-script')) {
+    const script = document.createElement('script')
+    script.id = 'google-swg-script'
+    script.async = true
+    script.type = 'application/javascript'
+    script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
+    script.onload = () => {
+      const selfWindow = window as any
+      selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
+      selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
+        basicSubscriptions.init({
+          type: 'NewsArticle',
+          isPartOfType: ['Product'],
+          isPartOfProductId: 'CAow6OXGDA:openaccess',
+          clientOptions: { theme: 'light', lang: 'vi' }
+        })
+      })
+    }
+    document.head.appendChild(script)
+  }
 })
 
 const handleSubscribe = () => {
@@ -702,6 +728,26 @@ const handleSubscribe = () => {
                   </h5>
                 </div>
               </div>
+            </div>
+          </div>
+          <!-- Google Subscribe with Google Widget -->
+          <div
+            class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs bg-linear-to-tr from-sky-50/50 to-indigo-50/30 dark:from-zinc-900 dark:to-zinc-950"
+          >
+            <h4
+              class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
+            >
+              <Sparkles class="w-4 h-4 text-red-500" /> Bản tin TechDeal
+            </h4>
+            <div class="space-y-3">
+              <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">
+                Đăng ký để nhận thông báo về những tin tức công nghệ mới và độc quyền trực tiếp qua
+                Google News.
+              </p>
+              <div
+                class="swg-basic-subscription-button-placeholder w-full mt-2"
+                data-play-button="true"
+              ></div>
             </div>
           </div>
         </aside>
