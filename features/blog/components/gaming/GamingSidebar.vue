@@ -108,7 +108,7 @@ defineProps<{
     <div
       class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-3 rounded-xl flex items-center justify-center shadow-xs"
     >
-      <AdBanner width="300px" height="250px" :is-google-ad="true"/>
+      <AdBanner width="300px" height="250px" :is-google-ad="true" />
     </div>
   </aside>
 </template>

@@ -93,10 +93,10 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
       try {
         const categoryMap: Record<string, string> = {
           'thế giới game': 'gaming',
-          'android': 'android',
-          'ios': 'ios',
+          android: 'android',
+          ios: 'ios',
           'công nghệ': 'technology',
-          'windows': 'windows'
+          windows: 'windows'
         }
         const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
         const catPostsRes = await blogRepository.getPosts({ category: categoryId, enrich: false })
@@ -175,31 +175,43 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[s\]([\s\S]*?)\[\/s\]/gi, '<s>$1</s>')
 
   // Lists [LIST] and [*]
-  html = html.replace(/\[list(?:=([^\]]+))?\]([\s\S]*?)\[\/list\]/gi, (match: string, type: string | undefined, listContent: string) => {
-    const items = listContent.split(/\[\*\]/)
-    const listItems = items
-      .slice(1)
-      .map((item: string) => `<li style="list-style: inherit;" data-xf-list-type="${type ? 'ol' : 'ul'}">${item.trim()}</li>`)
-      .join('')
-    const tag = type ? 'ol' : 'ul'
-    const attrib = type ? ` type="${type}"` : ''
-    const listStyle = type ? 'decimal' : 'disc'
-    return `<${tag}${attrib} style="list-style-type: ${listStyle}; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${listItems}</${tag}>`
-  })
+  html = html.replace(
+    /\[list(?:=([^\]]+))?\]([\s\S]*?)\[\/list\]/gi,
+    (match: string, type: string | undefined, listContent: string) => {
+      const items = listContent.split(/\[\*\]/)
+      const listItems = items
+        .slice(1)
+        .map(
+          (item: string) =>
+            `<li style="list-style: inherit;" data-xf-list-type="${type ? 'ol' : 'ul'}">${item.trim()}</li>`
+        )
+        .join('')
+      const tag = type ? 'ol' : 'ul'
+      const attrib = type ? ` type="${type}"` : ''
+      const listStyle = type ? 'decimal' : 'disc'
+      return `<${tag}${attrib} style="list-style-type: ${listStyle}; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${listItems}</${tag}>`
+    }
+  )
 
   // Support [ul] and [ol] lists with [li]
   html = html.replace(/\[ul\]([\s\S]*?)\[\/ul\]/gi, (match: string, content: string) => {
-    let ulContent = content.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, (liMatch: string, liContent: string) => {
-      return `<li style="list-style: inherit;">${liContent.trim()}</li>`
-    })
+    let ulContent = content.replace(
+      /\[li\]([\s\S]*?)\[\/li\]/gi,
+      (liMatch: string, liContent: string) => {
+        return `<li style="list-style: inherit;">${liContent.trim()}</li>`
+      }
+    )
     ulContent = ulContent.replace(/\s*\n\s*/g, '')
     return `<ul style="list-style-type: disc; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${ulContent}</ul>`
   })
 
   html = html.replace(/\[ol\]([\s\S]*?)\[\/ol\]/gi, (match: string, content: string) => {
-    let olContent = content.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, (liMatch: string, liContent: string) => {
-      return `<li style="list-style: inherit;">${liContent.trim()}</li>`
-    })
+    let olContent = content.replace(
+      /\[li\]([\s\S]*?)\[\/li\]/gi,
+      (liMatch: string, liContent: string) => {
+        return `<li style="list-style: inherit;">${liContent.trim()}</li>`
+      }
+    )
     olContent = olContent.replace(/\s*\n\s*/g, '')
     return `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 8px; margin-bottom: 8px; display: block;">${olContent}</ol>`
   })
@@ -207,7 +219,10 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[li\]([\s\S]*?)\[\/li\]/gi, '<li style="list-style: inherit;">$1</li>')
 
   // Font color and size
-  html = html.replace(/\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1">$2</span>')
+  html = html.replace(
+    /\[color=([^\]]+)\]([\s\S]*?)\[\/color\]/gi,
+    '<span style="color: $1">$2</span>'
+  )
   html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, (match, size, content) => {
     const sizeMap: Record<string, string> = {
       '1': '10px',
@@ -218,7 +233,8 @@ const parseBBCode = (bbcode: string) => {
       '6': '24px',
       '7': '32px'
     }
-    const fontSize = sizeMap[size.trim()] || (isNaN(Number(size)) ? size.trim() : `${size.trim()}px`)
+    const fontSize =
+      sizeMap[size.trim()] || (isNaN(Number(size)) ? size.trim() : `${size.trim()}px`)
     return `<span style="font-size: ${fontSize}">${content}</span>`
   })
 
@@ -245,7 +261,9 @@ const parseBBCode = (bbcode: string) => {
   html = html.replace(/\[youtube\]([\s\S]*?)\[\/youtube\]/gi, (match, videoIdOrUrl) => {
     const trimmed = videoIdOrUrl.trim()
     let videoId = trimmed
-    const urlMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]+)/i)
+    const urlMatch = trimmed.match(
+      /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]+)/i
+    )
     if (urlMatch && urlMatch[1]) {
       videoId = urlMatch[1]
     }
@@ -382,7 +400,7 @@ const copyUrl = () => {
 const requestUrl = useRequestURL().href
 
 useSeoMeta({
-  title: () => `${post.value.title} - TechDeal`,
+  title: () => post.value.title,
   description: () => post.value.summary,
   ogTitle: () => `${post.value.title} - TechDeal`,
   ogDescription: () => post.value.summary,

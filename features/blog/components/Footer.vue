@@ -63,9 +63,21 @@ const copyrightText = computed(() =>
         <div>
           <h4 class="text-white font-bold uppercase mb-4">{{ middleColTitle }}</h4>
           <ul class="space-y-2">
-            <li><NuxtLink to="/terms" class="hover:text-white transition-colors">Terms of Service</NuxtLink></li>
-            <li><NuxtLink to="/privacy" class="hover:text-white transition-colors">Privacy Policy</NuxtLink></li>
-            <li><NuxtLink to="/about" class="hover:text-white transition-colors">About & Newsletter</NuxtLink></li>
+            <li>
+              <NuxtLink to="/terms" class="hover:text-white transition-colors"
+                >Terms of Service</NuxtLink
+              >
+            </li>
+            <li>
+              <NuxtLink to="/privacy" class="hover:text-white transition-colors"
+                >Privacy Policy</NuxtLink
+              >
+            </li>
+            <li>
+              <NuxtLink to="/about" class="hover:text-white transition-colors"
+                >About & Newsletter</NuxtLink
+              >
+            </li>
           </ul>
         </div>
 

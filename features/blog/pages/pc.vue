@@ -29,7 +29,7 @@ const requestUrl = useRequestURL().href
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: 'PC máy tính - Tin tức PC TechDeal',
+  title: 'PC máy tính - Tin tức PC',
   description:
     'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
   ogTitle: 'Chuyên mục PC máy tính - TechDeal',
@@ -51,9 +51,8 @@ useHead({
 })
 
 // Fetch articles dynamically
-const { data: allCategoryPosts } = await useAsyncData(
-  'posts-pc-all',
-  () => blogRepository.getPosts({ category: 'pc' })
+const { data: allCategoryPosts } = await useAsyncData('posts-pc-all', () =>
+  blogRepository.getPosts({ category: 'pc' })
 )
 const postsList = computed(() => allCategoryPosts.value?.items || [])
 const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
@@ -143,7 +142,10 @@ const userStore = useUserStore()
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+          <div
+            v-if="totalPages > 1"
+            class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap"
+          >
             <button
               :disabled="currentPage <= 1"
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"

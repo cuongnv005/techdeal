@@ -9,13 +9,8 @@ interface UseTranslateResult {
 }
 
 export function useTranslate(): UseTranslateResult {
-  const { $i18n } = useNuxtApp()
-
-  const translate = (key: TxKeyPath, options?: TranslateOptions): string => {
-    if (options) {
-      return $i18n.t(key, options)
-    }
-    return $i18n.t(key)
+  const translate = (key: TxKeyPath, _options?: TranslateOptions): string => {
+    return String(key)
   }
 
   return { translate }

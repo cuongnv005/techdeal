@@ -19,15 +19,15 @@ const requestUrl = useRequestURL().href
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: 'Trang chủ - Tin tức Công nghệ TechDeal',
+  title: 'Trang chủ - Tin tức Công nghệ',
   description:
     'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
-  ogTitle: 'Trang chủ - Tin tức Công nghệ TechDeal',
+  ogTitle: 'Trang chủ - Tin tức Công nghệ',
   ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogUrl: requestUrl,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Trang chủ - Tin tức Công nghệ TechDeal',
+  twitterTitle: 'Trang chủ - Tin tức Công nghệ',
   twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
 })
 
@@ -129,7 +129,11 @@ const handleSearch = () => {
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
       <!-- HERO COMPONENT (only show on page 1) -->
-      <HomeHero v-if="currentPage === 1" :featured-big-post="featuredBigPost" :featured-small-posts="featuredSmallPosts" />
+      <HomeHero
+        v-if="currentPage === 1"
+        :featured-big-post="featuredBigPost"
+        :featured-small-posts="featuredSmallPosts"
+      />
 
       <!-- AD BANNER BLOCK -->
       <AdBanner width="970px" height="90px" :is-google-ad="true" />
@@ -151,8 +155,12 @@ const handleSearch = () => {
 
           <!-- Spinning Loading Indicator -->
           <div v-if="pending" class="flex flex-col items-center justify-center py-20 min-h-[350px]">
-            <div class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">Đang tải bài viết mới...</p>
+            <div
+              class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
+            ></div>
+            <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
+              Đang tải bài viết mới...
+            </p>
           </div>
 
           <!-- Simplified News Grid (Using PostCard layout) -->
@@ -161,7 +169,10 @@ const handleSearch = () => {
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap">
+          <div
+            v-if="totalPages > 1"
+            class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap"
+          >
             <button
               :disabled="currentPage <= 1"
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
