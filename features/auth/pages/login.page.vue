@@ -73,6 +73,22 @@ const handleCredentialResponse = async (response: any) => {
 }
 
 onMounted(() => {
+  const route = useRoute()
+  const token = route.query.token as string
+  const userParam = route.query.user as string
+
+  if (token && userParam) {
+    try {
+      const user = JSON.parse(decodeURIComponent(userParam))
+      userStore.setAuth(token, user)
+      alert(`Đăng nhập thành công! Chào mừng ${user.username || user.email}`)
+      navigateTo('/')
+      return
+    } catch (e) {
+      console.error('Lỗi đăng nhập Google Redirect:', e)
+    }
+  }
+
   if (process.client) {
     // Dynamically load Google Identity Services SDK
     const script = document.createElement('script')
@@ -84,7 +100,7 @@ onMounted(() => {
       if (g) {
         g.accounts.id.initialize({
           client_id: config.public.googleClientId,
-          callback: handleCredentialResponse,
+          login_uri: 'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/google',
           ux_mode: 'redirect',
           auto_select: false
         })
