@@ -27,7 +27,7 @@ const descriptionText = computed(() =>
     ? 'Trang blog cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
     : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
 )
-const middleColTitle = computed(() => 'Useful Links')
+const middleColTitle = computed(() => 'Liên kết hữu ích')
 const supportEmail = computed(() => (isBlue.value ? 'contact@techdeal.com' : 'gaming@techdeal.com'))
 const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822144589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
@@ -65,17 +65,17 @@ const copyrightText = computed(() =>
           <ul class="space-y-2">
             <li>
               <NuxtLink to="/terms" class="hover:text-white transition-colors"
-                >Terms of Service</NuxtLink
+                >Điều khoản Dịch vụ</NuxtLink
               >
             </li>
             <li>
               <NuxtLink to="/privacy" class="hover:text-white transition-colors"
-                >Privacy Policy</NuxtLink
+                >Chính sách Bảo mật</NuxtLink
               >
             </li>
             <li>
               <NuxtLink to="/about" class="hover:text-white transition-colors"
-                >About & Newsletter</NuxtLink
+                >Giới thiệu & Bản tin</NuxtLink
               >
             </li>
           </ul>

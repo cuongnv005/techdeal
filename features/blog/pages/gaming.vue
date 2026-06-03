@@ -120,6 +120,7 @@ const posts = computed(() => {
 
     <!-- MAIN AREA -->
     <main>
+      <h1 class="sr-only">Thế giới Game - Tin tức Game & Esports mới nhất</h1>
       <!-- Admin Action Bar -->
       <div
         v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')"

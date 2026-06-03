@@ -2,7 +2,7 @@
 import RegisterPage from '@features/auth/pages/register.page.vue'
 
 useSeoMeta({
-  title: 'Đăng ký tài khoản - TechDeal',
+  title: 'Đăng ký tài khoản',
   robots: 'noindex, nofollow'
 })
 </script>

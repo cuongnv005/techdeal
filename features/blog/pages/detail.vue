@@ -430,17 +430,25 @@ import { onMounted } from 'vue'
 
 const requestUrl = useRequestURL().href
 
+const truncatedSummary = computed(() => {
+  const sum = post.value.summary || ''
+  if (sum.length > 155) {
+    return sum.substring(0, 152) + '...'
+  }
+  return sum
+})
+
 useSeoMeta({
   title: () => post.value.title,
-  description: () => post.value.summary,
-  ogTitle: () => `${post.value.title} - TechDeal`,
-  ogDescription: () => post.value.summary,
+  description: () => truncatedSummary.value,
+  ogTitle: () => post.value.title,
+  ogDescription: () => truncatedSummary.value,
   ogImage: () => post.value.imageUrl,
   ogUrl: requestUrl,
   ogType: 'article',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => `${post.value.title} - TechDeal`,
-  twitterDescription: () => post.value.summary,
+  twitterTitle: () => post.value.title,
+  twitterDescription: () => truncatedSummary.value,
   twitterImage: () => post.value.imageUrl
 })
 
@@ -458,7 +466,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'NewsArticle',
         headline: post.value.title,
-        description: post.value.summary,
+        description: truncatedSummary.value,
         image: [post.value.imageUrl],
         datePublished: post.value.scheduledAt || new Date().toISOString(),
         dateModified: post.value.scheduledAt || new Date().toISOString(),

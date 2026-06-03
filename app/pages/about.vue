@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import Header from '@features/blog/components/Header.vue'
 import Footer from '@features/blog/components/Footer.vue'
 import { Sparkles, Mail, Rss, Laptop, Gamepad2 } from 'lucide-vue-next'
 
 useSeoMeta({
-  title: 'About TechDeal & Newsletter - TechDeal',
+  title: 'Giới thiệu & Bản tin',
   description:
-    'Learn more about TechDeal blog, our gaming and tech coverage, and subscribe to our newsletter.',
-  ogTitle: 'About & Newsletter - TechDeal',
+    'Tìm hiểu thêm về blog TechDeal, chuyên mục tin tức game và công nghệ của chúng tôi, và đăng ký nhận bản tin khuyến mãi.',
+  ogTitle: 'Giới thiệu & Bản tin',
   ogType: 'website'
 })
 
@@ -18,7 +19,7 @@ const handleSubscribe = () => {
   if (emailInput.value.trim()) {
     isSubscribed.value = true
     emailInput.value = ''
-    alert('Thank you for subscribing to TechDeal newsletter!')
+    alert('Cảm ơn bạn đã đăng ký nhận bản tin từ TechDeal!')
   }
 }
 </script>
@@ -31,21 +32,22 @@ const handleSubscribe = () => {
 
     <main class="container mx-auto px-4 py-12 max-w-3xl">
       <div
-        class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 md:p-10 shadow-xs space-y-8"
+        class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-855 p-6 md:p-10 shadow-xs space-y-8"
       >
         <!-- About Section -->
         <div class="space-y-6">
           <h1
             class="text-3xl font-black tracking-tight text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-4 flex items-center gap-2"
           >
-            <Sparkles class="w-8 h-8 text-[#3498db] dark:text-[#e74c3c]" /> About TechDeal
+            <Sparkles class="w-8 h-8 text-[#3498db] dark:text-[#e74c3c]" /> Giới thiệu TechDeal
           </h1>
 
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Welcome to <strong>TechDeal</strong>, a dedicated blog and community sharing space for
-            all things technology and gaming. We are not a formal news publication, but rather a hub
-            run by tech enthusiasts and gamers who love sharing the latest hardware reviews,
-            software tips, dynamic discussions, and hot deals.
+            Chào mừng bạn đến với <strong>TechDeal</strong>, không gian chia sẻ và là cộng đồng dành
+            riêng cho những ai đam mê công nghệ và trò chơi điện tử. Chúng tôi không phải là một cơ
+            quan báo chí chính thức, mà là một sân chơi được vận hành bởi những người đam mê công
+            nghệ và game thủ - những người yêu thích việc chia sẻ các đánh giá phần cứng mới nhất,
+            mẹo phần mềm, các thảo luận sôi nổi và các tin khuyến mãi hấp dẫn nhất.
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -54,9 +56,10 @@ const handleSubscribe = () => {
             >
               <Laptop class="w-8 h-8 text-blue-500 shrink-0" />
               <div>
-                <h3 class="text-xs font-bold text-zinc-900 dark:text-white">Tech Insights</h3>
-                <p class="text-[11px] text-zinc-500 mt-1 leading-normal">
-                  Guides, operating systems tutorials, hardware breakdowns, and review articles.
+                <h3 class="text-xs font-bold text-zinc-900 dark:text-white">Góc Công nghệ</h3>
+                <p class="text-[11px] text-zinc-555 mt-1 leading-normal dark:text-zinc-400">
+                  Các bài hướng dẫn, thủ thuật hệ điều hành, phân tích phần cứng và các bài đánh giá
+                  thiết bị chi tiết.
                 </p>
               </div>
             </div>
@@ -65,10 +68,12 @@ const handleSubscribe = () => {
             >
               <Gamepad2 class="w-8 h-8 text-red-500 shrink-0" />
               <div>
-                <h3 class="text-xs font-bold text-zinc-900 dark:text-white">Gaming Deals</h3>
-                <p class="text-[11px] text-zinc-500 mt-1 leading-normal">
-                  Updates on free game distribution programs from Steam, Epic Games, and other major
-                  gaming platforms.
+                <h3 class="text-xs font-bold text-zinc-900 dark:text-white">
+                  Thế giới Game & Deal hot
+                </h3>
+                <p class="text-[11px] text-zinc-555 mt-1 leading-normal dark:text-zinc-400">
+                  Cập nhật các chương trình phát tặng game miễn phí từ Steam, Epic Games Store và
+                  các nền tảng game lớn khác.
                 </p>
               </div>
             </div>
@@ -78,18 +83,19 @@ const handleSubscribe = () => {
         <!-- Newsletter Section -->
         <div class="border-t border-gray-200 dark:border-zinc-800 pt-8 space-y-6">
           <h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-            <Mail class="w-6 h-6 text-[#3498db]" /> TechDeal Newsletter
+            <Mail class="w-6 h-6 text-[#3498db]" /> Bản tin TechDeal
           </h2>
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Don't miss out on free game promotions and handpicked tech deals. Subscribe to our
-            newsletter to receive weekly summaries of our best posts directly to your inbox.
+            Đừng bỏ lỡ các đợt phát tặng game miễn phí và ưu đãi công nghệ được chọn lọc kỹ càng.
+            Hãy đăng ký nhận bản tin của chúng tôi để nhận các bài viết tổng hợp nổi bật hàng tuần
+            trực tiếp trong hộp thư của bạn.
           </p>
 
           <form @submit.prevent="handleSubscribe" class="flex flex-col sm:flex-row gap-2 max-w-lg">
             <input
               v-model="emailInput"
               type="email"
-              placeholder="Enter your email address..."
+              placeholder="Nhập địa chỉ email của bạn..."
               class="flex-grow text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db]"
               required
             />
@@ -97,12 +103,12 @@ const handleSubscribe = () => {
               type="submit"
               class="px-5 py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Rss class="w-4 h-4" /> Subscribe
+              <Rss class="w-4 h-4" /> Đăng ký
             </button>
           </form>
 
           <p v-if="isSubscribed" class="text-xs text-emerald-500 font-semibold">
-            🎉 Successfully subscribed! Stay tuned for awesome deals!
+            🎉 Đăng ký thành công! Hãy chờ đón những ưu đãi tuyệt vời tiếp theo!
           </p>
         </div>
       </div>
