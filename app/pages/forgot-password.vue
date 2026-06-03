@@ -2,7 +2,7 @@
 import ForgotPasswordPage from '@features/auth/pages/forgot-password.page.vue'
 
 useSeoMeta({
-  title: 'Khôi phục mật khẩu - TechDeal',
+  title: 'Khôi phục mật khẩu',
   robots: 'noindex, nofollow'
 })
 </script>

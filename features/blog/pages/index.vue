@@ -128,6 +128,7 @@ const handleSearch = () => {
 
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-6">
+      <h1 class="sr-only">TechDeal - Tin tức công nghệ, game và khuyến mãi mới nhất</h1>
       <!-- HERO COMPONENT (only show on page 1) -->
       <HomeHero
         v-if="currentPage === 1"
