@@ -338,9 +338,9 @@ const mappedComments = computed(() => {
 
 // Popular posts for sidebar
 const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
-  blogRepository.getPosts({ limit: 5, enrich: false })
+  blogRepository.getPopularPosts(5)
 )
-const popularSidebarPosts = computed(() => popularSidebarPostsData.value?.items || [])
+const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
 // Comments State
 const newCommentContent = ref('')
@@ -480,29 +480,29 @@ useHead({
   ]
 })
 
-onMounted(() => {
-  // Load Google SwG Basic SDK dynamically
-  if (process.client && !document.getElementById('google-swg-script')) {
-    const script = document.createElement('script')
-    script.id = 'google-swg-script'
-    script.async = true
-    script.type = 'application/javascript'
-    script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
-    script.onload = () => {
-      const selfWindow = window as any
-      selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
-      selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
-        basicSubscriptions.init({
-          type: 'NewsArticle',
-          isPartOfType: ['Product'],
-          isPartOfProductId: 'CAow6OXGDA:openaccess',
-          clientOptions: { theme: 'light', lang: 'vi' }
-        })
-      })
-    }
-    document.head.appendChild(script)
-  }
-})
+// onMounted(() => {
+//   // Load Google SwG Basic SDK dynamically
+//   if (process.client && !document.getElementById('google-swg-script')) {
+//     const script = document.createElement('script')
+//     script.id = 'google-swg-script'
+//     script.async = true
+//     script.type = 'application/javascript'
+//     script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
+//     script.onload = () => {
+//       const selfWindow = window as any
+//       selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
+//       selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
+//         basicSubscriptions.init({
+//           type: 'NewsArticle',
+//           isPartOfType: ['Product'],
+//           isPartOfProductId: 'CAow6OXGDA:openaccess',
+//           clientOptions: { theme: 'light', lang: 'vi' }
+//         })
+//       })
+//     }
+//     document.head.appendChild(script)
+//   }
+// })
 
 const handleSubscribe = () => {
   alert('Cảm ơn bạn đã đăng ký!')

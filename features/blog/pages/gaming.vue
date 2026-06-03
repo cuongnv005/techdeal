@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-vue-next'
+import { Facebook, Twitter, Instagram, Linkedin, TrendingUp } from 'lucide-vue-next'
 
 import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
+import PostCard from '../components/PostCard.vue'
 import GamingBanner from '../components/gaming/GamingBanner.vue'
 import GamingCategories from '../components/gaming/GamingCategories.vue'
 import GamingSidebar from '../components/gaming/GamingSidebar.vue'
@@ -55,7 +56,7 @@ const categories = ref([
 
 // Fetch gaming articles dynamically
 const { data: gamingPosts } = await useAsyncData('posts-gaming', () =>
-  blogRepository.getPosts({ category: 'gaming', limit: 20 })
+  blogRepository.getPosts({ category: 'gaming' })
 )
 
 const postsList = computed(() => gamingPosts.value?.items || [])
@@ -77,30 +78,36 @@ const fallbackPost: BlogPost = {
 
 // Banner Posts (Big header layout)
 const bannerPosts = computed<BlogPost[]>(() => {
-  return postsList.value.slice(0, 1).length > 0 ? postsList.value.slice(0, 1) : [fallbackPost]
+  return postsList.value.slice(0, 2).length > 0 ? postsList.value.slice(0, 2) : [fallbackPost]
 })
 
-// Spotlight posts
+// Spotlight posts - next 3 posts (posts 3, 4, 5 -> indices 2, 3, 4)
 const spotlightBigPost = computed<BlogPost>(() => {
-  return postsList.value[1] || fallbackPost
+  return postsList.value[2] || fallbackPost
 })
 
 const spotlightSmallPosts = computed<BlogPost[]>(() => {
-  return postsList.value.slice(2, 4)
-})
-
-// Popular News list
-const popularMediumPosts = computed<BlogPost[]>(() => {
-  return postsList.value.slice(4, 6)
-})
-
-const popularSmallPosts = computed<BlogPost[]>(() => {
-  return postsList.value.slice(6, 9)
+  return postsList.value.slice(3, 5)
 })
 
 // Sidebar recent posts
 const recentSidebarPosts = computed<BlogPost[]>(() => {
-  return postsList.value.slice(9, 14)
+  return postsList.value.slice(0, 5)
+})
+
+const route = useRoute()
+const currentPage = computed(() => Number(route.query.page) || 1)
+
+const remainingPosts = computed(() => {
+  return postsList.value.slice(5)
+})
+
+const totalPages = computed(() => Math.ceil(remainingPosts.value.length / 10) || 1)
+
+const posts = computed(() => {
+  const start = (currentPage.value - 1) * 10
+  const end = start + 10
+  return remainingPosts.value.slice(start, end)
 })
 </script>
 
@@ -134,9 +141,6 @@ const recentSidebarPosts = computed<BlogPost[]>(() => {
       <!-- GAMING BANNER COMPONENT -->
       <GamingBanner :banner-posts="bannerPosts" />
 
-      <!-- GAMING CATEGORIES COMPONENT -->
-      <GamingCategories :categories="categories" />
-
       <!-- MIDDLE AD BANNER -->
       <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
@@ -154,78 +158,55 @@ const recentSidebarPosts = computed<BlogPost[]>(() => {
             <!-- MID AD BANNER 2 -->
             <AdBanner width="728px" height="90px" :is-google-ad="true" />
 
-            <!-- POPULAR NEWS SECTION -->
+            <!-- NEWS GRID SECTION -->
             <div>
-              <div class="border-b border-gray-250 dark:border-zinc-800 pb-3 mb-6">
-                <h3
-                  class="text-lg font-black uppercase tracking-wider text-zinc-900 dark:text-white border-l-4 border-[#e74c3c] pl-3"
+              <div
+                class="border-b-2 border-zinc-800 dark:border-zinc-700 pb-2 mb-6 flex justify-between items-center"
+              >
+                <h2
+                  class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
                 >
-                  Tin game phổ biến nhất
-                </h3>
+                  <TrendingUp class="w-5 h-5 text-[#e74c3c]" /> Tin mới cập nhật
+                </h2>
               </div>
 
-              <!-- 2 Medium overlay cards -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div
-                  v-for="mPost in popularMediumPosts"
-                  :key="mPost.id"
-                  class="relative aspect-[16/10] rounded-xl overflow-hidden group shadow-lg"
-                >
-                  <img
-                    :src="mPost.imageUrl"
-                    :alt="mPost.title"
-                    class="w-full h-full object-cover opacity-70 group-hover:scale-102 transition-transform duration-500"
-                  />
-                  <div
-                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5"
-                  >
-                    <span
-                      class="self-start bg-[#e74c3c] text-white text-[9px] font-bold px-1.5 py-0.5 rounded mb-2"
-                    >
-                      {{ mPost.category }}
-                    </span>
-                    <h4 class="text-sm font-bold text-white hover:text-[#e74c3c] transition-colors">
-                      <NuxtLink :to="`/blog/${mPost.slug}.${mPost.id}`">{{ mPost.title }}</NuxtLink>
-                    </h4>
-                  </div>
-                </div>
+              <!-- Simplified News Grid (Using PostCard layout) -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <PostCard v-for="post in posts" :key="post.id" :post="post" />
               </div>
 
-              <!-- 3 Small text posts with thumb -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div
-                  v-for="pPost in popularSmallPosts"
-                  :key="pPost.id"
-                  class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-3 rounded-xl flex flex-col gap-3 group hover:border-gray-300 dark:hover:border-zinc-800 transition-all shadow-xs"
+              <!-- Pagination -->
+              <div
+                v-if="totalPages > 1"
+                class="flex items-center justify-center gap-2 mt-8 pt-4 flex-wrap"
+              >
+                <button
+                  :disabled="currentPage <= 1"
+                  @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
+                  class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
                 >
-                  <div class="aspect-[16/9] w-full rounded overflow-hidden">
-                    <NuxtLink :to="`/blog/${pPost.slug}.${pPost.id}`" class="block w-full h-full">
-                      <img
-                        :src="pPost.imageUrl"
-                        :alt="pPost.title"
-                        class="w-full h-full object-cover"
-                      />
-                    </NuxtLink>
-                  </div>
-                  <div class="flex-grow flex flex-col justify-between">
-                    <div>
-                      <span class="text-[9px] font-bold text-[#e74c3c] uppercase block mb-1">
-                        {{ pPost.category }}
-                      </span>
-                      <h5
-                        class="text-xs font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-tight group-hover:text-[#e74c3c] transition-colors"
-                      >
-                        <NuxtLink :to="`/blog/${pPost.slug}.${pPost.id}`">{{
-                          pPost.title
-                        }}</NuxtLink>
-                      </h5>
-                    </div>
-                    <div class="flex items-center gap-1 text-[10px] text-zinc-555 mt-2">
-                      <Eye class="w-3.5 h-3.5 text-red-500" :stroke-width="2.5" />
-                      <span>{{ pPost.views }} xem</span>
-                    </div>
-                  </div>
-                </div>
+                  Trước
+                </button>
+                <button
+                  v-for="page in totalPages"
+                  :key="page"
+                  @click="navigateTo({ query: { ...route.query, page: page } })"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer select-none"
+                  :class="
+                    currentPage === page
+                      ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                      : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855'
+                  "
+                >
+                  {{ page }}
+                </button>
+                <button
+                  :disabled="currentPage >= totalPages"
+                  @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
+                  class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+                >
+                  Sau
+                </button>
               </div>
             </div>
           </div>

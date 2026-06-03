@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { Search, Trash2, MessageSquare, User, FileText } from 'lucide-vue-next'
 
@@ -16,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const searchQuery = ref('')
+const currentPage = ref(1)
 
 const filteredComments = computed(() => {
   if (!searchQuery.value.trim()) return props.commentsList
@@ -26,6 +27,20 @@ const filteredComments = computed(() => {
       c.author.toLowerCase().includes(query) ||
       c.postTitle.toLowerCase().includes(query)
   )
+})
+
+const paginatedComments = computed(() => {
+  const start = (currentPage.value - 1) * 10
+  const end = start + 10
+  return filteredComments.value.slice(start, end)
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredComments.value.length / 10) || 1
+})
+
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 const confirmDelete = (id: string, author: string) => {
@@ -69,7 +84,7 @@ const confirmDelete = (id: string, author: string) => {
           </thead>
           <tbody class="divide-y divide-gray-150 dark:divide-zinc-850">
             <tr
-              v-for="comment in filteredComments"
+              v-for="comment in paginatedComments"
               :key="comment.id"
               class="hover:bg-gray-50/50 dark:hover:bg-zinc-950/30 transition-colors"
             >
@@ -116,6 +131,40 @@ const confirmDelete = (id: string, author: string) => {
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Pagination controls -->
+    <div
+      v-if="totalPages > 1"
+      class="flex items-center justify-center gap-2 pt-2 flex-wrap select-none"
+    >
+      <button
+        :disabled="currentPage <= 1"
+        @click="currentPage--"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Trước
+      </button>
+      <button
+        v-for="page in totalPages"
+        :key="page"
+        @click="currentPage = page"
+        class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+        :class="
+          currentPage === page
+            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+            : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
+        "
+      >
+        {{ page }}
+      </button>
+      <button
+        :disabled="currentPage >= totalPages"
+        @click="currentPage++"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Sau
+      </button>
     </div>
   </div>
 </template>

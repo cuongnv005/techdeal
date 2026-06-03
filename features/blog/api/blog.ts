@@ -394,6 +394,23 @@ export class BlogRepository {
       }
     }
   }
+
+  async getPopularPosts(limit: number = 10): Promise<BlogPost[]> {
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPost[]>>>(
+        '/posts/popular',
+        { limit }
+      )
+
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        return response.data.data.map(mapApiPostToBlogPost)
+      }
+      return []
+    } catch (error) {
+      console.error('Error fetching popular posts:', error)
+      return []
+    }
+  }
 }
 
 export const blogRepository = new BlogRepository()
