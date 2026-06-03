@@ -113,24 +113,23 @@ const previewHtml = ref('')
 
 // Predefined tags database
 const systemTags = [
-  'Gaming',
-  'Esports',
-  'Hardware',
-  'Intel',
-  'AMD',
-  'Nvidia',
-  'Nintendo',
-  'PlayStation',
   'iOS',
   'iPhone',
   'Apple',
   'Android',
-  'Google',
   'Windows',
+  'Windows 11',
   'Microsoft',
-  'AI',
-  'Review',
-  'Calm'
+  'ứng dụng',
+  'ứng dụng miễn phí',
+  'miễn phí',
+  'game',
+  'game miễn phí',
+  'phần mềm',
+  'phần mềm miễn phí',
+  'Steam',
+  'Epic Games',
+  'Mobile'
 ]
 
 // Editor instance reference

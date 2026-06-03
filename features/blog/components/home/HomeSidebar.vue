@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import {
   Facebook,
   Twitter,
@@ -13,36 +13,42 @@ import {
 } from 'lucide-vue-next'
 
 import AdBanner from '../AdBanner.vue'
+import { blogRepository } from '../../api/blog'
 
 import type { BlogPost } from '../../types/post.type'
 
 defineProps<{
-  mostViewedPosts: BlogPost[]
+  mostViewedPosts?: BlogPost[]
 }>()
 
-onMounted(() => {
-  // Load Google SwG Basic SDK dynamically
-  if (process.client && !document.getElementById('google-swg-script')) {
-    const script = document.createElement('script')
-    script.id = 'google-swg-script'
-    script.async = true
-    script.type = 'application/javascript'
-    script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
-    script.onload = () => {
-      const selfWindow = window as any
-      selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
-      selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
-        basicSubscriptions.init({
-          type: 'NewsArticle',
-          isPartOfType: ['Product'],
-          isPartOfProductId: 'CAow6OXGDA:openaccess',
-          clientOptions: { theme: 'light', lang: 'vi' }
-        })
-      })
-    }
-    document.head.appendChild(script)
-  }
-})
+const { data: popularData } = await useAsyncData('sidebar-popular-posts', () =>
+  blogRepository.getPopularPosts(5)
+)
+const popularPosts = computed(() => popularData.value || [])
+
+// onMounted(() => {
+//   // Load Google SwG Basic SDK dynamically
+//   if (process.client && !document.getElementById('google-swg-script')) {
+//     const script = document.createElement('script')
+//     script.id = 'google-swg-script'
+//     script.async = true
+//     script.type = 'application/javascript'
+//     script.src = 'https://news.google.com/swg/js/v1/swg-basic.js'
+//     script.onload = () => {
+//       const selfWindow = window as any
+//       selfWindow.SWG_BASIC = selfWindow.SWG_BASIC || []
+//       selfWindow.SWG_BASIC.push((basicSubscriptions: any) => {
+//         basicSubscriptions.init({
+//           type: 'NewsArticle',
+//           isPartOfType: ['Product'],
+//           isPartOfProductId: 'CAow6OXGDA:openaccess',
+//           clientOptions: { theme: 'light', lang: 'vi' }
+//         })
+//       })
+//     }
+//     document.head.appendChild(script)
+//   }
+// })
 </script>
 
 <template>
@@ -111,11 +117,7 @@ onMounted(() => {
         <TrendingUp class="w-4 h-4 text-[#3498db]" /> Xem nhiều nhất tháng
       </h3>
       <ul class="space-y-4">
-        <li
-          v-for="(p, index) in mostViewedPosts.slice(0, 5)"
-          :key="p.id"
-          class="flex gap-3 items-start group"
-        >
+        <li v-for="(p, index) in popularPosts" :key="p.id" class="flex gap-3 items-start group">
           <span
             class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold transition-colors"
             :class="

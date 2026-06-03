@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 import {
   Eye,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-vue-next'
 
 import type { StatItem, ChartDataPoint } from '../types/dashboard.type'
+import { AdminRepoImpl } from '../api/dashboard'
 
 interface Props {
   statsData: {
@@ -23,10 +24,52 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const timeRange = ref<'week' | 'month'>('week')
+const adminRepo = new AdminRepoImpl()
 
-const activeChartData = computed(() => {
-  return timeRange.value === 'week' ? props.statsData.weekly : props.statsData.monthly
+// Views Chart state (Line Chart)
+const timeRange = ref<'week' | 'month'>('week')
+const viewsChartData = ref<ChartDataPoint[]>(props.statsData.weekly)
+const isLoadingViews = ref(false)
+const hoveredIndex = ref<number | null>(null)
+
+const fetchViewsData = async () => {
+  isLoadingViews.value = true
+  try {
+    viewsChartData.value = await adminRepo.getWeeklyChartData(timeRange.value)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isLoadingViews.value = false
+  }
+}
+
+watch(timeRange, fetchViewsData)
+
+// Posts Chart state (Bar Chart)
+const postsTimeRange = ref<'week' | 'month'>('week')
+const postsChartData = ref<ChartDataPoint[]>([])
+const isLoadingPosts = ref(false)
+
+const fetchPostsData = async () => {
+  isLoadingPosts.value = true
+  try {
+    postsChartData.value = await adminRepo.getPostsChartData(postsTimeRange.value)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isLoadingPosts.value = false
+  }
+}
+
+watch(postsTimeRange, fetchPostsData)
+
+onMounted(() => {
+  if (props.statsData?.weekly?.length) {
+    viewsChartData.value = props.statsData.weekly
+  } else {
+    fetchViewsData()
+  }
+  fetchPostsData()
 })
 
 // Custom SVG Chart parameters
@@ -36,7 +79,7 @@ const padding = 40
 
 // Compute coordinates for views line chart
 const viewPoints = computed(() => {
-  const data = activeChartData.value
+  const data = viewsChartData.value
   if (!data || data.length === 0) return ''
   const maxViews = Math.max(...data.map((d) => d.views), 1)
 
@@ -54,12 +97,13 @@ const viewPoints = computed(() => {
 
 // Compute coordinates for posts bar chart
 const barWidth = computed(() => {
-  const data = activeChartData.value
+  const data = postsChartData.value
+  if (!data || data.length === 0) return 0
   return ((svgWidth - padding * 2) / data.length) * 0.6
 })
 
 const postBars = computed(() => {
-  const data = activeChartData.value
+  const data = postsChartData.value
   if (!data || data.length === 0) return []
   const maxPosts = Math.max(...data.map((d) => d.posts), 1)
   const barSpacing = (svgWidth - padding * 2) / data.length
@@ -183,6 +227,12 @@ const getColorClass = (label: string) => {
         </div>
 
         <div class="relative w-full overflow-hidden">
+          <div
+            v-if="isLoadingViews"
+            class="absolute inset-0 bg-white/70 dark:bg-zinc-900/70 flex items-center justify-center z-10 transition-all rounded-xl"
+          >
+            <div class="text-xs font-bold text-zinc-500 animate-pulse">Đang tải dữ liệu...</div>
+          </div>
           <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="w-full h-auto text-blue-500">
             <!-- Grid Lines -->
             <line
@@ -224,25 +274,49 @@ const getColorClass = (label: string) => {
             />
 
             <!-- Circles / Markers -->
-            <circle
+            <g
               v-for="(point, idx) in viewPoints.split(' ')"
               :key="idx"
-              :cx="point.split(',')[0]"
-              :cy="point.split(',')[1]"
-              r="4.5"
-              fill="#3498db"
-              stroke="#fff"
-              stroke-width="1.5"
-            />
+              @mouseenter="hoveredIndex = idx"
+              @mouseleave="hoveredIndex = null"
+              class="cursor-pointer"
+            >
+              <!-- Hidden larger circle for easier hover detection -->
+              <circle
+                :cx="point.split(',')[0]"
+                :cy="point.split(',')[1]"
+                r="10"
+                fill="transparent"
+              />
+              <circle
+                :cx="point.split(',')[0]"
+                :cy="point.split(',')[1]"
+                r="4.5"
+                :fill="hoveredIndex === idx ? '#e74c3c' : '#3498db'"
+                stroke="#fff"
+                stroke-width="1.5"
+                class="transition-all duration-200"
+              />
+              <!-- Value text shown above the active point -->
+              <text
+                v-if="hoveredIndex === idx && viewsChartData[idx]"
+                :x="point.split(',')[0]"
+                :y="parseFloat(point.split(',')[1] || '0') - 10"
+                text-anchor="middle"
+                class="text-[10px] font-black fill-[#e74c3c] bg-white dark:fill-[#e74c3c] transition-all duration-200 drop-shadow-md select-none"
+              >
+                {{ viewsChartData[idx].views }} lượt xem
+              </text>
+            </g>
 
             <!-- Labels -->
             <text
-              v-for="(d, idx) in activeChartData"
+              v-for="(d, idx) in viewsChartData"
               :key="idx"
               :x="
-                activeChartData.length === 1
+                viewsChartData.length === 1
                   ? padding + (svgWidth - padding * 2) / 2
-                  : padding + (idx / (activeChartData.length - 1)) * (svgWidth - padding * 2)
+                  : padding + (idx / (viewsChartData.length - 1)) * (svgWidth - padding * 2)
               "
               :y="svgHeight - 15"
               text-anchor="middle"
@@ -267,14 +341,41 @@ const getColorClass = (label: string) => {
               Biểu đồ cột biểu diễn số lượng bài viết xuất bản
             </p>
           </div>
-          <span
-            class="inline-flex items-center gap-1 text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-1 rounded-lg"
+          <div
+            class="flex bg-gray-100 dark:bg-zinc-950 p-1 rounded-xl border border-gray-200 dark:border-zinc-800"
           >
-            <BarChart3 class="w-3.5 h-3.5" /> Auto-sync
-          </span>
+            <button
+              @click="postsTimeRange = 'week'"
+              class="px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
+              :class="
+                postsTimeRange === 'week'
+                  ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs'
+                  : 'text-zinc-500'
+              "
+            >
+              Tuần
+            </button>
+            <button
+              @click="postsTimeRange = 'month'"
+              class="px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
+              :class="
+                postsTimeRange === 'month'
+                  ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs'
+                  : 'text-zinc-500'
+              "
+            >
+              Tháng
+            </button>
+          </div>
         </div>
 
         <div class="relative w-full overflow-hidden">
+          <div
+            v-if="isLoadingPosts"
+            class="absolute inset-0 bg-white/70 dark:bg-zinc-900/70 flex items-center justify-center z-10 transition-all rounded-xl"
+          >
+            <div class="text-xs font-bold text-zinc-500 animate-pulse">Đang tải dữ liệu...</div>
+          </div>
           <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="w-full h-auto text-teal-500">
             <!-- Grid Lines -->
             <line

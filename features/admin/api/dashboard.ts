@@ -11,8 +11,9 @@ import { HttpService } from '@core/api/service'
 
 export abstract class AdminRepository {
   abstract getOverviewStats(): Promise<StatItem[]>
-  abstract getWeeklyChartData(): Promise<ChartDataPoint[]>
+  abstract getWeeklyChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
   abstract getMonthlyChartData(): Promise<ChartDataPoint[]>
+  abstract getPostsChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
   abstract getPosts(): Promise<PostItem[]>
   abstract deletePost(id: string): Promise<void>
   abstract getComments(): Promise<CommentItem[]>
@@ -114,22 +115,33 @@ export class AdminRepoImpl implements AdminRepository {
     }
   }
 
-  async getWeeklyChartData(): Promise<ChartDataPoint[]> {
+  async getWeeklyChartData(range: 'week' | 'month' = 'week'): Promise<ChartDataPoint[]> {
     try {
-      const response = await HttpService.get<
-        unknown,
-        AxiosResponse<ApiResponse<WorkerChartPoint[]>>
-      >('/admin/stats/chart')
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<any[]>>>(
+        `/admin/stats/chart?range=${range}`
+      )
       const list = response.data?.data
       if (!Array.isArray(list)) {
         console.error('getWeeklyChartData: response.data.data is not an array', list)
         return []
       }
-      return list.map((item) => ({
-        label: item.view_date,
-        views: item.total_views,
-        posts: 0
-      }))
+      const groupedMap = new Map<string, { label: string; views: number; posts: number }>()
+
+      list.forEach((item) => {
+        const label = item.view_date || item.post_date || ''
+        const views = item.total_views || 0
+        const posts = item.total_posts || 0
+
+        if (groupedMap.has(label)) {
+          const existing = groupedMap.get(label)!
+          existing.views += views
+          existing.posts += posts
+        } else {
+          groupedMap.set(label, { label, views, posts })
+        }
+      })
+
+      return Array.from(groupedMap.values())
     } catch (e) {
       console.error(e)
       return []
@@ -137,8 +149,41 @@ export class AdminRepoImpl implements AdminRepository {
   }
 
   async getMonthlyChartData(): Promise<ChartDataPoint[]> {
-    // Falls back to weekly chart or empty as we don't have separate monthly chart endpoint in worker
-    return this.getWeeklyChartData()
+    return this.getWeeklyChartData('month')
+  }
+
+  async getPostsChartData(range: 'week' | 'month' = 'week'): Promise<ChartDataPoint[]> {
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<any[]>>>(
+        `/admin/stats/posts-chart?range=${range}`
+      )
+      const list = response.data?.data
+      if (!Array.isArray(list)) {
+        console.error('getPostsChartData: response.data.data is not an array', list)
+        return []
+      }
+
+      const groupedMap = new Map<string, { label: string; views: number; posts: number }>()
+
+      list.forEach((item) => {
+        const label = item.post_date || item.view_date || ''
+        const views = item.total_views || 0
+        const posts = item.total_posts || 0
+
+        if (groupedMap.has(label)) {
+          const existing = groupedMap.get(label)!
+          existing.views += views
+          existing.posts += posts
+        } else {
+          groupedMap.set(label, { label, views, posts })
+        }
+      })
+
+      return Array.from(groupedMap.values())
+    } catch (e) {
+      console.error(e)
+      return []
+    }
   }
 
   async getPosts(): Promise<PostItem[]> {
