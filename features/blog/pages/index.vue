@@ -43,7 +43,8 @@ useHead({
 // Fetch posts from API using useAsyncData, watching the current page for server-side pagination
 const { data: allPosts, pending } = await useAsyncData(
   'public-posts-all',
-  () => blogRepository.getPosts({ page: currentPage.value, limit: 10 }),
+  () =>
+    blogRepository.getPosts({ page: currentPage.value, limit: currentPage.value === 1 ? 11 : 10 }),
   {
     watch: [currentPage]
   }
