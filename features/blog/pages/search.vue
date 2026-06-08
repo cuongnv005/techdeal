@@ -38,24 +38,30 @@ useSeoMeta({
 const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch search articles dynamically based on parameters
-const { data: searchResultPosts, refresh } = await useAsyncData(
-  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}-all`,
+const {
+  data: searchResultPosts,
+  refresh,
+  pending
+} = await useAsyncData(
+  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}-${currentPage.value}`,
   () =>
     blogRepository.getPosts({
       q: queryTerm.value || undefined,
       title: titleTerm.value || undefined,
-      tag: tagTerm.value || undefined
-    })
+      tag: tagTerm.value || undefined,
+      page: currentPage.value,
+      limit: 10
+    }),
+  {
+    watch: [currentPage]
+  }
 )
 
 const postsList = computed(() => searchResultPosts.value?.items || [])
-const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
+const totalPages = computed(() => searchResultPosts.value?.pagination?.total_pages || 1)
+const totalItems = computed(() => searchResultPosts.value?.pagination?.total_items || 0)
 
-const posts = computed(() => {
-  const start = (currentPage.value - 1) * 10
-  const end = start + 10
-  return postsList.value.slice(start, end)
-})
+const posts = computed(() => postsList.value)
 
 // Watch for search query changes and refetch
 watch(
@@ -64,6 +70,18 @@ watch(
     refresh()
   }
 )
+
+// Watch page changes to scroll smoothly back to the list header
+watch(currentPage, () => {
+  if (process.client) {
+    nextTick(() => {
+      const el = document.getElementById('search-list-section')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  }
+})
 
 // Computed property for sidebar
 const mostViewedPosts = computed(() => {
@@ -99,10 +117,10 @@ const mostViewedPosts = computed(() => {
           </h1>
           <p class="text-xs text-blue-50 mt-2 max-w-xl">
             <template v-if="tagTerm"
-              >Tìm thấy {{ postsList.length }} bài viết gắn thẻ #{{ tagTerm }}.</template
+              >Tìm thấy {{ totalItems }} bài viết gắn thẻ #{{ tagTerm }}.</template
             >
             <template v-else
-              >Tìm thấy {{ postsList.length }} bài viết khớp với từ khóa tìm kiếm của bạn.</template
+              >Tìm thấy {{ totalItems }} bài viết khớp với từ khóa tìm kiếm của bạn.</template
             >
           </p>
         </div>
@@ -116,6 +134,7 @@ const mostViewedPosts = computed(() => {
         <!-- Main News Column (70%) -->
         <div class="lg:col-span-7">
           <div
+            id="search-list-section"
             class="border-b-2 border-zinc-800 dark:border-zinc-700 pb-2 mb-6 flex justify-between items-center"
           >
             <h2
@@ -125,9 +144,19 @@ const mostViewedPosts = computed(() => {
             </h2>
           </div>
 
+          <!-- Spinning Loading Indicator -->
+          <div v-if="pending" class="flex flex-col items-center justify-center py-20 min-h-[350px]">
+            <div
+              class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
+            ></div>
+            <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
+              Đang tải bài viết...
+            </p>
+          </div>
+
           <!-- Empty State -->
           <div
-            v-if="posts.length === 0"
+            v-else-if="posts.length === 0"
             class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-12 text-center"
           >
             <span class="text-4xl mb-4 block">🔍</span>

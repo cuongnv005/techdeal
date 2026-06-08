@@ -16,7 +16,8 @@ export default defineNuxtConfig({
     public: {
       googleClientId:
         process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID ||
-        '559334545172-uarhhls0lrd7rbgoa9538dm16p76kiv6.apps.googleusercontent.com'
+        '559334545172-uarhhls0lrd7rbgoa9538dm16p76kiv6.apps.googleusercontent.com',
+      gtagId: process.env.NUXT_PUBLIC_GTAG_ID || ''
     }
   },
 

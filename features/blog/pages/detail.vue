@@ -79,13 +79,17 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           )
           let tagPosts: BlogPost[] = []
           for (const cand of candidates) {
-            const tagPostsRes = await blogRepository.getPosts({ tag: cand, enrich: false })
+            const tagPostsRes = await blogRepository.getPosts({
+              tag: cand,
+              limit: 6,
+              enrich: false
+            })
             tagPosts = tagPostsRes.items
             if (tagPosts && tagPosts.length > 0) {
               break
             }
           }
-          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id)
+          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
         } catch (err) {
           console.error('Error fetching similar tag posts:', err)
         }
@@ -103,9 +107,13 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           windows: 'windows'
         }
         const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
-        const catPostsRes = await blogRepository.getPosts({ category: categoryId, enrich: false })
+        const catPostsRes = await blogRepository.getPosts({
+          category: categoryId,
+          limit: 6,
+          enrich: false
+        })
         const catPosts = catPostsRes.items
-        finalRelated = catPosts.filter((p) => p.id !== detail.post.id)
+        finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
       } catch (err) {
         console.error('Error fetching fallback category posts:', err)
       }
