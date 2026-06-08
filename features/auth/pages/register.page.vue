@@ -60,7 +60,15 @@ const handleCredentialResponse = async (response: any) => {
     if (authData && authData.token && authData.user) {
       userStore.setAuth(authData.token, authData.user)
       alert(`Đăng nhập thành công! Chào mừng ${authData.user.username || authData.user.email}`)
-      navigateTo('/')
+      let redirectUrl = '/'
+      if (process.client) {
+        const savedRedirect = localStorage.getItem('google_login_redirect_url')
+        if (savedRedirect) {
+          redirectUrl = savedRedirect
+          localStorage.removeItem('google_login_redirect_url')
+        }
+      }
+      navigateTo(redirectUrl)
     } else {
       throw new Error('Không nhận được thông tin xác thực từ máy chủ!')
     }
@@ -90,7 +98,15 @@ onMounted(() => {
       }
       userStore.setAuth(token, user)
       alert(`Đăng nhập thành công! Chào mừng ${user.username}`)
-      navigateTo('/')
+      let redirectUrl = '/'
+      if (process.client) {
+        const savedRedirect = localStorage.getItem('google_login_redirect_url')
+        if (savedRedirect) {
+          redirectUrl = savedRedirect
+          localStorage.removeItem('google_login_redirect_url')
+        }
+      }
+      navigateTo(redirectUrl)
       return
     } catch (e) {
       console.error('Lỗi đăng nhập Google Redirect:', e)
