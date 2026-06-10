@@ -2,5 +2,7 @@ User-agent: *
 Disallow: /giveaway
 Disallow: /admin
 Disallow: /admin/
+Disallow: /go
+Disallow: /go/
 
 Sitemap: https://techdeal.io.vn/sitemap.xml

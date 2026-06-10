@@ -39,7 +39,7 @@ const copyrightText = computed(() =>
 
 <template>
   <footer
-    class="text-xs py-10 mt-16 border-t transition-colors duration-300"
+    class="text-xs py-10 mt-16 border-t transition-colors duration-300 relative z-30"
     :class="footerBgClass"
   >
     <div class="container mx-auto px-4">

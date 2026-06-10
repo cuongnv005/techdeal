@@ -9,7 +9,8 @@ import {
   ShieldAlert,
   ArrowLeft,
   LayoutDashboard,
-  Gift
+  Gift,
+  Link2
 } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
@@ -19,6 +20,7 @@ import PostManagement from '../components/PostManagement.vue'
 import StatsDashboard from '../components/StatsDashboard.vue'
 import UserManagement from '../components/UserManagement.vue'
 import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
+import ShortlinkManagement from '@features/shortlink/components/ShortlinkManagement.vue'
 import {
   useAdminStats,
   useAdminPosts,
@@ -35,7 +37,7 @@ const hasAccess = computed(() => {
   return userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
 })
 
-const activeTab = ref<'stats' | 'posts' | 'comments' | 'users' | 'giveaway'>('stats')
+const activeTab = ref<'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink'>('stats')
 
 // Call composables
 const { stats, isLoadingStats } = await useAdminStats()
@@ -163,6 +165,19 @@ const { users, updateUserRole, toggleUserStatus } = await useAdminUsers()
                 <Gift class="w-4 h-4" />
                 Quản lý Giveaway
               </button>
+
+              <button
+                @click="activeTab = 'shortlink'"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                :class="
+                  activeTab === 'shortlink'
+                    ? 'bg-[#3498db]/15 text-[#3498db] dark:bg-[#e74c3c]/15 dark:text-[#e74c3c]'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-950'
+                "
+              >
+                <Link2 class="w-4 h-4" />
+                Quản lý Shortlink
+              </button>
             </nav>
           </div>
         </aside>
@@ -199,6 +214,11 @@ const { users, updateUserRole, toggleUserStatus } = await useAdminUsers()
           <!-- Giveaway Tab -->
           <div v-else-if="activeTab === 'giveaway'">
             <GiveawayManagement />
+          </div>
+
+          <!-- Shortlink Tab -->
+          <div v-else-if="activeTab === 'shortlink'">
+            <ShortlinkManagement />
           </div>
         </main>
       </div>
