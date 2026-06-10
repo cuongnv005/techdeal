@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /giveaway
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: https://techdeal.io.vn/sitemap.xml

@@ -32,6 +32,10 @@ const userStore = useUserStore()
 const authRepo = new AuthRepository()
 const config = useRuntimeConfig()
 
+useHead({
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }]
+})
+
 const giveawayId = computed(() => (route.query.id as string) || '')
 
 const { giveaway, isLoading, error, claim, claimError, isClaiming, refresh } =
@@ -117,49 +121,62 @@ watch([isAuthModalOpen, authTab], async ([isOpen]) => {
 
 const isReferrerInvalid = ref(false)
 
+const checkReferrer = () => {
+  if (!process.client) return
+
+  // If the giveaway has loaded and is_block is explicitly false, we don't block
+  if (giveaway.value && giveaway.value.is_block === false) {
+    isReferrerInvalid.value = false
+    return
+  }
+
+  // Otherwise, run the referrer checks
+  if (sessionStorage.getItem('techdeal_valid_session') === 'true') {
+    isReferrerInvalid.value = false
+    return
+  }
+
+  const referrer = document.referrer
+  if (referrer) {
+    try {
+      const url = new URL(referrer)
+      const hostname = url.hostname
+      // Allow if it comes from techdeal.io.vn or subdomains, or localhost/dev IP
+      if (
+        hostname.endsWith('techdeal.io.vn') ||
+        hostname.includes('localhost') ||
+        hostname.includes('192.168.1.56')
+      ) {
+        isReferrerInvalid.value = false
+        sessionStorage.setItem('techdeal_valid_session', 'true')
+      } else {
+        isReferrerInvalid.value = true
+      }
+    } catch (e) {
+      isReferrerInvalid.value = true
+    }
+  } else {
+    // Direct link paste
+    isReferrerInvalid.value = true
+  }
+}
+
 // Check expiry status on load and show modal
 onMounted(() => {
   if (process.client) {
     localStorage.removeItem('google_login_redirect_url')
-
-    // Check if referrer is valid (came from techdeal.io.vn) or if we verified this session already
-    if (sessionStorage.getItem('techdeal_valid_session') === 'true') {
-      isReferrerInvalid.value = false
-    } else {
-      const referrer = document.referrer
-      if (referrer) {
-        try {
-          const url = new URL(referrer)
-          const hostname = url.hostname
-          // Allow if it comes from techdeal.io.vn or subdomains, or localhost for local dev
-          if (
-            hostname.endsWith('techdeal.io.vn') ||
-            hostname.includes('localhost') ||
-            hostname.includes('192.168.1.56:3000')
-          ) {
-            isReferrerInvalid.value = false
-            sessionStorage.setItem('techdeal_valid_session', 'true')
-          } else {
-            isReferrerInvalid.value = true
-          }
-        } catch (e) {
-          isReferrerInvalid.value = true
-        }
-      } else {
-        // Direct link paste
-        isReferrerInvalid.value = true
-      }
-    }
   }
+  checkReferrer()
   if (giveaway.value?.is_expired) {
     isExpiredModalOpen.value = true
   }
 })
 
-// Listen to giveaway changes to trigger expired modal
+// Listen to giveaway changes to trigger expired modal & re-evaluate referrer rules
 watch(
   () => giveaway.value,
   (newVal) => {
+    checkReferrer()
     if (newVal?.is_expired) {
       isExpiredModalOpen.value = true
     }

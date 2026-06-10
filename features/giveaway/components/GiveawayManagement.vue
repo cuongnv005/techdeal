@@ -11,13 +11,21 @@ import {
   Eye,
   Key,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-vue-next'
 import type { Giveaway, CreateGiveawayInput, GiveawayAdminDetail } from '../types/giveaway.type'
 import { useAdminGiveaways, useAdminGiveawayDetail } from '../composables/use-giveaway'
 
-const { giveaways, isLoading, createGiveaway, finishGiveaway, deleteGiveaway, actionError } =
-  await useAdminGiveaways()
+const {
+  giveaways,
+  isLoading,
+  createGiveaway,
+  updateGiveaway,
+  finishGiveaway,
+  deleteGiveaway,
+  actionError
+} = await useAdminGiveaways()
 
 const searchQuery = ref('')
 const currentPage = ref(1)
@@ -35,7 +43,8 @@ const form = ref<CreateGiveawayInput>({
   activation_link: '',
   key_quantity: 10,
   original_price: 0,
-  expiry_date: ''
+  expiry_date: '',
+  is_block: true
 })
 
 const filteredGiveaways = computed(() => {
@@ -69,7 +78,8 @@ const openCreateModal = () => {
     activation_link: '',
     key_quantity: 10,
     original_price: 0,
-    expiry_date: localISODate // Default 7 days from now in local time
+    expiry_date: localISODate, // Default 7 days from now in local time
+    is_block: true
   }
   isCreateModalOpen.value = true
 }
@@ -84,6 +94,10 @@ const handleCreate = async () => {
   if (resultId) {
     isCreateModalOpen.value = false
   }
+}
+
+const toggleBlock = async (giveaway: Giveaway) => {
+  await updateGiveaway(giveaway.id, { is_block: giveaway.is_block !== false ? false : true })
 }
 
 const handleFinish = async (id: string) => {
@@ -238,6 +252,7 @@ const formatPrice = (price: number) => {
               <th class="px-6 py-4">Số lượng Key (Đã nhận)</th>
               <th class="px-6 py-4">Giá gốc</th>
               <th class="px-6 py-4">Thời Hạn</th>
+              <th class="px-6 py-4">Bảo Mật</th>
               <th class="px-6 py-4">Trạng Thái</th>
               <th class="px-6 py-4 text-right">Hành động</th>
             </tr>
@@ -259,6 +274,21 @@ const formatPrice = (price: number) => {
               </td>
               <td class="px-6 py-4 text-xs font-medium text-zinc-550 dark:text-zinc-400">
                 {{ formatDate(giveaway.expiry_date) }}
+              </td>
+              <td class="px-6 py-4">
+                <button
+                  @click="toggleBlock(giveaway)"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-xl transition-all border cursor-pointer select-none"
+                  :class="
+                    giveaway.is_block !== false
+                      ? 'bg-red-500/10 text-red-550 border-red-500/20 hover:bg-red-500/20'
+                      : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-200'
+                  "
+                  title="Click để thay đổi chế độ chặn truy cập trực tiếp"
+                >
+                  <ShieldCheck class="w-3.5 h-3.5" v-if="giveaway.is_block !== false" />
+                  <span>{{ giveaway.is_block !== false ? 'Chặn Direct' : 'Không Chặn' }}</span>
+                </button>
               </td>
               <td class="px-6 py-4">
                 <span
@@ -455,6 +485,21 @@ const formatPrice = (price: number) => {
             />
           </div>
 
+          <div class="flex items-center gap-2 py-2">
+            <input
+              v-model="form.is_block"
+              type="checkbox"
+              id="is_block"
+              class="w-4 h-4 text-[#3498db] dark:text-[#e74c3c] border-gray-300 rounded focus:ring-[#3498db]"
+            />
+            <label
+              for="is_block"
+              class="text-[10px] font-bold uppercase tracking-wider text-zinc-450 cursor-pointer"
+            >
+              Chặn truy cập trực tiếp (Yêu cầu đi từ trang web TechDeal)
+            </label>
+          </div>
+
           <div
             class="flex items-center justify-end gap-3 pt-4 border-t border-gray-150 dark:border-zinc-800"
           >
@@ -550,7 +595,7 @@ const formatPrice = (price: number) => {
               </h4>
 
               <div
-                class="border border-gray-150 dark:border-zinc-850 rounded-xl overflow-hidden max-h-60 overflow-y-auto"
+                class="border border-gray-150 dark:border-zinc-850 rounded-xl max-h-52 overflow-y-auto"
                 @scroll="handleClaimsScroll"
               >
                 <table class="w-full text-left border-collapse text-xs">
