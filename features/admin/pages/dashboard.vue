@@ -21,12 +21,7 @@ import StatsDashboard from '../components/StatsDashboard.vue'
 import UserManagement from '../components/UserManagement.vue'
 import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
 import ShortlinkManagement from '@features/shortlink/components/ShortlinkManagement.vue'
-import {
-  useAdminStats,
-  useAdminPosts,
-  useAdminComments,
-  useAdminUsers
-} from '../composables/use-admin'
+import { useAdminStats } from '../composables/use-admin'
 
 import { useUserStore } from '@stores/user'
 
@@ -41,9 +36,6 @@ const activeTab = ref<'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 's
 
 // Call composables
 const { stats, isLoadingStats } = await useAdminStats()
-const { posts, deletePost } = await useAdminPosts()
-const { comments, deleteComment } = await useAdminComments()
-const { users, updateUserRole, toggleUserStatus } = await useAdminUsers()
 </script>
 
 <template>
@@ -194,21 +186,17 @@ const { users, updateUserRole, toggleUserStatus } = await useAdminUsers()
 
           <!-- Posts Tab -->
           <div v-else-if="activeTab === 'posts'">
-            <PostManagement :posts-list="posts" @delete="deletePost" />
+            <PostManagement />
           </div>
 
           <!-- Comments Tab -->
           <div v-else-if="activeTab === 'comments'">
-            <CommentManagement :comments-list="comments" @delete="deleteComment" />
+            <CommentManagement />
           </div>
 
           <!-- Users Tab -->
           <div v-else-if="activeTab === 'users'">
-            <UserManagement
-              :users-list="users"
-              @change-role="updateUserRole"
-              @toggle-status="toggleUserStatus"
-            />
+            <UserManagement />
           </div>
 
           <!-- Giveaway Tab -->

@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { useUserStore } from '@stores/user'
 import { AdminRepoImpl } from '../api/dashboard'
 
@@ -27,24 +28,36 @@ export async function useAdminStats() {
   return { stats, isLoadingStats, statsError, refreshStats }
 }
 
-export async function useAdminPosts() {
+export function useAdminPosts() {
   const adminRepo = new AdminRepoImpl()
   const userStore = useUserStore()
+  const currentPage = ref(1)
+  const limit = ref(10)
 
   const {
-    data: posts,
+    data: postsData,
     pending: isLoadingPosts,
     error: postsError,
     refresh: refreshPosts
-  } = await useAsyncData(
-    'admin-posts',
+  } = useAsyncData(
+    () => `admin-posts-page-${currentPage.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+        }
       }
-      return await adminRepo.getPosts()
+      return await adminRepo.getPosts(currentPage.value, limit.value)
     },
-    { server: false, default: () => [] }
+    {
+      watch: [currentPage],
+      server: false,
+      default: () => ({
+        items: [],
+        pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+      })
+    }
   )
 
   const deletePost = async (id: string) => {
@@ -52,27 +65,39 @@ export async function useAdminPosts() {
     await refreshPosts()
   }
 
-  return { posts, isLoadingPosts, postsError, deletePost, refreshPosts }
+  return { postsData, isLoadingPosts, postsError, deletePost, refreshPosts, currentPage }
 }
 
-export async function useAdminComments() {
+export function useAdminComments() {
   const adminRepo = new AdminRepoImpl()
   const userStore = useUserStore()
+  const currentPage = ref(1)
+  const limit = ref(10)
 
   const {
-    data: comments,
+    data: commentsData,
     pending: isLoadingComments,
     error: commentsError,
     refresh: refreshComments
-  } = await useAsyncData(
-    'admin-comments',
+  } = useAsyncData(
+    () => `admin-comments-page-${currentPage.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+        }
       }
-      return await adminRepo.getComments()
+      return await adminRepo.getComments(currentPage.value, limit.value)
     },
-    { server: false, default: () => [] }
+    {
+      watch: [currentPage],
+      server: false,
+      default: () => ({
+        items: [],
+        pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+      })
+    }
   )
 
   const deleteComment = async (id: string) => {
@@ -80,27 +105,46 @@ export async function useAdminComments() {
     await refreshComments()
   }
 
-  return { comments, isLoadingComments, commentsError, deleteComment, refreshComments }
+  return {
+    commentsData,
+    isLoadingComments,
+    commentsError,
+    deleteComment,
+    refreshComments,
+    currentPage
+  }
 }
 
-export async function useAdminUsers() {
+export function useAdminUsers() {
   const adminRepo = new AdminRepoImpl()
   const userStore = useUserStore()
+  const currentPage = ref(1)
+  const limit = ref(10)
 
   const {
-    data: users,
+    data: usersData,
     pending: isLoadingUsers,
     error: usersError,
     refresh: refreshUsers
-  } = await useAsyncData(
-    'admin-users',
+  } = useAsyncData(
+    () => `admin-users-page-${currentPage.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+        }
       }
-      return await adminRepo.getUsers()
+      return await adminRepo.getUsers(currentPage.value, limit.value)
     },
-    { server: false, default: () => [] }
+    {
+      watch: [currentPage],
+      server: false,
+      default: () => ({
+        items: [],
+        pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+      })
+    }
   )
 
   const updateUserRole = async (id: string, role: 'admin' | 'mod' | 'user') => {
@@ -113,5 +157,13 @@ export async function useAdminUsers() {
     await refreshUsers()
   }
 
-  return { users, isLoadingUsers, usersError, updateUserRole, toggleUserStatus, refreshUsers }
+  return {
+    usersData,
+    isLoadingUsers,
+    usersError,
+    updateUserRole,
+    toggleUserStatus,
+    refreshUsers,
+    currentPage
+  }
 }

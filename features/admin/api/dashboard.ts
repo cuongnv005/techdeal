@@ -4,7 +4,8 @@ import type {
   ChartDataPoint,
   PostItem,
   CommentItem,
-  UserItem
+  UserItem,
+  PaginatedResult
 } from '../types/dashboard.type'
 
 import { HttpService } from '@core/api/service'
@@ -14,11 +15,11 @@ export abstract class AdminRepository {
   abstract getWeeklyChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
   abstract getMonthlyChartData(): Promise<ChartDataPoint[]>
   abstract getPostsChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
-  abstract getPosts(): Promise<PostItem[]>
+  abstract getPosts(page?: number, limit?: number): Promise<PaginatedResult<PostItem>>
   abstract deletePost(id: string): Promise<void>
-  abstract getComments(): Promise<CommentItem[]>
+  abstract getComments(page?: number, limit?: number): Promise<PaginatedResult<CommentItem>>
   abstract deleteComment(id: string): Promise<void>
-  abstract getUsers(): Promise<UserItem[]>
+  abstract getUsers(page?: number, limit?: number): Promise<PaginatedResult<UserItem>>
   abstract updateUserRole(id: string, role: 'admin' | 'mod' | 'user'): Promise<unknown>
   abstract toggleUserStatus(id: string): Promise<unknown>
 }
@@ -186,12 +187,12 @@ export class AdminRepoImpl implements AdminRepository {
     }
   }
 
-  async getPosts(): Promise<PostItem[]> {
+  async getPosts(page: number = 1, limit: number = 10): Promise<PaginatedResult<PostItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerPost[]; pagination?: any }>>
-      >('/admin/posts')
+      >('/admin/posts', { page, limit })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)
@@ -202,21 +203,40 @@ export class AdminRepoImpl implements AdminRepository {
 
       if (!Array.isArray(list)) {
         console.error('getPosts: response.data.data is not a valid list', list)
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+        }
       }
-      return list.map((post) => ({
+
+      const items = list.map((post) => ({
         id: post.id,
         title: post.title,
         author: post.author_name,
         category: post.category_name,
         publishDate: new Date(post.created_at).toLocaleDateString('vi-VN'),
         views: post.views,
-        comments: 0, // database schema details view/comment separately
+        comments: 0,
         status: post.status
       }))
+
+      const pagination =
+        data && 'pagination' in data && data.pagination
+          ? data.pagination
+          : {
+              current_page: page,
+              per_page: limit,
+              total_items: items.length,
+              total_pages: Math.ceil(items.length / limit) || 1
+            }
+
+      return { items, pagination }
     } catch (e) {
       console.error(e)
-      return []
+      return {
+        items: [],
+        pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+      }
     }
   }
 
@@ -224,12 +244,12 @@ export class AdminRepoImpl implements AdminRepository {
     await HttpService.delete(`/admin/posts/${id}`)
   }
 
-  async getComments(): Promise<CommentItem[]> {
+  async getComments(page: number = 1, limit: number = 10): Promise<PaginatedResult<CommentItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerComment[]; pagination?: any }>>
-      >('/admin/comments')
+      >('/admin/comments', { page, limit })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)
@@ -240,18 +260,37 @@ export class AdminRepoImpl implements AdminRepository {
 
       if (!Array.isArray(list)) {
         console.error('getComments: response.data.data is not a valid list', list)
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+        }
       }
-      return list.map((comment) => ({
+
+      const items = list.map((comment) => ({
         id: comment.id,
         content: comment.content,
         author: comment.author_name,
         postTitle: comment.post_title,
         date: new Date(comment.created_at).toLocaleString('vi-VN')
       }))
+
+      const pagination =
+        data && 'pagination' in data && data.pagination
+          ? data.pagination
+          : {
+              current_page: page,
+              per_page: limit,
+              total_items: items.length,
+              total_pages: Math.ceil(items.length / limit) || 1
+            }
+
+      return { items, pagination }
     } catch (e) {
       console.error(e)
-      return []
+      return {
+        items: [],
+        pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+      }
     }
   }
 
@@ -259,12 +298,12 @@ export class AdminRepoImpl implements AdminRepository {
     await HttpService.delete(`/admin/comments/${id}`)
   }
 
-  async getUsers(): Promise<UserItem[]> {
+  async getUsers(page: number = 1, limit: number = 10): Promise<PaginatedResult<UserItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerUser[]; pagination?: any }>>
-      >('/admin/users')
+      >('/admin/users', { page, limit })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)
@@ -275,9 +314,13 @@ export class AdminRepoImpl implements AdminRepository {
 
       if (!Array.isArray(list)) {
         console.error('getUsers: response.data.data is not a valid list', list)
-        return []
+        return {
+          items: [],
+          pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+        }
       }
-      return list.map((user) => ({
+
+      const items = list.map((user) => ({
         id: user.id,
         username: user.username,
         email: user.email,
@@ -285,9 +328,24 @@ export class AdminRepoImpl implements AdminRepository {
         status: user.status,
         joinDate: new Date(user.created_at).toLocaleDateString('vi-VN')
       }))
+
+      const pagination =
+        data && 'pagination' in data && data.pagination
+          ? data.pagination
+          : {
+              current_page: page,
+              per_page: limit,
+              total_items: items.length,
+              total_pages: Math.ceil(items.length / limit) || 1
+            }
+
+      return { items, pagination }
     } catch (e) {
       console.error(e)
-      return []
+      return {
+        items: [],
+        pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+      }
     }
   }
 

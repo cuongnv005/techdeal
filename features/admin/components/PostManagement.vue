@@ -13,25 +13,18 @@ import {
   Pencil
 } from 'lucide-vue-next'
 
-import type { PostItem } from '../types/dashboard.type'
+import { useAdminPosts } from '../composables/use-admin'
 
-interface Props {
-  postsList: PostItem[]
-}
-
-const props = defineProps<Props>()
+const { postsData, isLoadingPosts, deletePost, currentPage } = useAdminPosts()
 
 const emit = defineEmits<{
-  (e: 'delete', id: string): void
   (e: 'approve', id: string): void
   (e: 'unpublish', id: string): void
-  (e: 'edit', id: string): void
 }>()
 
 const searchQuery = ref('')
 const categoryFilter = ref('')
 const statusFilter = ref('')
-const currentPage = ref(1)
 
 const statusConfig = {
   pending: {
@@ -49,7 +42,8 @@ const statusConfig = {
 }
 
 const filteredPosts = computed(() => {
-  return props.postsList.filter((post) => {
+  const list = postsData.value?.items || []
+  return list.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       post.author.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -62,13 +56,36 @@ const filteredPosts = computed(() => {
 })
 
 const paginatedPosts = computed(() => {
-  const start = (currentPage.value - 1) * 10
-  const end = start + 10
-  return filteredPosts.value.slice(start, end)
+  return filteredPosts.value
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredPosts.value.length / 10) || 1
+  return postsData.value?.pagination?.total_pages || 1
+})
+
+const visiblePages = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  if (total <= 5) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
+    }
+  } else {
+    pages.push(1)
+    const start = Math.max(2, currentPage.value - 1)
+    const end = Math.min(total - 1, currentPage.value + 1)
+    if (start > 2) {
+      pages.push('...')
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+    if (end < total - 1) {
+      pages.push('...')
+    }
+    pages.push(total)
+  }
+  return pages
 })
 
 watch([searchQuery, categoryFilter, statusFilter], () => {
@@ -76,13 +93,13 @@ watch([searchQuery, categoryFilter, statusFilter], () => {
 })
 
 const categories = computed(() => {
-  const all = props.postsList.map((p) => p.category)
+  const all = (postsData.value?.items || []).map((p) => p.category)
   return [...new Set(all)]
 })
 
 const confirmDelete = (id: string, title: string) => {
   if (confirm(`Bạn có chắc chắn muốn xóa bài viết: "${title}"? Action này không thể hoàn tác.`)) {
-    emit('delete', id)
+    deletePost(id)
   }
 }
 
@@ -97,14 +114,14 @@ const confirmUnpublish = (id: string, title: string) => {
   <div class="space-y-6 animate-fadeIn">
     <!-- Filter bar -->
     <div
-      class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
+      class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-200 dark:border-zinc-855 shadow-xs"
     >
       <div class="relative w-full sm:max-w-xs">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Tìm bài viết, tác giả..."
-          class="w-full text-xs pl-9 pr-4 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+          class="w-full text-xs pl-9 pr-4 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
         />
         <Search class="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
       </div>
@@ -112,7 +129,7 @@ const confirmUnpublish = (id: string, title: string) => {
       <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
         <select
           v-model="categoryFilter"
-          class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
+          class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-770 dark:text-zinc-300 focus:outline-none cursor-pointer"
         >
           <option value="">Tất cả chuyên mục</option>
           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
@@ -120,7 +137,7 @@ const confirmUnpublish = (id: string, title: string) => {
 
         <select
           v-model="statusFilter"
-          class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
+          class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-770 dark:text-zinc-300 focus:outline-none cursor-pointer"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="pending">Chờ duyệt</option>
@@ -141,7 +158,10 @@ const confirmUnpublish = (id: string, title: string) => {
     <div
       class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs"
     >
-      <div class="overflow-x-auto">
+      <div v-if="isLoadingPosts" class="p-12 text-center text-xs text-zinc-400">
+        Đang tải danh sách bài viết...
+      </div>
+      <div v-else class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr
@@ -262,27 +282,31 @@ const confirmUnpublish = (id: string, title: string) => {
       <button
         :disabled="currentPage <= 1"
         @click="currentPage--"
-        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-255 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         Trước
       </button>
-      <button
-        v-for="page in totalPages"
-        :key="page"
-        @click="currentPage = page"
-        class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-        :class="
-          currentPage === page
-            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-            : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
-        "
-      >
-        {{ page }}
-      </button>
+      <template v-for="page in visiblePages" :key="page">
+        <span v-if="page === '...'" class="px-2 py-2 text-xs font-bold text-zinc-400 select-none">
+          ...
+        </span>
+        <button
+          v-else
+          @click="currentPage = Number(page)"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+          :class="
+            currentPage === page
+              ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+              : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
+          "
+        >
+          {{ page }}
+        </button>
+      </template>
       <button
         :disabled="currentPage >= totalPages"
         @click="currentPage++"
-        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-255 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         Sau
       </button>

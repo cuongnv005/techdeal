@@ -7,7 +7,7 @@ export function useAdminShortlinks() {
   const actionError = ref<string | null>(null)
   const isPending = ref(false)
   const currentPage = ref(1)
-  const limit = ref(20)
+  const limit = ref(10)
 
   const {
     data: shortlinksData,
@@ -28,7 +28,7 @@ export function useAdminShortlinks() {
       server: false,
       default: () => ({
         items: [],
-        pagination: { current_page: 1, per_page: 20, total_items: 0, total_pages: 1 }
+        pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
       })
     }
   )
