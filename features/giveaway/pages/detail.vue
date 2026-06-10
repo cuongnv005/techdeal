@@ -115,10 +115,41 @@ watch([isAuthModalOpen, authTab], async ([isOpen]) => {
   }
 })
 
+const isReferrerInvalid = ref(false)
+
 // Check expiry status on load and show modal
 onMounted(() => {
   if (process.client) {
     localStorage.removeItem('google_login_redirect_url')
+
+    // Check if referrer is valid (came from techdeal.io.vn) or if we verified this session already
+    if (sessionStorage.getItem('techdeal_valid_session') === 'true') {
+      isReferrerInvalid.value = false
+    } else {
+      const referrer = document.referrer
+      if (referrer) {
+        try {
+          const url = new URL(referrer)
+          const hostname = url.hostname
+          // Allow if it comes from techdeal.io.vn or subdomains, or localhost for local dev
+          if (
+            hostname.endsWith('techdeal.io.vn') ||
+            hostname.includes('localhost') ||
+            hostname.includes('192.168.1.56:3000')
+          ) {
+            isReferrerInvalid.value = false
+            sessionStorage.setItem('techdeal_valid_session', 'true')
+          } else {
+            isReferrerInvalid.value = true
+          }
+        } catch (e) {
+          isReferrerInvalid.value = true
+        }
+      } else {
+        // Direct link paste
+        isReferrerInvalid.value = true
+      }
+    }
   }
   if (giveaway.value?.is_expired) {
     isExpiredModalOpen.value = true
@@ -334,7 +365,7 @@ const formatPrice = (price: number) => {
 
         <!-- Error State -->
         <div
-          v-else-if="error || !giveaway || !giveawayId"
+          v-else-if="error || !giveaway || !giveawayId || isReferrerInvalid"
           class="py-16 px-8 text-center bg-white rounded-[32px] border-2 border-black shadow-[0_20px_60px_rgba(0,0,0,0.08)] max-w-lg mx-auto space-y-6"
         >
           <div
@@ -343,10 +374,19 @@ const formatPrice = (price: number) => {
             <AlertTriangle class="w-8 h-8" />
           </div>
           <h2 class="text-2xl font-black font-serif tracking-tight leading-none uppercase">
-            Không tìm thấy giveaway
+            {{ isReferrerInvalid ? 'Truy cập không hợp lệ' : 'Không tìm thấy giveaway' }}
           </h2>
           <p class="text-zinc-600 text-sm leading-relaxed max-w-xs mx-auto">
-            Chương trình giveaway không tồn tại, đã kết thúc hoặc đường dẫn không chính xác.
+            <template v-if="isReferrerInvalid">
+              Để nhận quà giveaway này, bạn vui lòng truy cập thông qua đường dẫn chính thức trong
+              các bài viết trên trang web
+              <a href="https://techdeal.io.vn" class="text-[#7C3AED] font-bold hover:underline"
+                >TechDeal</a
+              >. Chia sẻ hoặc dán trực tiếp link không được chấp nhận.
+            </template>
+            <template v-else>
+              Chương trình giveaway không tồn tại, đã kết thúc hoặc đường dẫn không chính xác.
+            </template>
           </p>
           <NuxtLink
             to="/"

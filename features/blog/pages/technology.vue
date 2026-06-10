@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 
 import {
   Search,
@@ -52,21 +52,41 @@ const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch articles dynamically
-const { data: allCategoryPosts } = await useAsyncData('posts-technology-all', () =>
-  blogRepository.getPosts({ category: 'technology' })
+const { data: allCategoryPosts, pending } = await useAsyncData(
+  'posts-technology-all',
+  () =>
+    blogRepository.getPosts({
+      category: 'technology',
+      page: currentPage.value,
+      limit: 10
+    }),
+  {
+    watch: [currentPage]
+  }
 )
+
 const postsList = computed(() => allCategoryPosts.value?.items || [])
-const totalPages = computed(() => Math.ceil(postsList.value.length / 10) || 1)
+const totalPages = computed(() => allCategoryPosts.value?.pagination?.total_pages || 1)
 
 const posts = computed(() => {
-  const start = (currentPage.value - 1) * 10
-  const end = start + 10
-  return postsList.value.slice(start, end)
+  return postsList.value
 })
 
 // Computed property for sidebar (popular posts)
 const mostViewedPosts = computed(() => {
   return [...postsList.value].sort((a, b) => b.views - a.views)
+})
+
+// Watch page changes to scroll smoothly back to the list header
+watch(currentPage, () => {
+  if (process.client) {
+    nextTick(() => {
+      const el = document.getElementById('news-list-section')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  }
 })
 
 // User store
@@ -126,6 +146,7 @@ const userStore = useUserStore()
         <!-- Main News Column (70%) -->
         <div class="lg:col-span-7">
           <div
+            id="news-list-section"
             class="border-b-2 border-zinc-800 dark:border-zinc-700 pb-2 mb-6 flex justify-between items-center"
           >
             <h2
@@ -135,8 +156,18 @@ const userStore = useUserStore()
             </h2>
           </div>
 
+          <!-- Spinning Loading Indicator -->
+          <div v-if="pending" class="flex flex-col items-center justify-center py-20 min-h-[350px]">
+            <div
+              class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
+            ></div>
+            <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
+              Đang tải bài viết mới...
+            </p>
+          </div>
+
           <!-- Simplified News Grid (Using PostCard layout) -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PostCard v-for="post in posts" :key="post.id" :post="post" />
           </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 
 import { Facebook, Twitter, Instagram, Linkedin, TrendingUp } from 'lucide-vue-next'
 
@@ -54,9 +54,21 @@ const categories = ref([
   { name: 'RPG/Story', count: '150 bài', icon: '🧙‍♂️' }
 ])
 
+const route = useRoute()
+const currentPage = computed(() => Number(route.query.page) || 1)
+
 // Fetch gaming articles dynamically
-const { data: gamingPosts } = await useAsyncData('posts-gaming', () =>
-  blogRepository.getPosts({ category: 'gaming' })
+const { data: gamingPosts, pending } = await useAsyncData(
+  'posts-gaming',
+  () =>
+    blogRepository.getPosts({
+      category: 'gaming',
+      page: currentPage.value,
+      limit: currentPage.value === 1 ? 15 : 10
+    }),
+  {
+    watch: [currentPage]
+  }
 )
 
 const postsList = computed(() => gamingPosts.value?.items || [])
@@ -95,19 +107,25 @@ const recentSidebarPosts = computed<BlogPost[]>(() => {
   return postsList.value.slice(0, 5)
 })
 
-const route = useRoute()
-const currentPage = computed(() => Number(route.query.page) || 1)
-
-const remainingPosts = computed(() => {
-  return postsList.value.slice(5)
-})
-
-const totalPages = computed(() => Math.ceil(remainingPosts.value.length / 10) || 1)
+const totalPages = computed(() => gamingPosts.value?.pagination?.total_pages || 1)
 
 const posts = computed(() => {
-  const start = (currentPage.value - 1) * 10
-  const end = start + 10
-  return remainingPosts.value.slice(start, end)
+  if (currentPage.value === 1) {
+    return postsList.value.slice(5)
+  }
+  return postsList.value
+})
+
+// Watch page changes to scroll smoothly back to the list header
+watch(currentPage, () => {
+  if (process.client) {
+    nextTick(() => {
+      const el = document.getElementById('news-list-section')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  }
 })
 </script>
 
@@ -140,7 +158,7 @@ const posts = computed(() => {
       </div>
 
       <!-- GAMING BANNER COMPONENT -->
-      <GamingBanner :banner-posts="bannerPosts" />
+      <GamingBanner v-if="currentPage === 1" :banner-posts="bannerPosts" />
 
       <!-- MIDDLE AD BANNER -->
       <AdBanner width="970px" height="90px" :is-google-ad="true" />
@@ -152,6 +170,7 @@ const posts = computed(() => {
           <div class="lg:col-span-7 space-y-12">
             <!-- GAMING SPOTLIGHT COMPONENT -->
             <GamingSpotlight
+              v-if="currentPage === 1"
               :spotlight-big-post="spotlightBigPost"
               :spotlight-small-posts="spotlightSmallPosts"
             />
@@ -162,6 +181,7 @@ const posts = computed(() => {
             <!-- NEWS GRID SECTION -->
             <div>
               <div
+                id="news-list-section"
                 class="border-b-2 border-zinc-800 dark:border-zinc-700 pb-2 mb-6 flex justify-between items-center"
               >
                 <h2
@@ -171,8 +191,21 @@ const posts = computed(() => {
                 </h2>
               </div>
 
+              <!-- Spinning Loading Indicator -->
+              <div
+                v-if="pending"
+                class="flex flex-col items-center justify-center py-20 min-h-[350px]"
+              >
+                <div
+                  class="w-10 h-10 border-4 border-[#e74c3c] border-t-transparent rounded-full animate-spin"
+                ></div>
+                <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
+                  Đang tải bài viết mới...
+                </p>
+              </div>
+
               <!-- Simplified News Grid (Using PostCard layout) -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PostCard v-for="post in posts" :key="post.id" :post="post" />
               </div>
 
