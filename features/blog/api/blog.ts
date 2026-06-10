@@ -139,16 +139,6 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
 }
 
 export class BlogRepository {
-  private detailCache = new Map<
-    string,
-    Promise<{
-      post: BlogPost
-      tags: string[]
-      relatedPosts: BlogPost[]
-      comments: ApiComment[]
-    } | null>
-  >()
-
   async getPosts(
     params?: GetPostsParams
   ): Promise<{ items: BlogPost[]; pagination?: ApiPagination }> {
@@ -244,47 +234,38 @@ export class BlogRepository {
     relatedPosts: BlogPost[]
     comments: ApiComment[]
   } | null> {
-    if (this.detailCache.has(slug)) {
-      return this.detailCache.get(slug)!
-    }
-
-    const promise = (async () => {
-      try {
-        let querySlug = slug
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
-        if (isUuid) {
-          const postsRes = await this.getPosts({ limit: 1000 })
-          const found = postsRes.items.find((p) => p.id === slug)
-          if (found && found.slug) {
-            querySlug = found.slug
-          } else {
-            return null
-          }
+    try {
+      let querySlug = slug
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
+      if (isUuid) {
+        const postsRes = await this.getPosts({ limit: 1000 })
+        const found = postsRes.items.find((p) => p.id === slug)
+        if (found && found.slug) {
+          querySlug = found.slug
+        } else {
+          return null
         }
-
-        const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
-          `/posts/${querySlug}`
-        )
-        if (response.data && response.data.success && response.data.data) {
-          const detail = response.data.data
-          const blogPost = mapApiPostToBlogPost(detail)
-          const related = (detail.related_similar_posts || []).map(mapApiPostToBlogPost)
-          return {
-            post: blogPost,
-            tags: detail.tags || [],
-            relatedPosts: related,
-            comments: detail.comments || []
-          }
-        }
-        return null
-      } catch (error) {
-        console.error(`Error fetching post by slug ${slug}:`, error)
-        return null
       }
-    })()
 
-    this.detailCache.set(slug, promise)
-    return promise
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
+        `/posts/${querySlug}`
+      )
+      if (response.data && response.data.success && response.data.data) {
+        const detail = response.data.data
+        const blogPost = mapApiPostToBlogPost(detail)
+        const related = (detail.related_similar_posts || []).map(mapApiPostToBlogPost)
+        return {
+          post: blogPost,
+          tags: detail.tags || [],
+          relatedPosts: related,
+          comments: detail.comments || []
+        }
+      }
+      return null
+    } catch (error) {
+      console.error(`Error fetching post by slug ${slug}:`, error)
+      return null
+    }
   }
 
   async submitComment(postId: string, content: string): Promise<ApiComment | null> {
