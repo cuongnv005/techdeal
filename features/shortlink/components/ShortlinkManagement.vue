@@ -51,6 +51,31 @@ const totalPages = computed(() => {
   return shortlinksData.value?.pagination?.total_pages || 1
 })
 
+const visiblePages = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  if (total <= 5) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
+    }
+  } else {
+    pages.push(1)
+    const start = Math.max(2, currentPage.value - 1)
+    const end = Math.min(total - 1, currentPage.value + 1)
+    if (start > 2) {
+      pages.push('...')
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+    if (end < total - 1) {
+      pages.push('...')
+    }
+    pages.push(total)
+  }
+  return pages
+})
+
 const openCreateModal = () => {
   form.value = {
     name: '',
@@ -311,23 +336,27 @@ const viewStats = async (id: string) => {
       >
         Trước
       </button>
-      <button
-        v-for="page in totalPages"
-        :key="page"
-        @click="currentPage = page"
-        class="px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer"
-        :class="
-          currentPage === page
-            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-            : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
-        "
-      >
-        {{ page }}
-      </button>
+      <template v-for="page in visiblePages" :key="page">
+        <span v-if="page === '...'" class="px-2 py-2 text-xs font-bold text-zinc-400 select-none">
+          ...
+        </span>
+        <button
+          v-else
+          @click="currentPage = Number(page)"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+          :class="
+            currentPage === page
+              ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+              : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
+          "
+        >
+          {{ page }}
+        </button>
+      </template>
       <button
         :disabled="currentPage >= totalPages"
         @click="currentPage++"
-        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-255 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         Sau
       </button>

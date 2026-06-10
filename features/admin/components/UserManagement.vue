@@ -3,38 +3,52 @@ import { ref, computed, watch } from 'vue'
 
 import { Search, UserCheck, ShieldAlert, Calendar, Mail, User } from 'lucide-vue-next'
 
-import type { UserItem } from '../types/dashboard.type'
+import { useAdminUsers } from '../composables/use-admin'
 
-interface Props {
-  usersList: UserItem[]
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  (e: 'change-role', id: string, role: 'admin' | 'mod' | 'user'): void
-  (e: 'toggle-status', id: string): void
-}>()
+const { usersData, isLoadingUsers, updateUserRole, toggleUserStatus, currentPage } = useAdminUsers()
 
 const searchQuery = ref('')
-const currentPage = ref(1)
 
 const filteredUsers = computed(() => {
-  if (!searchQuery.value.trim()) return props.usersList
+  const list = usersData.value?.items || []
+  if (!searchQuery.value.trim()) return list
   const query = searchQuery.value.toLowerCase()
-  return props.usersList.filter(
+  return list.filter(
     (u) => u.username.toLowerCase().includes(query) || u.email.toLowerCase().includes(query)
   )
 })
 
 const paginatedUsers = computed(() => {
-  const start = (currentPage.value - 1) * 10
-  const end = start + 10
-  return filteredUsers.value.slice(start, end)
+  return filteredUsers.value
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredUsers.value.length / 10) || 1
+  return usersData.value?.pagination?.total_pages || 1
+})
+
+const visiblePages = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  if (total <= 5) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
+    }
+  } else {
+    pages.push(1)
+    const start = Math.max(2, currentPage.value - 1)
+    const end = Math.min(total - 1, currentPage.value + 1)
+    if (start > 2) {
+      pages.push('...')
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+    if (end < total - 1) {
+      pages.push('...')
+    }
+    pages.push(total)
+  }
+  return pages
 })
 
 watch(searchQuery, () => {
@@ -43,7 +57,7 @@ watch(searchQuery, () => {
 
 const onRoleChange = (id: string, event: Event) => {
   const select = event.target as HTMLSelectElement
-  emit('change-role', id, select.value as 'admin' | 'mod' | 'user')
+  updateUserRole(id, select.value as 'admin' | 'mod' | 'user')
 }
 </script>
 
@@ -58,7 +72,7 @@ const onRoleChange = (id: string, event: Event) => {
           v-model="searchQuery"
           type="text"
           placeholder="Tìm thành viên, email..."
-          class="w-full text-xs pl-9 pr-4 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+          class="w-full text-xs pl-9 pr-4 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
         />
         <Search class="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
       </div>
@@ -68,7 +82,10 @@ const onRoleChange = (id: string, event: Event) => {
     <div
       class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs"
     >
-      <div class="overflow-x-auto">
+      <div v-if="isLoadingUsers" class="p-12 text-center text-xs text-zinc-400">
+        Đang tải danh sách thành viên...
+      </div>
+      <div v-else class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr
@@ -109,7 +126,7 @@ const onRoleChange = (id: string, event: Event) => {
                 <select
                   :value="user.role"
                   @change="onRoleChange(user.id, $event)"
-                  class="text-xs px-2.5 py-1.5 border border-gray-250 dark:border-zinc-850 rounded-lg bg-gray-50 dark:bg-zinc-950 text-zinc-750 dark:text-zinc-350 focus:outline-none cursor-pointer font-semibold"
+                  class="text-xs px-2.5 py-1.5 border border-gray-255 dark:border-zinc-850 rounded-lg bg-gray-50 dark:bg-zinc-950 text-zinc-750 dark:text-zinc-350 focus:outline-none cursor-pointer font-semibold"
                 >
                   <option value="user">User</option>
                   <option value="mod">Mod</option>
@@ -122,7 +139,7 @@ const onRoleChange = (id: string, event: Event) => {
                   :class="
                     user.status === 'active'
                       ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                      : 'bg-red-500/10 text-red-600 border border-red-500/20'
+                      : 'bg-red-500/10 text-red-650 border border-red-500/20'
                   "
                 >
                   {{ user.status === 'active' ? 'Hoạt động' : 'Bị chặn' }}
@@ -136,7 +153,7 @@ const onRoleChange = (id: string, event: Event) => {
               </td>
               <td class="px-6 py-4 text-right">
                 <button
-                  @click="emit('toggle-status', user.id)"
+                  @click="toggleUserStatus(user.id)"
                   class="p-2 rounded-xl transition-all cursor-pointer"
                   :class="
                     user.status === 'active'
@@ -173,19 +190,23 @@ const onRoleChange = (id: string, event: Event) => {
       >
         Trước
       </button>
-      <button
-        v-for="page in totalPages"
-        :key="page"
-        @click="currentPage = page"
-        class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-        :class="
-          currentPage === page
-            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-            : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
-        "
-      >
-        {{ page }}
-      </button>
+      <template v-for="page in visiblePages" :key="page">
+        <span v-if="page === '...'" class="px-2 py-2 text-xs font-bold text-zinc-400 select-none">
+          ...
+        </span>
+        <button
+          v-else
+          @click="currentPage = Number(page)"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+          :class="
+            currentPage === page
+              ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+              : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
+          "
+        >
+          {{ page }}
+        </button>
+      </template>
       <button
         :disabled="currentPage >= totalPages"
         @click="currentPage++"

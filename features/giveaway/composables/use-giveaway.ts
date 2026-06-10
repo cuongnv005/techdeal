@@ -55,26 +55,35 @@ export async function usePublicGiveaway(id: string) {
   }
 }
 
-export async function useAdminGiveaways() {
+export function useAdminGiveaways() {
   const repo = new GiveawayRepoImpl()
   const actionError = ref<string | null>(null)
   const isPending = ref(false)
+  const currentPage = ref(1)
+  const limit = ref(10)
 
   const {
-    data: giveaways,
+    data: giveawaysData,
     pending: isLoading,
     error,
     refresh
-  } = await useAsyncData(
-    'giveaway-admin-list',
+  } = useAsyncData(
+    () => `giveaway-admin-list-page-${currentPage.value}`,
     async () => {
-      const resp = await repo.adminList()
+      const resp = await repo.adminList(currentPage.value, limit.value)
       if (!resp.success) {
         throw new Error(resp.error || 'Không thể lấy danh sách chương trình giveaway')
       }
-      return resp.data || []
+      return resp.data
     },
-    { server: false, default: () => [] }
+    {
+      watch: [currentPage],
+      server: false,
+      default: () => ({
+        items: [],
+        pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
+      })
+    }
   )
 
   const createGiveaway = async (data: CreateGiveawayInput) => {
@@ -144,7 +153,7 @@ export async function useAdminGiveaways() {
   }
 
   return {
-    giveaways,
+    giveawaysData,
     isLoading,
     error,
     createGiveaway,
@@ -153,7 +162,8 @@ export async function useAdminGiveaways() {
     deleteGiveaway,
     actionError,
     isPending,
-    refresh
+    refresh,
+    currentPage
   }
 }
 

@@ -1,6 +1,7 @@
 import type { AxiosResponse } from 'axios'
 import { HttpService } from '@core/api/service'
 import type { Giveaway, GiveawayAdminDetail, CreateGiveawayInput } from '../types/giveaway.type'
+import type { DashboardPagination } from '../../admin/types/dashboard.type'
 
 interface ApiResponse<T> {
   success: boolean
@@ -12,7 +13,10 @@ interface ApiResponse<T> {
 export abstract class GiveawayRepository {
   abstract getPublicDetail(id: string): Promise<ApiResponse<Giveaway>>
   abstract claimKey(id: string): Promise<ApiResponse<{ activation_link: string }>>
-  abstract adminList(): Promise<ApiResponse<Giveaway[]>>
+  abstract adminList(
+    page?: number,
+    limit?: number
+  ): Promise<ApiResponse<{ items: Giveaway[]; pagination: DashboardPagination }>>
   abstract adminGet(id: string): Promise<ApiResponse<GiveawayAdminDetail>>
   abstract adminCreate(data: CreateGiveawayInput): Promise<ApiResponse<{ id: string }>>
   abstract adminUpdate(id: string, data: Partial<CreateGiveawayInput>): Promise<ApiResponse<any>>
@@ -51,17 +55,40 @@ export class GiveawayRepoImpl implements GiveawayRepository {
     }
   }
 
-  async adminList(): Promise<ApiResponse<Giveaway[]>> {
+  async adminList(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<ApiResponse<{ items: Giveaway[]; pagination: DashboardPagination }>> {
     try {
-      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<Giveaway[]>>>(
-        '/admin/giveaways'
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<any>>>(
+        '/admin/giveaways',
+        { page, limit }
       )
-      return response.data
+
+      const respData = response.data
+      if (respData.success && Array.isArray(respData.data)) {
+        return {
+          success: true,
+          data: {
+            items: respData.data,
+            pagination: {
+              current_page: page,
+              per_page: limit,
+              total_items: respData.data.length,
+              total_pages: Math.ceil(respData.data.length / limit) || 1
+            }
+          }
+        }
+      }
+      return respData
     } catch (e: any) {
       return {
         success: false,
         error: e.response?.data?.error || e.message || 'Lỗi khi tải danh sách',
-        data: []
+        data: {
+          items: [],
+          pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
+        }
       }
     }
   }
