@@ -27,6 +27,20 @@ const countdown = ref(5)
 const isFinished = ref(false)
 const hasRedirected = ref(false)
 
+/**
+ * Resolve the target URL, converting Apple App Store deep link schemes
+ * (itms-apps:// / itms-appss://) to their https:// equivalent on desktop
+ * browsers to avoid "no registered handler" console warnings.
+ */
+const resolveTargetUrl = (url: string): string => {
+  if (!process.client) return url
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+  if (!isMobile && /^itms-appss?:\/\//i.test(url)) {
+    return url.replace(/^itms-appss?:\/\//i, 'https://')
+  }
+  return url
+}
+
 const triggerRedirect = async () => {
   if (hasRedirected.value || !shortlink.value?.target_url) return
   hasRedirected.value = true
@@ -37,7 +51,16 @@ const triggerRedirect = async () => {
 
   // Redirect user to target URL
   if (process.client) {
-    window.location.replace(shortlink.value.target_url)
+    window.location.replace(resolveTargetUrl(shortlink.value.target_url))
+  }
+}
+
+/** Manual fallback button — uses same logic as auto-redirect */
+const handleManualRedirect = (e: Event) => {
+  e.preventDefault()
+  if (!shortlink.value?.target_url) return
+  if (process.client) {
+    window.location.replace(resolveTargetUrl(shortlink.value.target_url))
   }
 }
 
@@ -186,8 +209,8 @@ onMounted(() => {
                   Nếu trình duyệt của bạn không tự động chuyển hướng, vui lòng bấm nút dưới đây:
                 </p>
                 <a
-                  :href="shortlink.target_url"
-                  @click="triggerRedirect"
+                  href="javascript:void(0)"
+                  @click="handleManualRedirect"
                   class="inline-flex items-center gap-1.5 px-6 py-3 bg-zinc-900 dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-lg uppercase tracking-wider cursor-pointer"
                 >
                   Tới trang đích <ArrowRight class="w-4 h-4" />
