@@ -60,10 +60,25 @@ const openCreateModal = () => {
   isCreateModalOpen.value = true
 }
 
+/**
+ * Normalize known deep-link schemes to their https:// equivalent before
+ * saving. This prevents itms-apps:// / itms-appss:// (and other custom
+ * schemes) from being persisted to the database, which would cause
+ * "no registered handler" errors on non-iOS devices at redirect time.
+ */
+const normalizeUrl = (url: string): string => {
+  const trimmed = url.trim()
+  // Apple App Store deep links → https://
+  if (/^itms-appss?:\/\//i.test(trimmed)) {
+    return trimmed.replace(/^itms-appss?:\/\//i, 'https://')
+  }
+  return trimmed
+}
+
 const handleCreate = async () => {
   const inputData = {
     name: form.value.name,
-    target_url: form.value.target_url,
+    target_url: normalizeUrl(form.value.target_url),
     hash: form.value.hash.trim() || undefined
   }
   const result = await createShortlink(inputData)
@@ -360,9 +375,9 @@ const viewStats = async (id: string) => {
             >
             <input
               v-model="form.target_url"
-              type="url"
+              type="text"
               required
-              placeholder="https://example.com/file"
+              placeholder="https://example.com hoặc itms-appss://apps.apple.com/..."
               class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
             />
           </div>
