@@ -8,6 +8,7 @@ export interface Giveaway {
   is_expired: boolean
   is_out_of_keys: boolean
   has_claimed: boolean
+  is_block?: boolean
   activation_link?: string
   user?: {
     username: string
@@ -31,4 +32,5 @@ export interface CreateGiveawayInput {
   key_quantity: number
   original_price: number
   expiry_date: string
+  is_block?: boolean
 }
