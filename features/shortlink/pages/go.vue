@@ -34,8 +34,12 @@ const hasRedirected = ref(false)
  */
 const resolveTargetUrl = (url: string): string => {
   if (!process.client) return url
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  if (!isMobile && /^itms-appss?:\/\//i.test(url)) {
+  // Convert Apple App Store deep link schemes to https:// on ALL platforms.
+  // iOS 11+ handles https://apps.apple.com/ natively and opens the App Store
+  // app automatically — the itms-apps:// / itms-appss:// custom schemes are
+  // legacy and cause "no registered handler" errors on non-iOS devices
+  // (including F12 device emulation). No UA sniffing needed.
+  if (/^itms-appss?:\/\//i.test(url)) {
     return url.replace(/^itms-appss?:\/\//i, 'https://')
   }
   return url
