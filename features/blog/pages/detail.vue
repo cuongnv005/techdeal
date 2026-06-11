@@ -67,7 +67,7 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
     if (detail.post.content) {
       const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
       if (similarMatch && similarMatch[1]) {
-        const tag = similarMatch[1].trim()
+        const tag = similarMatch[1].trim().normalize('NFC')
         try {
           const candidates = Array.from(
             new Set([

@@ -144,6 +144,17 @@ export class BlogRepository {
   ): Promise<{ items: BlogPost[]; pagination?: ApiPagination }> {
     try {
       const { enrich = false, ...apiParams } = params || {}
+
+      if (apiParams.tag) {
+        apiParams.tag = apiParams.tag.normalize('NFC')
+      }
+      if (apiParams.q) {
+        apiParams.q = apiParams.q.normalize('NFC')
+      }
+      if (apiParams.title) {
+        apiParams.title = apiParams.title.normalize('NFC')
+      }
+
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: ApiPost[]; pagination?: ApiPagination }>>
