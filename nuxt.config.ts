@@ -126,7 +126,15 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    sources: ['/api/__sitemap__/urls']
+    sources: ['/api/__sitemap__/urls'],
+    exclude: [
+      '/forgot-password',
+      '/login',
+      '/register',
+      '/reset-password',
+      '/search',
+      '/blog/publish'
+    ]
   },
 
   vite: {
@@ -167,6 +175,12 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    '/forgot-password': { sitemap: false, robots: 'noindex, nofollow' },
+    '/login': { sitemap: false, robots: 'noindex, nofollow' },
+    '/register': { sitemap: false, robots: 'noindex, nofollow' },
+    '/reset-password': { sitemap: false, robots: 'noindex, nofollow' },
+    '/search': { sitemap: false, robots: 'noindex, nofollow' },
+    '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
     '/admin/**': { ssr: false },
     '/en': { redirect: '/' },

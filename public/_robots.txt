@@ -4,5 +4,11 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /go
 Disallow: /go/
+Disallow: /forgot-password
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /search
+Disallow: /blog/publish
 
 Sitemap: https://techdeal.io.vn/sitemap.xml
