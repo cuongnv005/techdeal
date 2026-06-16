@@ -33,8 +33,20 @@ useHead({
 const route = useRoute()
 const categoryId = ref((route.query.category as string) || 'technology')
 
+const categories = ref<{ id: string; name: string; description?: string }[]>([])
+
+const fetchCategories = async () => {
+  try {
+    categories.value = await blogRepository.getCategories()
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+  }
+}
+
 // Map category key to Display Name
 const categoryName = computed(() => {
+  const found = categories.value.find((c) => c.id === categoryId.value)
+  if (found) return found.name
   const map: Record<string, string> = {
     gaming: 'Thế giới Game',
     android: 'Android',
@@ -192,6 +204,7 @@ const loadScript = (src: string): Promise<void> => {
 // Check and wait for SCEditor scripts load
 let scriptCheckTimer: any = null
 onMounted(async () => {
+  await fetchCategories()
   if (isEditMode.value) {
     fetchPostToEdit()
   }

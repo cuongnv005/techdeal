@@ -583,9 +583,14 @@ const handleSubscribe = () => {
               <span class="flex items-center gap-1.5">
                 <User class="w-4 h-4" />
                 Đăng bởi
-                <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
-                  post.author
-                }}</strong>
+                <NuxtLink
+                  :to="`/user/${post.author}`"
+                  class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
+                >
+                  <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
+                    post.author
+                  }}</strong>
+                </NuxtLink>
               </span>
               <span class="flex items-center gap-1.5">
                 <Calendar class="w-4 h-4" />
@@ -730,14 +735,23 @@ const handleSubscribe = () => {
                 :key="c.id"
                 class="flex gap-4 p-5 rounded-2xl bg-white dark:bg-zinc-900/50 border border-gray-150 dark:border-zinc-900 transition-all duration-300"
               >
-                <img
-                  :src="c.avatar"
-                  :alt="c.author"
-                  class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-200 dark:border-zinc-850"
-                />
+                <NuxtLink :to="`/user/${c.author}`" class="shrink-0 block">
+                  <img
+                    :src="c.avatar"
+                    :alt="c.author"
+                    class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-zinc-850 hover:opacity-80 transition-opacity"
+                  />
+                </NuxtLink>
                 <div class="flex-grow space-y-1">
                   <div class="flex items-center justify-between">
-                    <h5 class="text-xs font-bold text-zinc-900 dark:text-white">{{ c.author }}</h5>
+                    <NuxtLink
+                      :to="`/user/${c.author}`"
+                      class="hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors"
+                    >
+                      <h5 class="text-xs font-bold text-zinc-900 dark:text-white">
+                        {{ c.author }}
+                      </h5>
+                    </NuxtLink>
                     <span class="text-[10px] text-zinc-400">{{ c.date }}</span>
                   </div>
                   <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">

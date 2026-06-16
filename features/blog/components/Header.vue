@@ -189,9 +189,14 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             class="hidden sm:flex items-center gap-3 border-l pl-3 border-gray-200 dark:border-zinc-800"
           >
             <template v-if="userStore.isAuthenticated">
-              <span class="text-xs font-semibold text-zinc-550 dark:text-zinc-400">
+              <span class="text-xs font-semibold text-zinc-555 dark:text-zinc-400">
                 Chào,
-                <strong class="text-zinc-850 dark:text-zinc-200">{{ userStore.username }}</strong>
+                <NuxtLink
+                  :to="`/user/${userStore.username}`"
+                  class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
+                >
+                  <strong class="font-bold">{{ userStore.username }}</strong>
+                </NuxtLink>
               </span>
               <NuxtLink
                 v-if="userStore.role === 'admin' || userStore.role === 'mod'"
@@ -389,9 +394,13 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                   <div class="flex flex-col gap-4">
                     <div class="text-sm">
                       Chào,
-                      <strong class="text-zinc-850 dark:text-zinc-200">{{
-                        userStore.username
-                      }}</strong>
+                      <NuxtLink
+                        :to="`/user/${userStore.username}`"
+                        class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
+                        @click="isSidebarOpen = false"
+                      >
+                        <strong class="font-bold">{{ userStore.username }}</strong>
+                      </NuxtLink>
                     </div>
                     <NuxtLink
                       v-if="userStore.role === 'admin' || userStore.role === 'mod'"

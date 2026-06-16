@@ -387,6 +387,22 @@ export class BlogRepository {
     }
   }
 
+  async getCategories(): Promise<{ id: string; name: string; description?: string }[]> {
+    try {
+      const response = await HttpService.get<
+        unknown,
+        AxiosResponse<ApiResponse<{ id: string; name: string; description?: string }[]>>
+      >('/posts/categories')
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        return response.data.data
+      }
+      return []
+    } catch (error) {
+      console.error('Error fetching categories:', error)
+      return []
+    }
+  }
+
   async getPopularPosts(limit: number = 10): Promise<BlogPost[]> {
     try {
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPost[]>>>(

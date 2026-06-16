@@ -28,7 +28,9 @@ const descriptionText = computed(() =>
     : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
 )
 const middleColTitle = computed(() => 'Liên kết hữu ích')
-const supportEmail = computed(() => (isBlue.value ? 'contact@techdeal.com' : 'gaming@techdeal.com'))
+const supportEmail = computed(() =>
+  isBlue.value ? 'mdchannelvn@gmail.com' : 'gaming@techdeal.com'
+)
 const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822144589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
   isBlue.value
