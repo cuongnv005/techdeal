@@ -7,7 +7,8 @@ useSeoMeta({
   description:
     'Điều khoản và điều kiện sử dụng TechDeal, trang tin tức công nghệ, game và khuyến mãi thiết bị điện tử.',
   ogTitle: 'Điều khoản Dịch vụ',
-  ogType: 'website'
+  ogType: 'website',
+  robots: 'index, follow'
 })
 </script>
 
@@ -109,9 +110,9 @@ useSeoMeta({
             Nếu bạn có bất kỳ câu hỏi nào về các Điều khoản Dịch vụ này, vui lòng liên hệ với chúng
             tôi qua email:
             <a
-              href="mailto:contact@techdeal.com"
+              href="mailto:mdchannelvn@gmail.com"
               class="text-[#3498db] dark:text-[#e74c3c] hover:underline font-semibold"
-              >contact@techdeal.com</a
+              >mdchannelvn@gmail.com</a
             >.
           </p>
         </section>

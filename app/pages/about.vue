@@ -9,7 +9,8 @@ useSeoMeta({
   description:
     'Tìm hiểu thêm về blog TechDeal, chuyên mục tin tức game và công nghệ của chúng tôi, và đăng ký nhận bản tin khuyến mãi.',
   ogTitle: 'Giới thiệu & Bản tin',
-  ogType: 'website'
+  ogType: 'website',
+  robots: 'index, follow'
 })
 
 const emailInput = ref('')
@@ -106,6 +107,10 @@ const handleSubscribe = () => {
               <Rss class="w-4 h-4" /> Đăng ký
             </button>
           </form>
+          <p class="text-[11px] text-zinc-450 dark:text-zinc-500 mt-2">
+            Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết không spam. Bạn có thể hủy đăng ký
+            bất kỳ lúc nào.
+          </p>
 
           <p v-if="isSubscribed" class="text-xs text-emerald-500 font-semibold">
             🎉 Đăng ký thành công! Hãy chờ đón những ưu đãi tuyệt vời tiếp theo!

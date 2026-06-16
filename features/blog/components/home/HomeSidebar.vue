@@ -26,6 +26,17 @@ const { data: popularData } = await useAsyncData('sidebar-popular-posts', () =>
 )
 const popularPosts = computed(() => popularData.value || [])
 
+const { data: categoriesData } = await useAsyncData('sidebar-categories', () =>
+  blogRepository.getCategories()
+)
+const categories = computed(() => categoriesData.value || [])
+
+const getCategoryLink = (id: string) => {
+  if (id === 'gaming') return '/game'
+  if (id === 'technology') return '/cong-nghe'
+  return `/${id}`
+}
+
 // onMounted(() => {
 //   // Load Google SwG Basic SDK dynamically
 //   if (process.client && !document.getElementById('google-swg-script')) {
@@ -160,25 +171,16 @@ const popularPosts = computed(() => popularData.value || [])
         Chuyên mục nổi bật
       </h3>
       <ul class="space-y-2 text-xs">
-        <li
-          v-for="cat in [
-            'Công nghệ',
-            'Điện thoại',
-            'Tai nghe & Loa',
-            'Phần mềm & Ứng dụng',
-            'AI & Xe điện'
-          ]"
-          :key="cat"
-        >
-          <a
-            href="#"
-            class="flex justify-between items-center py-2 px-3 hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded text-zinc-700 dark:text-zinc-300"
+        <li v-for="cat in categories" :key="cat.id">
+          <NuxtLink
+            :to="getCategoryLink(cat.id)"
+            class="flex justify-between items-center py-2 px-3 hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded text-zinc-700 dark:text-zinc-300 transition-colors"
           >
             <span class="flex items-center gap-2">
-              <Bookmark class="w-3.5 h-3.5 text-[#f39c12]" /> {{ cat }}
+              <Bookmark class="w-3.5 h-3.5 text-[#f39c12]" /> {{ cat.name }}
             </span>
             <ChevronRight class="w-3.5 h-3.5 text-zinc-400" />
-          </a>
+          </NuxtLink>
         </li>
       </ul>
     </div>
