@@ -11,5 +11,7 @@ export interface BlogPost {
   slug: string
   content?: string
   authorId?: string
+  authorAvatar?: string
+  authorBio?: string
   scheduledAt?: string | null
 }

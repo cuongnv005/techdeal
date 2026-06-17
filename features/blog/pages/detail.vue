@@ -816,7 +816,65 @@ const handleSubscribe = () => {
               </div>
             </div>
           </div>
+          <!-- Author Bio Card -->
+          <div
+            v-if="post.author"
+            class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs overflow-hidden relative"
+          >
+            <!-- Decorative gradient blob -->
+            <div
+              class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-[#3498db]/10 dark:bg-[#e74c3c]/10 blur-2xl pointer-events-none"
+            />
+            <h4
+              class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
+            >
+              Về tác giả
+            </h4>
+            <div class="flex flex-col items-center text-center gap-3">
+              <!-- Avatar -->
+              <div class="relative">
+                <img
+                  :src="
+                    post.authorAvatar ||
+                    'https://ui-avatars.com/api/?name=' +
+                      encodeURIComponent(post.author) +
+                      '&background=3498db&color=fff&size=80'
+                  "
+                  :alt="post.author"
+                  class="w-16 h-16 rounded-full object-cover border-2 border-[#3498db]/30 dark:border-[#e74c3c]/30 shadow-md ring-2 ring-white dark:ring-zinc-900 transition-transform duration-300 hover:scale-105"
+                />
+                <span
+                  class="absolute -bottom-1 -right-1 w-5 h-5 bg-[#3498db] dark:bg-[#e74c3c] rounded-full flex items-center justify-center text-[9px] text-white font-black shadow"
+                >
+                  ✓
+                </span>
+              </div>
+              <!-- Name -->
+              <NuxtLink
+                :to="`/user/${post.author}`"
+                class="text-sm font-extrabold text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors leading-tight"
+              >
+                {{ post.author }}
+              </NuxtLink>
+              <!-- Bio -->
+              <p
+                v-if="post.authorBio"
+                class="text-[11px] text-zinc-550 dark:text-zinc-400 leading-relaxed line-clamp-4"
+              >
+                {{ post.authorBio }}
+              </p>
+              <!-- View profile link -->
+              <NuxtLink
+                :to="`/user/${post.author}`"
+                class="inline-flex items-center gap-1 text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline transition-colors mt-1"
+              >
+                Xem hồ sơ →
+              </NuxtLink>
+            </div>
+          </div>
+
           <!-- Google Subscribe with Google Widget -->
+
           <div
             class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs bg-linear-to-tr from-sky-50/50 to-indigo-50/30 dark:from-zinc-900 dark:to-zinc-950"
           >
