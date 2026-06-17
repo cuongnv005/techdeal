@@ -19,6 +19,8 @@ export interface ApiPost {
   author_id?: string
   scheduled_at?: string | null
   thumbnail?: string
+  author_avatar?: string
+  author_bio?: string
 }
 
 export interface ApiComment {
@@ -134,6 +136,8 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     slug: post.slug,
     content: post.content,
     authorId: post.author_id,
+    authorAvatar: post.author_avatar,
+    authorBio: post.author_bio,
     scheduledAt: post.scheduled_at
   }
 }
