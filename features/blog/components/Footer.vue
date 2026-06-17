@@ -85,9 +85,24 @@ const copyrightText = computed(() =>
 
         <!-- Contact Column -->
         <div>
+          <!-- Đưa tiêu đề H4 ra ngoài thẻ address -->
           <h4 class="text-white font-bold uppercase mb-4">Liên hệ hỗ trợ</h4>
-          <p class="mb-2" :class="textMutedClass">Email: {{ supportEmail }}</p>
-          <p :class="textMutedClass">Điện thoại: {{ supportPhone }}</p>
+
+          <!-- Thẻ address chỉ bọc phần thông tin liên lạc -->
+          <address class="not-italic space-y-2 text-zinc-500">
+            <p>
+              Email:
+              <a href="mailto:mdchannelvn@gmail.com" class="hover:text-white transition-colors"
+                >mdchannelvn@gmail.com</a
+              >
+            </p>
+            <p>
+              Điện thoại:
+              <a href="tel:+84822344589" class="hover:text-white transition-colors"
+                >+84 (0) 822 344 589</a
+              >
+            </p>
+          </address>
         </div>
       </div>
       <div
