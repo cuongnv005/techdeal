@@ -124,10 +124,10 @@ const handleSubmit = async () => {
                 <div>
                   <h4 class="font-bold text-zinc-550 dark:text-zinc-400">Email</h4>
                   <a
-                    href="mailto:mdchannelvn@gmail.com"
+                    href="mailto:contact@techdeal.io.vn"
                     class="text-zinc-900 dark:text-white font-semibold hover:text-[#3498db] transition-colors"
                   >
-                    mdchannelvn@gmail.com
+                    contact@techdeal.io.vn
                   </a>
                 </div>
               </div>
