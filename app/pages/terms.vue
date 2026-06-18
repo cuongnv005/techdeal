@@ -72,14 +72,14 @@ useSeoMeta({
 
         <section class="space-y-3">
           <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-            4. Liên kết và Quảng cáo của Bên thứ ba
+            4. Tuyên bố Liên kết Tiếp thị (Affiliate Disclosure)
           </h2>
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Trang web của chúng tôi chứa các liên kết đến các trang web, dịch vụ và chương trình
-            liên kết của bên thứ ba (chẳng hạn như Steam, Epic Games Store và Google AdSense).
-            TechDeal không chịu trách nhiệm về nội dung, chính sách bảo mật hoặc hoạt động của bất
-            kỳ trang web bên thứ ba nào. Việc truy cập các liên kết này hoàn toàn thuộc về trách
-            nhiệm và rủi ro của riêng bạn.
+            Một số bài viết trên TechDeal có chứa liên kết tiếp thị liên kết (affiliate links) đến
+            các nền tảng bên thứ ba như Google Play, App Store, Steam và Epic Games Store. Điều này
+            có nghĩa là TechDeal có thể nhận được hoa hồng nếu bạn thực hiện giao dịch thông qua các
+            liên kết đó, <strong>hoàn toàn không phát sinh thêm chi phí nào cho bạn</strong>. Các
+            liên kết này không ảnh hưởng đến tính khách quan trong nội dung biên tập của chúng tôi.
           </p>
         </section>
 
@@ -104,17 +104,33 @@ useSeoMeta({
           </p>
         </section>
 
+        <section class="space-y-3">
+          <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Luật áp dụng</h2>
+          <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+            Các Điều khoản Dịch vụ này được điều chỉnh và giải thích theo pháp luật Việt Nam. Mọi
+            tranh chấp phát sinh liên quan đến việc sử dụng trang web sẽ được giải quyết tại tòa án
+            có thẩm quyền tại Hà Nội, Việt Nam.
+          </p>
+        </section>
+
         <section class="space-y-3 border-t border-gray-250 dark:border-zinc-800 pt-6">
           <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Liên hệ</h2>
           <p class="text-xs text-zinc-650 dark:text-zinc-400">
-            Nếu bạn có bất kỳ câu hỏi nào về các Điều khoản Dịch vụ này, vui lòng liên hệ với chúng
-            tôi qua email:
-            <a
-              href="mailto:mdchannelvn@gmail.com"
-              class="text-[#3498db] dark:text-[#e74c3c] hover:underline font-semibold"
-              >mdchannelvn@gmail.com</a
-            >.
+            Nếu bạn có câu hỏi về Điều khoản Dịch vụ này, vui lòng liên hệ:
           </p>
+          <ul class="text-xs text-zinc-650 dark:text-zinc-400 space-y-1">
+            <li>
+              <strong>Email:</strong>
+              <a
+                href="mailto:mdchannelvn@gmail.com"
+                class="text-[#3498db] dark:text-[#e74c3c] hover:underline font-semibold"
+              >
+                mdchannelvn@gmail.com
+              </a>
+            </li>
+            <li><strong>Điện thoại:</strong> +84 (0) 822 344 589</li>
+            <li><strong>Địa chỉ:</strong> Hà Nội, Việt Nam</li>
+          </ul>
         </section>
       </div>
     </main>
