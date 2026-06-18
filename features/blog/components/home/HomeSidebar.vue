@@ -74,24 +74,32 @@ const getCategoryLink = (id: string) => {
       <div class="grid grid-cols-2 gap-3 text-xs font-semibold">
         <a
           href="https://www.facebook.com/ThuVienGame1"
+          target="_blank"
+          rel="noopener noreferrer"
           class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 rounded hover:opacity-90"
         >
           <Facebook class="w-4 h-4" /> Facebook
         </a>
         <a
-          href="https://www.facebook.com/ThuVienGame1"
+          href="https://x.com/MDChannelVn1"
+          target="_blank"
+          rel="noopener noreferrer"
           class="flex items-center gap-2 p-2 bg-sky-50 dark:bg-sky-900/10 text-sky-500 dark:text-sky-400 rounded hover:opacity-90"
         >
-          <Twitter class="w-4 h-4" /> Twitter
+          <Twitter class="w-4 h-4" /> X
         </a>
         <a
-          href="https://www.facebook.com/ThuVienGame1"
+          href="https://www.instagram.com/thu_vien_game?igsh=M3k4bno1bmE3NXhx"
+          target="_blank"
+          rel="noopener noreferrer"
           class="flex items-center gap-2 p-2 bg-pink-50 dark:bg-pink-900/10 text-pink-600 dark:text-pink-400 rounded hover:opacity-90"
         >
           <Instagram class="w-4 h-4" /> Instagram
         </a>
         <a
-          href="https://www.facebook.com/ThuVienGame1"
+          href="https://www.youtube.com/@Th%C6%B0Vi%E1%BB%87nIOS-Game"
+          target="_blank"
+          rel="noopener noreferrer"
           class="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/10 text-red-650 dark:text-red-400 rounded hover:opacity-90"
         >
           <Youtube class="w-4 h-4" /> YouTube

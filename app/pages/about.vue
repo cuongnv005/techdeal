@@ -44,13 +44,41 @@ const handleSubscribe = () => {
           </h1>
 
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Chào mừng bạn đến với <strong>TechDeal</strong>, không gian chia sẻ và là cộng đồng dành
-            riêng cho những ai đam mê công nghệ và trò chơi điện tử. Chúng tôi không phải là một cơ
-            quan báo chí chính thức, mà là một sân chơi được vận hành bởi những người đam mê công
-            nghệ và game thủ - những người yêu thích việc chia sẻ các đánh giá phần cứng mới nhất,
-            mẹo phần mềm, các thảo luận sôi nổi và các tin khuyến mãi hấp dẫn nhất.
+            <strong>TechDeal</strong> là trang tin tức và chia sẻ kiến thức công nghệ được thành lập
+            năm 2026, tập trung vào các chủ đề thiết thực nhất với người dùng Việt Nam: thủ thuật hệ
+            điều hành, đánh giá ứng dụng, tin tức phần cứng, thế giới game và các ưu đãi công nghệ
+            hấp dẫn được cập nhật hàng ngày.
+          </p>
+          <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+            Với đội ngũ biên tập có nhiều năm kinh nghiệm trong lĩnh vực công nghệ và truyền thông
+            số, chúng tôi cam kết mang đến nội dung chính xác, được kiểm chứng và thực sự hữu ích —
+            không phải chỉ để câu view. Mỗi bài viết trên TechDeal đều được viết từ trải nghiệm thực
+            tế và góc nhìn độc lập của người dùng.
           </p>
 
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-3 pt-2">
+            <div
+              class="p-4 bg-blue-50 dark:bg-zinc-950 rounded-xl border border-blue-100 dark:border-zinc-850 text-center"
+            >
+              <p class="text-xl font-black text-[#3498db]">100+</p>
+              <p class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">Bài viết</p>
+            </div>
+            <div
+              class="p-4 bg-green-50 dark:bg-zinc-950 rounded-xl border border-green-100 dark:border-zinc-850 text-center"
+            >
+              <p class="text-xl font-black text-green-500">Hàng ngày</p>
+              <p class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">Cập nhật</p>
+            </div>
+            <div
+              class="p-4 bg-amber-50 dark:bg-zinc-950 rounded-xl border border-amber-100 dark:border-zinc-850 text-center"
+            >
+              <p class="text-xl font-black text-amber-500">2026</p>
+              <p class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">Thành lập</p>
+            </div>
+          </div>
+
+          <!-- Content pillars -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div
               class="p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850 flex gap-3"
@@ -59,8 +87,8 @@ const handleSubscribe = () => {
               <div>
                 <h3 class="text-xs font-bold text-zinc-900 dark:text-white">Góc Công nghệ</h3>
                 <p class="text-[11px] text-zinc-555 mt-1 leading-normal dark:text-zinc-400">
-                  Các bài hướng dẫn, thủ thuật hệ điều hành, phân tích phần cứng và các bài đánh giá
-                  thiết bị chi tiết.
+                  Hướng dẫn thực tế, thủ thuật hệ điều hành Windows/iOS/Android, phân tích phần cứng
+                  và đánh giá ứng dụng từ góc nhìn người dùng hàng ngày.
                 </p>
               </div>
             </div>
@@ -73,8 +101,94 @@ const handleSubscribe = () => {
                   Thế giới Game & Deal hot
                 </h3>
                 <p class="text-[11px] text-zinc-555 mt-1 leading-normal dark:text-zinc-400">
-                  Cập nhật các chương trình phát tặng game miễn phí từ Steam, Epic Games Store và
-                  các nền tảng game lớn khác.
+                  Tổng hợp game và ứng dụng đang miễn phí trên Steam, Epic Games, App Store và
+                  Google Play — cập nhật nhanh nhất, chọn lọc kỹ nhất.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="border-t border-gray-200 dark:border-zinc-800 pt-8 space-y-5">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Đội ngũ biên tập</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Author 1 -->
+            <div
+              class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850"
+            >
+              <img
+                src="https://i.ibb.co/6chzMbZ2/2026-06-17-002902.png"
+                alt="Nguyễn Văn Cương"
+                class="w-12 h-12 rounded-full object-cover shrink-0 border-2 border-[#3498db]/30"
+              />
+              <div>
+                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Văn Cương</p>
+                <p class="text-[10px] text-[#3498db] font-semibold mb-1">
+                  Founder & Editor-in-Chief
+                </p>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Hơn 10 năm kinh nghiệm trong lĩnh vực công nghệ và truyền thông số. Chuyên sâu về
+                  hệ sinh thái iOS, Android và các xu hướng AI mới nhất.
+                </p>
+              </div>
+            </div>
+            <!-- Author 2 -->
+            <div
+              class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center shrink-0 text-white font-black text-sm border-2 border-red-300/30"
+              >
+                TT
+              </div>
+              <div>
+                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Ngọc Đăng</p>
+                <p class="text-[10px] text-red-500 font-semibold mb-1">Editor — Game & Windows</p>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Game thủ kỳ cựu với 8 năm theo dõi ngành công nghiệp game. Chuyên viết về Windows,
+                  PC gaming và các deal phần mềm hấp dẫn.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Values Section -->
+        <div class="border-t border-gray-200 dark:border-zinc-800 pt-8 space-y-5">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Cam kết của chúng tôi</h2>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <span class="text-green-500 font-black text-sm mt-0.5">✓</span>
+              <div>
+                <p class="text-xs font-bold text-zinc-900 dark:text-white">Độc lập & Khách quan</p>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Nội dung biên tập hoàn toàn độc lập, không bị ảnh hưởng bởi nhà quảng cáo hay đối
+                  tác thương mại.
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-green-500 font-black text-sm mt-0.5">✓</span>
+              <div>
+                <p class="text-xs font-bold text-zinc-900 dark:text-white">
+                  Cập nhật nhanh & Chính xác
+                </p>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Đội ngũ kiểm tra thông tin trước khi đăng, đặc biệt với các deal miễn phí có thời
+                  hạn để đảm bảo bạn không lãng phí thời gian.
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-green-500 font-black text-sm mt-0.5">✓</span>
+              <div>
+                <p class="text-xs font-bold text-zinc-900 dark:text-white">
+                  Minh bạch về liên kết tiếp thị
+                </p>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Một số liên kết trong bài viết là affiliate links. Chúng tôi luôn công khai điều
+                  này và nó không ảnh hưởng đến tính trung thực của nội dung.
                 </p>
               </div>
             </div>
@@ -88,8 +202,8 @@ const handleSubscribe = () => {
           </h2>
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
             Đừng bỏ lỡ các đợt phát tặng game miễn phí và ưu đãi công nghệ được chọn lọc kỹ càng.
-            Hãy đăng ký nhận bản tin của chúng tôi để nhận các bài viết tổng hợp nổi bật hàng tuần
-            trực tiếp trong hộp thư của bạn.
+            Hãy đăng ký nhận bản tin để nhận tổng hợp nổi bật hàng tuần trực tiếp vào hộp thư của
+            bạn.
           </p>
 
           <form @submit.prevent="handleSubscribe" class="flex flex-col sm:flex-row gap-2 max-w-lg">
@@ -107,11 +221,10 @@ const handleSubscribe = () => {
               <Rss class="w-4 h-4" /> Đăng ký
             </button>
           </form>
-          <p class="text-[11px] text-zinc-450 dark:text-zinc-500 mt-2">
-            Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết không spam. Bạn có thể hủy đăng ký
-            bất kỳ lúc nào.
+          <p class="text-[11px] text-zinc-450 dark:text-zinc-500">
+            Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết không spam. Hủy đăng ký bất kỳ lúc
+            nào.
           </p>
-
           <p v-if="isSubscribed" class="text-xs text-emerald-500 font-semibold">
             🎉 Đăng ký thành công! Hãy chờ đón những ưu đãi tuyệt vời tiếp theo!
           </p>

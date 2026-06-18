@@ -80,6 +80,9 @@ const copyrightText = computed(() =>
                 >Giới thiệu & Bản tin</NuxtLink
               >
             </li>
+            <li>
+              <NuxtLink to="/contact" class="hover:text-white transition-colors">Liên hệ</NuxtLink>
+            </li>
           </ul>
         </div>
 
