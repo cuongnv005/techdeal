@@ -229,9 +229,9 @@ useSeoMeta({
             <li>
               <strong>Email:</strong>
               <a
-                href="mailto:mdchannelvn@gmail.com"
+                href="mailto:contact@techdeal.io.vn"
                 class="text-[#3498db] dark:text-[#e74c3c] hover:underline font-semibold"
-                >mdchannelvn@gmail.com</a
+                >contact@techdeal.io.vn</a
               >
             </li>
             <li><strong>Điện thoại:</strong> +84 (0) 822 344 589</li>
