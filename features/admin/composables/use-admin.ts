@@ -65,7 +65,20 @@ export function useAdminPosts() {
     await refreshPosts()
   }
 
-  return { postsData, isLoadingPosts, postsError, deletePost, refreshPosts, currentPage }
+  const toggleHidePost = async (id: string) => {
+    await adminRepo.togglePostHide(id)
+    await refreshPosts()
+  }
+
+  return {
+    postsData,
+    isLoadingPosts,
+    postsError,
+    deletePost,
+    toggleHidePost,
+    refreshPosts,
+    currentPage
+  }
 }
 
 export function useAdminComments() {

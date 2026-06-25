@@ -3,7 +3,7 @@ import { userRepository } from '../api/user'
 import type { UserProfileUpdatePayload, UserDetailsResponse } from '../types/user.type'
 
 export function useUser(
-  username: string,
+  authorId: string,
   initialPage: number = 1
 ): {
   profileData: Ref<UserDetailsResponse>
@@ -23,9 +23,9 @@ export function useUser(
     error,
     refresh
   } = useAsyncData(
-    `user-profile-${username}`,
+    `user-profile-${authorId}`,
     async () => {
-      const resp = await userRepository.getProfile(username, {
+      const resp = await userRepository.getProfile(authorId, {
         page: page.value,
         limit: limit.value
       })
@@ -35,7 +35,7 @@ export function useUser(
       watch: [page],
       server: true,
       default: () => ({
-        profile: { username },
+        profile: { id: authorId } as any,
         posts: [],
         pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
       })

@@ -140,10 +140,10 @@ const handleSubscribe = () => {
               <div
                 class="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center shrink-0 text-white font-black text-sm border-2 border-red-300/30"
               >
-                TT
+                TK
               </div>
               <div>
-                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Ngọc Đăng</p>
+                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Tuấn Khải</p>
                 <p class="text-[10px] text-red-500 font-semibold mb-1">Editor — Game & Windows</p>
                 <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                   Game thủ kỳ cựu với 8 năm theo dõi ngành công nghiệp game. Chuyên viết về Windows,

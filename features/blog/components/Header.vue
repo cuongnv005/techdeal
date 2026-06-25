@@ -192,7 +192,7 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
               <span class="text-xs font-semibold text-zinc-555 dark:text-zinc-400">
                 Chào,
                 <NuxtLink
-                  :to="`/user/${userStore.username}`"
+                  :to="`/user/${userStore.id}`"
                   class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
                 >
                   <strong class="font-bold">{{ userStore.username }}</strong>
@@ -395,7 +395,7 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                     <div class="text-sm">
                       Chào,
                       <NuxtLink
-                        :to="`/user/${userStore.username}`"
+                        :to="`/user/${userStore.id}`"
                         class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
                         @click="isSidebarOpen = false"
                       >

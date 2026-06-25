@@ -104,7 +104,8 @@ const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`,
           android: 'android',
           ios: 'ios',
           'công nghệ': 'technology',
-          windows: 'windows'
+          windows: 'windows',
+          pc: 'pc'
         }
         const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
         const catPostsRes = await blogRepository.getPosts({
@@ -334,6 +335,7 @@ const parsedContentHtml = computed(() => {
 const mappedComments = computed(() => {
   return comments.value.map((c) => ({
     id: c.id,
+    authorId: c.author_id,
     author: c.author_name || 'Thành viên',
     avatar:
       c.author_avatar ||
@@ -584,7 +586,7 @@ const handleSubscribe = () => {
                 <User class="w-4 h-4" />
                 Đăng bởi
                 <NuxtLink
-                  :to="`/user/${post.author}`"
+                  :to="`/user/${post.authorId}`"
                   class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
                 >
                   <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
@@ -735,7 +737,7 @@ const handleSubscribe = () => {
                 :key="c.id"
                 class="flex gap-4 p-5 rounded-2xl bg-white dark:bg-zinc-900/50 border border-gray-150 dark:border-zinc-900 transition-all duration-300"
               >
-                <NuxtLink :to="`/user/${c.author}`" class="shrink-0 block">
+                <NuxtLink :to="`/user/${c.authorId}`" class="shrink-0 block">
                   <img
                     :src="c.avatar"
                     :alt="c.author"
@@ -745,7 +747,7 @@ const handleSubscribe = () => {
                 <div class="flex-grow space-y-1">
                   <div class="flex items-center justify-between">
                     <NuxtLink
-                      :to="`/user/${c.author}`"
+                      :to="`/user/${c.authorId}`"
                       class="hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors"
                     >
                       <h5 class="text-xs font-bold text-zinc-900 dark:text-white">
@@ -851,7 +853,7 @@ const handleSubscribe = () => {
               </div>
               <!-- Name -->
               <NuxtLink
-                :to="`/user/${post.author}`"
+                :to="`/user/${post.authorId}`"
                 class="text-sm font-extrabold text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors leading-tight"
               >
                 {{ post.author }}
@@ -865,7 +867,7 @@ const handleSubscribe = () => {
               </p>
               <!-- View profile link -->
               <NuxtLink
-                :to="`/user/${post.author}`"
+                :to="`/user/${post.authorId}`"
                 class="inline-flex items-center gap-1 text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline transition-colors mt-1"
               >
                 Xem hồ sơ →
