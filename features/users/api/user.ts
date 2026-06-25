@@ -11,7 +11,7 @@ export interface ApiResponse<T> {
 
 export abstract class UserRepository {
   abstract getProfile(
-    username: string,
+    authorId: string,
     params?: { page?: number; limit?: number }
   ): Promise<ApiResponse<UserDetailsResponse>>
 
@@ -20,21 +20,21 @@ export abstract class UserRepository {
 
 export class UserRepoImpl implements UserRepository {
   async getProfile(
-    username: string,
+    authorId: string,
     params?: { page?: number; limit?: number }
   ): Promise<ApiResponse<UserDetailsResponse>> {
     try {
       const response = await HttpService.get<
         { page?: number; limit?: number },
         AxiosResponse<ApiResponse<UserDetailsResponse>>
-      >(`/users/${username}`, params)
+      >(`/users/${authorId}`, params)
       return response.data
     } catch (e: any) {
       return {
         success: false,
         error: e.response?.data?.error || e.message || 'Lỗi khi tải thông tin người dùng',
         data: {
-          profile: { username },
+          profile: { id: authorId } as any,
           posts: [],
           pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
         }

@@ -6,6 +6,7 @@ import {
   Trash2,
   Calendar,
   Eye,
+  EyeOff,
   MessageSquare,
   Plus,
   CheckCircle,
@@ -15,7 +16,7 @@ import {
 
 import { useAdminPosts } from '../composables/use-admin'
 
-const { postsData, isLoadingPosts, deletePost, currentPage } = useAdminPosts()
+const { postsData, isLoadingPosts, deletePost, toggleHidePost, currentPage } = useAdminPosts()
 
 const emit = defineEmits<{
   (e: 'approve', id: string): void
@@ -206,6 +207,13 @@ const confirmUnpublish = (id: string, title: string) => {
               </td>
               <td class="px-6 py-4">
                 <span
+                  v-if="post.is_hidden === 1"
+                  class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800"
+                >
+                  Đã ẩn
+                </span>
+                <span
+                  v-else
                   :class="[
                     'inline-block text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full',
                     statusConfig[post.status]?.cls ?? ''
@@ -243,6 +251,15 @@ const confirmUnpublish = (id: string, title: string) => {
                     title="Hủy đăng bài viết"
                   >
                     <XCircle class="w-4 h-4" />
+                  </button>
+                  <!-- Ẩn/Hiện bài viết -->
+                  <button
+                    @click="toggleHidePost(post.id)"
+                    class="p-2 text-zinc-400 hover:text-indigo-500 hover:bg-indigo-500/10 rounded-xl transition-all cursor-pointer"
+                    :title="post.is_hidden === 1 ? 'Hiện bài viết' : 'Ẩn bài viết'"
+                  >
+                    <Eye v-if="post.is_hidden === 1" class="w-4 h-4" />
+                    <EyeOff v-else class="w-4 h-4" />
                   </button>
                   <!-- Chỉnh sửa -->
                   <button

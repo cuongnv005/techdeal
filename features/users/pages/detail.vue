@@ -11,22 +11,25 @@ import UserProfileInfo from '../components/UserProfileInfo.vue'
 import UserPostList from '../components/UserPostList.vue'
 
 const route = useRoute()
-const usernameParam = route.params.username as string
+const authorIdParam = route.params.id as string
 const userStore = useUserStore()
 
 // Composable setup
-const { profileData, isLoading, error, page, updateProfile } = useUser(usernameParam)
+const { profileData, isLoading, error, page, updateProfile } = useUser(authorIdParam)
 
 const isOwner = computed(() => {
-  return userStore.isAuthenticated && userStore.username === usernameParam
+  return userStore.isAuthenticated && userStore.id === authorIdParam
 })
+
+const usernameVal = computed(() => profileData.value?.profile?.username || '')
 
 // Merge user store email if owner (since public profile API doesn't return email)
 const profileWithEmail = computed<UserProfile>(() => {
   const p = profileData.value?.profile
   if (!p)
     return {
-      username: usernameParam,
+      id: authorIdParam,
+      username: '',
       role: isOwner.value && userStore.role ? userStore.role : 'user'
     } as UserProfile
   return {
@@ -36,7 +39,7 @@ const profileWithEmail = computed<UserProfile>(() => {
   } as UserProfile
 })
 
-const requestUrl = `https://techdeal.io.vn/user/${usernameParam}`
+const requestUrl = `https://techdeal.io.vn/user/${authorIdParam}`
 const defaultAvatar =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'
 
@@ -44,29 +47,29 @@ const defaultAvatar =
 useSeoMeta({
   title: () =>
     profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameParam}) | TechDeal`
-      : `@${usernameParam} - Trang cá nhân | TechDeal`,
+      ? `${profileData.value.profile.full_name} (@${usernameVal.value}) | TechDeal`
+      : `@${usernameVal.value || 'User'} - Trang cá nhân | TechDeal`,
   description: () =>
     profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameParam} trên TechDeal.`,
+    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
   ogTitle: () =>
     profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameParam})`
-      : `@${usernameParam}`,
+      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
+      : `@${usernameVal.value || 'User'}`,
   ogDescription: () =>
     profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameParam} trên TechDeal.`,
+    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
   ogImage: () => profileData.value?.profile?.avatar_url || defaultAvatar,
   ogUrl: requestUrl,
   ogType: 'profile',
   twitterCard: 'summary_large_image',
   twitterTitle: () =>
     profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameParam})`
-      : `@${usernameParam}`,
+      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
+      : `@${usernameVal.value || 'User'}`,
   twitterDescription: () =>
     profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameParam} trên TechDeal.`,
+    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
   twitterImage: () => profileData.value?.profile?.avatar_url || defaultAvatar,
   robots: 'index, follow'
 })
@@ -86,8 +89,8 @@ useHead(() => ({
         '@type': 'ProfilePage',
         mainEntity: {
           '@type': 'Person',
-          name: profileWithEmail.value.full_name || usernameParam,
-          alternateName: usernameParam,
+          name: profileWithEmail.value.full_name || usernameVal.value || 'User',
+          alternateName: usernameVal.value || 'User',
           image: profileWithEmail.value.avatar_url || defaultAvatar,
           description: profileWithEmail.value.bio || '',
           agentInteractionStatistic: {

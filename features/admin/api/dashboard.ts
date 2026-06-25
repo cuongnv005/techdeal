@@ -17,6 +17,7 @@ export abstract class AdminRepository {
   abstract getPostsChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
   abstract getPosts(page?: number, limit?: number): Promise<PaginatedResult<PostItem>>
   abstract deletePost(id: string): Promise<void>
+  abstract togglePostHide(id: string): Promise<unknown>
   abstract getComments(page?: number, limit?: number): Promise<PaginatedResult<CommentItem>>
   abstract deleteComment(id: string): Promise<void>
   abstract getUsers(page?: number, limit?: number): Promise<PaginatedResult<UserItem>>
@@ -57,6 +58,7 @@ interface WorkerPost {
   created_at: string
   author_name: string
   category_name: string
+  is_hidden: number
 }
 
 interface WorkerComment {
@@ -217,7 +219,8 @@ export class AdminRepoImpl implements AdminRepository {
         publishDate: new Date(post.created_at).toLocaleDateString('vi-VN'),
         views: post.views,
         comments: 0,
-        status: post.status
+        status: post.status,
+        is_hidden: post.is_hidden
       }))
 
       const pagination =
@@ -242,6 +245,10 @@ export class AdminRepoImpl implements AdminRepository {
 
   async deletePost(id: string): Promise<void> {
     await HttpService.delete(`/admin/posts/${id}`)
+  }
+
+  async togglePostHide(id: string): Promise<unknown> {
+    return await HttpService.post(`/posts/${id}/hide`, {})
   }
 
   async getComments(page: number = 1, limit: number = 10): Promise<PaginatedResult<CommentItem>> {

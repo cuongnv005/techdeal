@@ -20,6 +20,7 @@ export interface PostItem {
   views: number
   comments: number
   status: 'pending' | 'published' | 'unpublished'
+  is_hidden: number
 }
 
 export interface CommentItem {

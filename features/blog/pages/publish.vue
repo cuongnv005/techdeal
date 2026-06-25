@@ -52,7 +52,8 @@ const categoryName = computed(() => {
     android: 'Android',
     ios: 'iOS',
     technology: 'Công nghệ',
-    windows: 'Windows'
+    windows: 'Windows',
+    pc: 'PC'
   }
   return map[categoryId.value] || 'Công nghệ'
 })
@@ -64,7 +65,8 @@ const categoryUrl = computed(() => {
     android: '/android',
     ios: '/ios',
     technology: '/cong-nghe',
-    windows: '/windows'
+    windows: '/windows',
+    pc: '/pc'
   }
   return map[categoryId.value] || '/'
 })
@@ -85,7 +87,8 @@ const fetchPostToEdit = async () => {
           android: 'android',
           ios: 'ios',
           'công nghệ': 'technology',
-          windows: 'windows'
+          windows: 'windows',
+          pc: 'pc'
         }
         categoryId.value = categoryMap[detail.post.category.toLowerCase()] || 'technology'
       }
