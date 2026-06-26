@@ -10,6 +10,7 @@ export interface Giveaway {
   has_claimed: boolean
   is_block?: boolean
   activation_link?: string
+  image_url?: string
   user?: {
     username: string
     role: string
@@ -33,4 +34,5 @@ export interface CreateGiveawayInput {
   original_price: number
   expiry_date: string
   is_block?: boolean
+  image_url?: string
 }

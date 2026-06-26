@@ -44,7 +44,8 @@ const form = ref<CreateGiveawayInput>({
   key_quantity: 10,
   original_price: 0,
   expiry_date: '',
-  is_block: true
+  is_block: true,
+  image_url: ''
 })
 
 const filteredGiveaways = computed(() => {
@@ -103,7 +104,8 @@ const openCreateModal = () => {
     key_quantity: 10,
     original_price: 0,
     expiry_date: localISODate, // Default 7 days from now in local time
-    is_block: true
+    is_block: true,
+    image_url: ''
   }
   isCreateModalOpen.value = true
 }
@@ -512,6 +514,18 @@ const formatPrice = (price: number) => {
               v-model="form.expiry_date"
               type="datetime-local"
               required
+              class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+            />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+              >Link ảnh hướng dẫn nhận giveaway (Tùy chọn)</label
+            >
+            <input
+              v-model="form.image_url"
+              type="url"
+              placeholder="https://..."
               class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
             />
           </div>

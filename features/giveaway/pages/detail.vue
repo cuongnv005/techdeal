@@ -556,6 +556,27 @@ const formatPrice = (price: number) => {
             </div>
           </section>
 
+          <!-- HƯỚNG DẪN BẰNG HÌNH ẢNH (Nếu có) -->
+          <section v-if="giveaway.image_url" class="max-w-xl mx-auto">
+            <div
+              class="border-2 border-black rounded-[28px] p-6 bg-white shadow-[8px_8px_0_rgba(0,0,0,1)] text-center space-y-4"
+            >
+              <div
+                class="inline-flex items-center gap-1 bg-black text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full font-serif"
+              >
+                <Sparkles class="w-3.5 h-3.5 fill-current text-yellow-400" /> HƯỚNG DẪN CHI TIẾT
+                BẰNG HÌNH ẢNH
+              </div>
+              <div class="border-2 border-black rounded-2xl overflow-hidden bg-zinc-50">
+                <img
+                  :src="giveaway.image_url"
+                  alt="Hướng dẫn nhận giveaway"
+                  class="w-full h-auto object-contain mx-auto max-h-[500px]"
+                />
+              </div>
+            </div>
+          </section>
+
           <!-- Mobile Ad 2 (Below PRO CARD, above CTA Claim block) -->
           <div class="xl:hidden max-w-md mx-auto px-4">
             <AdBanner width="100%" height="90px" :is-google-ad="true" />
