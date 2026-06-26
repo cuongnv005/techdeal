@@ -609,12 +609,14 @@ const formatPrice = (price: number) => {
                 Vui lòng chờ trong giây lát, hệ thống đang chuyển bạn đến liên kết nhận bản quyền
                 phần mềm...
               </p>
-              <a
-                :href="claimSuccessLink"
-                class="text-xs font-bold underline hover:no-underline text-[#7C3AED]"
-              >
-                Hoặc click vào đây để chuyển hướng thủ công
-              </a>
+              <div class="pt-2">
+                <a
+                  :href="claimSuccessLink"
+                  class="w-full py-4 bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+                >
+                  Đến trang nhận quà ngay <ExternalLink class="w-4 h-4" />
+                </a>
+              </div>
             </div>
 
             <!-- Case: Normal Claim CTA -->
