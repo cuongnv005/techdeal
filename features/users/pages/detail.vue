@@ -64,7 +64,7 @@ useSeoMeta({
     profileData.value?.profile?.bio ||
     `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
   ogImage: () => profileData.value?.profile?.avatar_url || defaultAvatar,
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl,
   ogType: 'profile',
   twitterCard: 'summary_large_image',
   twitterTitle: () =>

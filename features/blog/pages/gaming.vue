@@ -30,21 +30,21 @@ useSeoMeta({
     'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
   ogTitle: 'Thế giới Game - TechDeal Gaming',
   ogDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Thế giới Game - TechDeal Gaming',
   twitterDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 // Mock categories for gaming
 const categories = ref([

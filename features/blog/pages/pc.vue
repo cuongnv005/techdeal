@@ -35,21 +35,21 @@ useSeoMeta({
     'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
   ogTitle: 'Chuyên mục PC máy tính - TechDeal',
   ogDescription: 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Chuyên mục PC máy tính - TechDeal',
   twitterDescription: 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 // Fetch articles dynamically
 const { data: allCategoryPosts, pending } = await useAsyncData(

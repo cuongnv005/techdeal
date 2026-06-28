@@ -305,7 +305,7 @@ useSeoMeta({
   ogTitle: () => post.value.title,
   ogDescription: () => truncatedSummary.value,
   ogImage: () => post.value.imageUrl,
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'article',
   twitterCard: 'summary_large_image',
   twitterTitle: () => post.value.title,
@@ -313,11 +313,11 @@ useSeoMeta({
   twitterImage: () => post.value.imageUrl
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ],
   script: [
@@ -339,15 +339,15 @@ useHead({
           '@type': 'Organization',
           name: 'TechDeal'
         },
-        url: requestUrl,
+        url: requestUrl.value,
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': requestUrl
+          '@id': requestUrl.value
         }
       })
     }
   ]
-})
+}))
 
 // onMounted(() => {
 //   // Load Google SwG Basic SDK dynamically

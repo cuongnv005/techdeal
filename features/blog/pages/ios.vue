@@ -33,21 +33,21 @@ useSeoMeta({
     'Chuyên mục iOS: Cập nhật tin tức iPhone, iPad, các bản cập nhật iOS mới nhất, thủ thuật sử dụng và đánh giá ứng dụng Apple.',
   ogTitle: 'Chuyên mục iOS - TechDeal',
   ogDescription: 'Cập nhật tin tức iOS mới nhất hàng ngày.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Chuyên mục iOS - TechDeal',
   twitterDescription: 'Cập nhật tin tức iOS mới ngày.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 const currentPage = computed(() => Number(route.query.page) || 1)
 

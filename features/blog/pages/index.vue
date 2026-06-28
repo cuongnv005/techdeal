@@ -25,21 +25,21 @@ useSeoMeta({
     'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
   ogTitle: 'Trang chủ - Tin tức Công nghệ',
   ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Trang chủ - Tin tức Công nghệ',
   twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 // Fetch posts from API using useAsyncData, watching the current page for server-side pagination
 const { data: allPosts, pending } = await useAsyncData(
