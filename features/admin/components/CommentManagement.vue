@@ -5,25 +5,11 @@ import { Search, Trash2, MessageSquare, User, FileText } from 'lucide-vue-next'
 
 import { useAdminComments } from '../composables/use-admin'
 
-const { commentsData, isLoadingComments, deleteComment, currentPage } = useAdminComments()
+const { commentsData, isLoadingComments, deleteComment, currentPage, searchQuery } =
+  useAdminComments()
 
-const searchQuery = ref('')
-
-const filteredComments = computed(() => {
-  const list = commentsData.value?.items || []
-  if (!searchQuery.value.trim()) return list
-  const query = searchQuery.value.toLowerCase()
-  return list.filter(
-    (c) =>
-      c.content.toLowerCase().includes(query) ||
-      c.author.toLowerCase().includes(query) ||
-      c.postTitle.toLowerCase().includes(query)
-  )
-})
-
-const paginatedComments = computed(() => {
-  return filteredComments.value
-})
+const paginatedComments = computed(() => commentsData.value?.items || [])
+const filteredComments = paginatedComments
 
 const totalPages = computed(() => {
   return commentsData.value?.pagination?.total_pages || 1
@@ -54,11 +40,7 @@ const visiblePages = computed(() => {
   return pages
 })
 
-watch(searchQuery, () => {
-  currentPage.value = 1
-})
-
-const confirmDelete = (id: string, author: string) => {
+const confirmDelete = (id: string, author: string): void => {
   if (confirm(`Bạn có chắc chắn muốn xóa bình luận của "${author}"?`)) {
     deleteComment(id)
   }

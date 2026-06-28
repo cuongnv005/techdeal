@@ -16,20 +16,22 @@ import {
 
 import { useAdminPosts } from '../composables/use-admin'
 
-const { postsData, isLoadingPosts, deletePost, toggleHidePost, currentPage } = useAdminPosts()
-
-const emit = defineEmits<{
-  (e: 'approve', id: string): void
-  (e: 'unpublish', id: string): void
-}>()
-
-const searchQuery = ref('')
-const categoryFilter = ref('')
-const statusFilter = ref('')
+const {
+  postsData,
+  isLoadingPosts,
+  deletePost,
+  approvePost,
+  unpublishPost,
+  toggleHidePost,
+  currentPage,
+  searchQuery,
+  categoryFilter,
+  statusFilter
+} = useAdminPosts()
 
 const statusConfig = {
   pending: {
-    label: 'Chờ duyệt',
+    label: 'Chờ đăng',
     cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
   },
   published: {
@@ -42,23 +44,8 @@ const statusConfig = {
   }
 }
 
-const filteredPosts = computed(() => {
-  const list = postsData.value?.items || []
-  return list.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchQuery.value.toLowerCase())
-
-    const matchesCategory = !categoryFilter.value || post.category === categoryFilter.value
-    const matchesStatus = !statusFilter.value || post.status === statusFilter.value
-
-    return matchesSearch && matchesCategory && matchesStatus
-  })
-})
-
-const paginatedPosts = computed(() => {
-  return filteredPosts.value
-})
+const paginatedPosts = computed(() => postsData.value?.items || [])
+const filteredPosts = paginatedPosts
 
 const totalPages = computed(() => {
   return postsData.value?.pagination?.total_pages || 1
@@ -89,24 +76,20 @@ const visiblePages = computed(() => {
   return pages
 })
 
-watch([searchQuery, categoryFilter, statusFilter], () => {
-  currentPage.value = 1
-})
-
 const categories = computed(() => {
   const all = (postsData.value?.items || []).map((p) => p.category)
   return [...new Set(all)]
 })
 
-const confirmDelete = (id: string, title: string) => {
+const confirmDelete = (id: string, title: string): void => {
   if (confirm(`Bạn có chắc chắn muốn xóa bài viết: "${title}"? Action này không thể hoàn tác.`)) {
     deletePost(id)
   }
 }
 
-const confirmUnpublish = (id: string, title: string) => {
+const confirmUnpublish = (id: string, title: string): void => {
   if (confirm(`Hủy đăng bài viết: "${title}"?`)) {
-    emit('unpublish', id)
+    unpublishPost(id)
   }
 }
 </script>
@@ -187,7 +170,9 @@ const confirmUnpublish = (id: string, title: string) => {
                   <h4
                     class="text-xs font-bold text-zinc-900 dark:text-white line-clamp-1 hover:text-[#3498db] cursor-pointer"
                   >
-                    {{ post.title }}
+                    <NuxtLink :to="`/blog/${post.slug || post.id}`" target="_blank">
+                      {{ post.title }}
+                    </NuxtLink>
                   </h4>
                   <div class="flex items-center gap-2 text-[10px] text-zinc-400">
                     <Calendar class="w-3.5 h-3.5" />
@@ -237,7 +222,7 @@ const confirmUnpublish = (id: string, title: string) => {
                   <!-- Duyệt bài (chỉ hiện khi pending hoặc unpublished) -->
                   <button
                     v-if="post.status !== 'published'"
-                    @click="emit('approve', post.id)"
+                    @click="approvePost(post.id)"
                     class="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all cursor-pointer"
                     title="Duyệt bài viết"
                   >

@@ -1,11 +1,12 @@
-import type { AxiosResponse } from 'axios'
-import { HttpService } from '@core/api/service'
 import type {
   Shortlink,
   CreateShortlinkInput,
   ShortlinkPagination,
   ShortlinkStats
 } from '../types/shortlink.type'
+import type { AxiosResponse } from 'axios'
+
+import { HttpService } from '@core/api/service'
 
 interface ApiResponse<T> {
   success: boolean
@@ -17,13 +18,18 @@ interface ApiResponse<T> {
 export class ShortlinkRepository {
   async adminList(
     page: number = 1,
-    limit: number = 20
+    limit: number = 10,
+    filters?: { q?: string }
   ): Promise<ApiResponse<{ items: Shortlink[]; pagination: ShortlinkPagination }>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: Shortlink[]; pagination: ShortlinkPagination }>>
-      >('/admin/shortlinks', { page, limit })
+      >('/admin/shortlinks', {
+        page,
+        limit,
+        ...(filters?.q ? { q: filters.q } : {})
+      })
       return response.data
     } catch (e: any) {
       return {
@@ -31,7 +37,7 @@ export class ShortlinkRepository {
         error: e.response?.data?.error || e.message || 'Lỗi khi tải danh sách shortlinks',
         data: {
           items: [],
-          pagination: { current_page: 1, per_page: 20, total_items: 0, total_pages: 1 }
+          pagination: { current_page: 1, per_page: limit, total_items: 0, total_pages: 1 }
         }
       }
     }

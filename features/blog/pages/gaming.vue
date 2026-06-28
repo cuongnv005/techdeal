@@ -19,7 +19,9 @@ import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
 
-const requestUrl = useRequestURL().href
+const route = useRoute()
+const siteUrl = 'https://techdeal.io.vn'
+const requestUrl = computed(() => `${siteUrl}${route.path}`)
 
 // SEO optimization for Gaming Page
 useSeoMeta({
@@ -54,7 +56,6 @@ const categories = ref([
   { name: 'RPG/Story', count: '150 bài', icon: '🧙‍♂️' }
 ])
 
-const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch gaming articles dynamically

@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { useCookie } from '#app'
+import { defineStore } from 'pinia'
 
 import { HttpService } from '@core/api/service'
 

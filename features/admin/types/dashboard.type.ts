@@ -14,6 +14,7 @@ export interface ChartDataPoint {
 export interface PostItem {
   id: string
   title: string
+  slug: string
   author: string
   category: string
   publishDate: string

@@ -1,5 +1,7 @@
 import { ref } from 'vue'
+
 import { shortlinkRepository } from '../api/shortlink'
+
 import type { CreateShortlinkInput } from '../types/shortlink.type'
 
 export function useAdminShortlinks() {
@@ -8,6 +10,7 @@ export function useAdminShortlinks() {
   const isPending = ref(false)
   const currentPage = ref(1)
   const limit = ref(10)
+  const searchQuery = ref('')
 
   const {
     data: shortlinksData,
@@ -15,16 +18,18 @@ export function useAdminShortlinks() {
     error,
     refresh
   } = useAsyncData(
-    () => `shortlinks-admin-list-page-${currentPage.value}`,
+    () => `shortlinks-admin-list-p${currentPage.value}-q${searchQuery.value}`,
     async () => {
-      const resp = await repo.adminList(currentPage.value, limit.value)
+      const resp = await repo.adminList(currentPage.value, limit.value, {
+        q: searchQuery.value
+      })
       if (!resp.success) {
         throw new Error(resp.error || 'Không thể lấy danh sách shortlinks')
       }
       return resp.data
     },
     {
-      watch: [currentPage],
+      watch: [currentPage, searchQuery],
       server: false,
       default: () => ({
         items: [],
@@ -32,6 +37,10 @@ export function useAdminShortlinks() {
       })
     }
   )
+
+  watch(searchQuery, () => {
+    currentPage.value = 1
+  })
 
   const createShortlink = async (data: CreateShortlinkInput) => {
     isPending.value = true
@@ -82,6 +91,7 @@ export function useAdminShortlinks() {
     actionError,
     isPending,
     currentPage,
+    searchQuery,
     refresh
   }
 }

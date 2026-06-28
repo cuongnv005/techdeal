@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 import { useRoute, useAsyncData, navigateTo } from '#app'
 import {
@@ -19,12 +19,12 @@ import {
 } from 'lucide-vue-next'
 
 import { blogRepository, type ApiComment } from '../api/blog'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
+import Header from '../components/Header.vue'
+import { parseBBCode } from '../utils/bbcode'
 
 import type { BlogPost } from '../types/post.type'
-import { parseBBCode } from '../utils/bbcode'
 
 import { useUserStore } from '@stores/user'
 
@@ -288,9 +288,8 @@ const copyUrl = () => {
   }
 }
 
-import { onMounted } from 'vue'
-
-const requestUrl = useRequestURL().href
+const siteUrl = 'https://techdeal.io.vn'
+const requestUrl = computed(() => `${siteUrl}${route.path}`)
 
 const truncatedSummary = computed(() => {
   const sum = post.value.summary || ''

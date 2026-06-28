@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+
 import {
   User,
   Mail,
@@ -13,6 +14,7 @@ import {
   Cake,
   Users
 } from 'lucide-vue-next'
+
 import type { UserProfile } from '../types/user.type'
 
 interface Props {

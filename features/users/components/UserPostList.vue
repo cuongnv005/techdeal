@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { Calendar, FileText, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+
 import type { UserPost, UserPagination } from '../types/user.type'
 
 interface Props {

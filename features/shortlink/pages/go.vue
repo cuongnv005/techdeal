@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+
 import {
   ShieldAlert,
   CheckCircle,
@@ -9,10 +10,11 @@ import {
   ShieldCheck,
   HelpCircle
 } from 'lucide-vue-next'
-import { usePublicShortlink } from '../composables/use-shortlink'
-import Header from '../../blog/components/Header.vue'
-import Footer from '../../blog/components/Footer.vue'
+
 import AdBanner from '../../blog/components/AdBanner.vue'
+import Footer from '../../blog/components/Footer.vue'
+import Header from '../../blog/components/Header.vue'
+import { usePublicShortlink } from '../composables/use-shortlink'
 
 const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')

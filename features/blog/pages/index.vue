@@ -15,7 +15,8 @@ import type { BlogPost } from '../types/post.type'
 
 const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
-const requestUrl = useRequestURL().href
+const siteUrl = 'https://techdeal.io.vn'
+const requestUrl = computed(() => `${siteUrl}${route.path}`)
 
 // Set page meta for SEO optimization
 useSeoMeta({

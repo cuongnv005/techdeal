@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useRoute, useAsyncData, navigateTo, useRequestURL } from '#app'
+
+import { useRoute, useAsyncData, navigateTo } from '#app'
 import {
   User,
   Calendar,
@@ -20,13 +21,14 @@ import {
 } from 'lucide-vue-next'
 
 import { blogRepository, type ApiComment } from '../api/blog'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
+import Header from '../components/Header.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
+import { parseBBCode } from '../utils/bbcode'
 
 import type { BlogPost } from '../types/post.type'
-import { parseBBCode } from '../utils/bbcode'
+
 import { useUserStore } from '@stores/user'
 
 interface Props {
@@ -57,7 +59,8 @@ const post = computed<BlogPost | null>(() => dealData.value?.post || null)
 const tags = computed<string[]>(() => dealData.value?.tags || [])
 
 // SEO Metadata
-const requestUrl = useRequestURL().href
+const siteUrl = 'https://techdeal.io.vn'
+const requestUrl = computed(() => `${siteUrl}${route.path}`)
 useSeoMeta({
   title: computed(() =>
     post.value?.title

@@ -11,8 +11,9 @@ import {
   TrendingDown
 } from 'lucide-vue-next'
 
-import type { StatItem, ChartDataPoint } from '../types/dashboard.type'
 import { AdminRepoImpl } from '../api/dashboard'
+
+import type { StatItem, ChartDataPoint } from '../types/dashboard.type'
 
 interface Props {
   statsData: {
