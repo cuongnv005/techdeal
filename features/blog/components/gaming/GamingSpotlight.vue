@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { Eye } from 'lucide-vue-next'
 
 import type { BlogPost } from '../../types/post.type'

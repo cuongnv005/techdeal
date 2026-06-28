@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
+
 import {
   Facebook,
   Twitter,
@@ -12,8 +13,8 @@ import {
   Sparkles
 } from 'lucide-vue-next'
 
-import AdBanner from '../AdBanner.vue'
 import { blogRepository } from '../../api/blog'
+import AdBanner from '../AdBanner.vue'
 
 import type { BlogPost } from '../../types/post.type'
 

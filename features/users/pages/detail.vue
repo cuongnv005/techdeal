@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import { useRoute } from '#app'
-import { useUserStore } from '@stores/user'
-import { useUser } from '../composables/use-user'
-import type { UserProfile } from '../types/user.type'
-import Header from '@features/blog/components/Header.vue'
-import Footer from '@features/blog/components/Footer.vue'
+
 import UserAvatar from '../components/UserAvatar.vue'
-import UserProfileInfo from '../components/UserProfileInfo.vue'
 import UserPostList from '../components/UserPostList.vue'
+import UserProfileInfo from '../components/UserProfileInfo.vue'
+import { useUser } from '../composables/use-user'
+
+import type { UserProfile } from '../types/user.type'
+
+import Footer from '@features/blog/components/Footer.vue'
+import Header from '@features/blog/components/Header.vue'
+import { useUserStore } from '@stores/user'
 
 const route = useRoute()
 const authorIdParam = route.params.id as string
@@ -47,8 +51,8 @@ const defaultAvatar =
 useSeoMeta({
   title: () =>
     profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameVal.value}) | TechDeal`
-      : `@${usernameVal.value || 'User'} - Trang cá nhân | TechDeal`,
+      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
+      : `@${usernameVal.value || 'User'} - Trang cá nhân`,
   description: () =>
     profileData.value?.profile?.bio ||
     `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,

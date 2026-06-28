@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useRoute } from '#imports'
 
-import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
 import { useDark, useToggle } from '@vueuse/core'
+import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
 
+import { useRoute } from '#imports'
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()

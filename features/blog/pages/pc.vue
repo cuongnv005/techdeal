@@ -14,6 +14,7 @@ import {
 
 import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import PostCard from '../components/PostCard.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
@@ -21,11 +22,11 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 import type { BlogPost } from '../types/post.type'
 
 import { useUserStore } from '@stores/user'
-import Footer from '../components/Footer.vue'
 
 const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
-const requestUrl = useRequestURL().href
+const siteUrl = 'https://techdeal.io.vn'
+const requestUrl = computed(() => `${siteUrl}${route.path}`)
 
 // Set page meta for SEO optimization
 useSeoMeta({

@@ -1,6 +1,8 @@
 import { ref } from 'vue'
-import { useUserStore } from '@stores/user'
+
 import { AdminRepoImpl } from '../api/dashboard'
+
+import { useUserStore } from '@stores/user'
 
 export async function useAdminStats() {
   const adminRepo = new AdminRepoImpl()
@@ -33,6 +35,9 @@ export function useAdminPosts() {
   const userStore = useUserStore()
   const currentPage = ref(1)
   const limit = ref(10)
+  const searchQuery = ref('')
+  const categoryFilter = ref('')
+  const statusFilter = ref('')
 
   const {
     data: postsData,
@@ -40,7 +45,8 @@ export function useAdminPosts() {
     error: postsError,
     refresh: refreshPosts
   } = useAsyncData(
-    () => `admin-posts-page-${currentPage.value}`,
+    () =>
+      `admin-posts-p${currentPage.value}-q${searchQuery.value}-c${categoryFilter.value}-s${statusFilter.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
         return {
@@ -48,10 +54,14 @@ export function useAdminPosts() {
           pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
         }
       }
-      return await adminRepo.getPosts(currentPage.value, limit.value)
+      return await adminRepo.getPosts(currentPage.value, limit.value, {
+        q: searchQuery.value,
+        category: categoryFilter.value,
+        status: statusFilter.value
+      })
     },
     {
-      watch: [currentPage],
+      watch: [currentPage, searchQuery, categoryFilter, statusFilter],
       server: false,
       default: () => ({
         items: [],
@@ -60,12 +70,26 @@ export function useAdminPosts() {
     }
   )
 
-  const deletePost = async (id: string) => {
+  watch([searchQuery, categoryFilter, statusFilter], () => {
+    currentPage.value = 1
+  })
+
+  const deletePost = async (id: string): Promise<void> => {
     await adminRepo.deletePost(id)
     await refreshPosts()
   }
 
-  const toggleHidePost = async (id: string) => {
+  const approvePost = async (id: string): Promise<void> => {
+    await adminRepo.approvePost(id)
+    await refreshPosts()
+  }
+
+  const unpublishPost = async (id: string): Promise<void> => {
+    await adminRepo.unpublishPost(id)
+    await refreshPosts()
+  }
+
+  const toggleHidePost = async (id: string): Promise<void> => {
     await adminRepo.togglePostHide(id)
     await refreshPosts()
   }
@@ -75,9 +99,14 @@ export function useAdminPosts() {
     isLoadingPosts,
     postsError,
     deletePost,
+    approvePost,
+    unpublishPost,
     toggleHidePost,
     refreshPosts,
-    currentPage
+    currentPage,
+    searchQuery,
+    categoryFilter,
+    statusFilter
   }
 }
 
@@ -86,6 +115,7 @@ export function useAdminComments() {
   const userStore = useUserStore()
   const currentPage = ref(1)
   const limit = ref(10)
+  const searchQuery = ref('')
 
   const {
     data: commentsData,
@@ -93,7 +123,7 @@ export function useAdminComments() {
     error: commentsError,
     refresh: refreshComments
   } = useAsyncData(
-    () => `admin-comments-page-${currentPage.value}`,
+    () => `admin-comments-p${currentPage.value}-q${searchQuery.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
         return {
@@ -101,10 +131,12 @@ export function useAdminComments() {
           pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
         }
       }
-      return await adminRepo.getComments(currentPage.value, limit.value)
+      return await adminRepo.getComments(currentPage.value, limit.value, {
+        q: searchQuery.value
+      })
     },
     {
-      watch: [currentPage],
+      watch: [currentPage, searchQuery],
       server: false,
       default: () => ({
         items: [],
@@ -113,7 +145,11 @@ export function useAdminComments() {
     }
   )
 
-  const deleteComment = async (id: string) => {
+  watch(searchQuery, () => {
+    currentPage.value = 1
+  })
+
+  const deleteComment = async (id: string): Promise<void> => {
     await adminRepo.deleteComment(id)
     await refreshComments()
   }
@@ -124,7 +160,8 @@ export function useAdminComments() {
     commentsError,
     deleteComment,
     refreshComments,
-    currentPage
+    currentPage,
+    searchQuery
   }
 }
 
@@ -133,6 +170,9 @@ export function useAdminUsers() {
   const userStore = useUserStore()
   const currentPage = ref(1)
   const limit = ref(10)
+  const searchQuery = ref('')
+  const roleFilter = ref('')
+  const statusFilter = ref('')
 
   const {
     data: usersData,
@@ -140,7 +180,8 @@ export function useAdminUsers() {
     error: usersError,
     refresh: refreshUsers
   } = useAsyncData(
-    () => `admin-users-page-${currentPage.value}`,
+    () =>
+      `admin-users-p${currentPage.value}-q${searchQuery.value}-r${roleFilter.value}-s${statusFilter.value}`,
     async () => {
       if (!userStore.isAuthenticated || (userStore.role !== 'admin' && userStore.role !== 'mod')) {
         return {
@@ -148,10 +189,14 @@ export function useAdminUsers() {
           pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 1 }
         }
       }
-      return await adminRepo.getUsers(currentPage.value, limit.value)
+      return await adminRepo.getUsers(currentPage.value, limit.value, {
+        q: searchQuery.value,
+        role: roleFilter.value,
+        status: statusFilter.value
+      })
     },
     {
-      watch: [currentPage],
+      watch: [currentPage, searchQuery, roleFilter, statusFilter],
       server: false,
       default: () => ({
         items: [],
@@ -160,12 +205,16 @@ export function useAdminUsers() {
     }
   )
 
-  const updateUserRole = async (id: string, role: 'admin' | 'mod' | 'user') => {
+  watch([searchQuery, roleFilter, statusFilter], () => {
+    currentPage.value = 1
+  })
+
+  const updateUserRole = async (id: string, role: 'admin' | 'mod' | 'user'): Promise<void> => {
     await adminRepo.updateUserRole(id, role)
     await refreshUsers()
   }
 
-  const toggleUserStatus = async (id: string) => {
+  const toggleUserStatus = async (id: string): Promise<void> => {
     await adminRepo.toggleUserStatus(id)
     await refreshUsers()
   }
@@ -177,6 +226,9 @@ export function useAdminUsers() {
     updateUserRole,
     toggleUserStatus,
     refreshUsers,
-    currentPage
+    currentPage,
+    searchQuery,
+    roleFilter,
+    statusFilter
   }
 }

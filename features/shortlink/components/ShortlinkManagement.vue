@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
 import {
   Search,
   Plus,
@@ -12,7 +13,9 @@ import {
   AlertCircle,
   BarChart2
 } from 'lucide-vue-next'
+
 import { useAdminShortlinks } from '../composables/use-shortlink'
+
 import type { ShortlinkStats } from '../types/shortlink.type'
 
 const {
@@ -22,10 +25,10 @@ const {
   deleteShortlink,
   actionError,
   isPending,
-  currentPage
+  currentPage,
+  searchQuery
 } = useAdminShortlinks()
 
-const searchQuery = ref('')
 const copiedId = ref<string | null>(null)
 const isCreateModalOpen = ref(false)
 
@@ -35,17 +38,7 @@ const form = ref({
   hash: ''
 })
 
-const filteredShortlinks = computed(() => {
-  const items = shortlinksData.value?.items || []
-  if (!searchQuery.value.trim()) return items
-  const query = searchQuery.value.toLowerCase()
-  return items.filter(
-    (s) =>
-      s.name.toLowerCase().includes(query) ||
-      s.hash.toLowerCase().includes(query) ||
-      s.target_url.toLowerCase().includes(query)
-  )
-})
+const filteredShortlinks = computed(() => shortlinksData.value?.items || [])
 
 const totalPages = computed(() => {
   return shortlinksData.value?.pagination?.total_pages || 1

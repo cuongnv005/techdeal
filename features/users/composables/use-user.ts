@@ -1,5 +1,7 @@
 import { ref, type Ref } from 'vue'
+
 import { userRepository } from '../api/user'
+
 import type { UserProfileUpdatePayload, UserDetailsResponse } from '../types/user.type'
 
 export function useUser(

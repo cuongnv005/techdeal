@@ -1,5 +1,5 @@
-import { defineEventHandler, setHeader } from 'h3'
 import axios from 'axios'
+import { defineEventHandler, setHeader } from 'h3'
 
 export default defineEventHandler(async (event) => {
   setHeader(event, 'Content-Type', 'text/xml; charset=utf-8')

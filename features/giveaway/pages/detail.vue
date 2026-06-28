@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+
 import {
   Gift,
   Clock,
@@ -22,10 +23,12 @@ import {
   MousePointerClick,
   UserPlus
 } from 'lucide-vue-next'
-import { usePublicGiveaway } from '../composables/use-giveaway'
-import { useUserStore } from '@stores/user'
+
 import { AuthRepository } from '../../auth/api/auth'
 import AdBanner from '../../blog/components/AdBanner.vue'
+import { usePublicGiveaway } from '../composables/use-giveaway'
+
+import { useUserStore } from '@stores/user'
 
 const route = useRoute()
 const userStore = useUserStore()

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Header from '@features/blog/components/Header.vue'
-import Footer from '@features/blog/components/Footer.vue'
+
 import {
   Mail,
   Phone,
@@ -13,6 +12,9 @@ import {
   CheckCircle2,
   AlertTriangle
 } from 'lucide-vue-next'
+
+import Footer from '@features/blog/components/Footer.vue'
+import Header from '@features/blog/components/Header.vue'
 
 useSeoMeta({
   title: 'Liên hệ',

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import { Camera, Loader2 } from 'lucide-vue-next'
 
 interface Props {

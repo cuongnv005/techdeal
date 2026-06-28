@@ -5,22 +5,19 @@ import { Search, UserCheck, ShieldAlert, Calendar, Mail, User } from 'lucide-vue
 
 import { useAdminUsers } from '../composables/use-admin'
 
-const { usersData, isLoadingUsers, updateUserRole, toggleUserStatus, currentPage } = useAdminUsers()
+const {
+  usersData,
+  isLoadingUsers,
+  updateUserRole,
+  toggleUserStatus,
+  currentPage,
+  searchQuery,
+  roleFilter,
+  statusFilter
+} = useAdminUsers()
 
-const searchQuery = ref('')
-
-const filteredUsers = computed(() => {
-  const list = usersData.value?.items || []
-  if (!searchQuery.value.trim()) return list
-  const query = searchQuery.value.toLowerCase()
-  return list.filter(
-    (u) => u.username.toLowerCase().includes(query) || u.email.toLowerCase().includes(query)
-  )
-})
-
-const paginatedUsers = computed(() => {
-  return filteredUsers.value
-})
+const paginatedUsers = computed(() => usersData.value?.items || [])
+const filteredUsers = paginatedUsers
 
 const totalPages = computed(() => {
   return usersData.value?.pagination?.total_pages || 1
@@ -51,11 +48,7 @@ const visiblePages = computed(() => {
   return pages
 })
 
-watch(searchQuery, () => {
-  currentPage.value = 1
-})
-
-const onRoleChange = (id: string, event: Event) => {
+const onRoleChange = (id: string, event: Event): void => {
   const select = event.target as HTMLSelectElement
   updateUserRole(id, select.value as 'admin' | 'mod' | 'user')
 }

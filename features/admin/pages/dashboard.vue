@@ -19,10 +19,10 @@ import CommentManagement from '../components/CommentManagement.vue'
 import PostManagement from '../components/PostManagement.vue'
 import StatsDashboard from '../components/StatsDashboard.vue'
 import UserManagement from '../components/UserManagement.vue'
-import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
-import ShortlinkManagement from '@features/shortlink/components/ShortlinkManagement.vue'
 import { useAdminStats } from '../composables/use-admin'
 
+import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
+import ShortlinkManagement from '@features/shortlink/components/ShortlinkManagement.vue'
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+
 import { useRoute } from '#app'
 import { Lock, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-vue-next'
 

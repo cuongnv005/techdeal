@@ -1,4 +1,3 @@
-import type { AxiosResponse } from 'axios'
 import type {
   StatItem,
   ChartDataPoint,
@@ -7,6 +6,7 @@ import type {
   UserItem,
   PaginatedResult
 } from '../types/dashboard.type'
+import type { AxiosResponse } from 'axios'
 
 import { HttpService } from '@core/api/service'
 
@@ -15,12 +15,26 @@ export abstract class AdminRepository {
   abstract getWeeklyChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
   abstract getMonthlyChartData(): Promise<ChartDataPoint[]>
   abstract getPostsChartData(range?: 'week' | 'month'): Promise<ChartDataPoint[]>
-  abstract getPosts(page?: number, limit?: number): Promise<PaginatedResult<PostItem>>
+  abstract getPosts(
+    page?: number,
+    limit?: number,
+    filters?: { q?: string; category?: string; status?: string }
+  ): Promise<PaginatedResult<PostItem>>
   abstract deletePost(id: string): Promise<void>
+  abstract approvePost(id: string): Promise<unknown>
+  abstract unpublishPost(id: string): Promise<unknown>
   abstract togglePostHide(id: string): Promise<unknown>
-  abstract getComments(page?: number, limit?: number): Promise<PaginatedResult<CommentItem>>
+  abstract getComments(
+    page?: number,
+    limit?: number,
+    filters?: { q?: string }
+  ): Promise<PaginatedResult<CommentItem>>
   abstract deleteComment(id: string): Promise<void>
-  abstract getUsers(page?: number, limit?: number): Promise<PaginatedResult<UserItem>>
+  abstract getUsers(
+    page?: number,
+    limit?: number,
+    filters?: { q?: string; role?: string; status?: string }
+  ): Promise<PaginatedResult<UserItem>>
   abstract updateUserRole(id: string, role: 'admin' | 'mod' | 'user'): Promise<unknown>
   abstract toggleUserStatus(id: string): Promise<unknown>
 }
@@ -189,12 +203,22 @@ export class AdminRepoImpl implements AdminRepository {
     }
   }
 
-  async getPosts(page: number = 1, limit: number = 10): Promise<PaginatedResult<PostItem>> {
+  async getPosts(
+    page: number = 1,
+    limit: number = 10,
+    filters?: { q?: string; category?: string; status?: string }
+  ): Promise<PaginatedResult<PostItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerPost[]; pagination?: any }>>
-      >('/admin/posts', { page, limit })
+      >('/admin/posts', {
+        page,
+        limit,
+        ...(filters?.q ? { q: filters.q } : {}),
+        ...(filters?.category ? { category: filters.category } : {}),
+        ...(filters?.status ? { status: filters.status } : {})
+      })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)
@@ -214,6 +238,7 @@ export class AdminRepoImpl implements AdminRepository {
       const items = list.map((post) => ({
         id: post.id,
         title: post.title,
+        slug: post.slug,
         author: post.author_name,
         category: post.category_name,
         publishDate: new Date(post.created_at).toLocaleDateString('vi-VN'),
@@ -247,16 +272,32 @@ export class AdminRepoImpl implements AdminRepository {
     await HttpService.delete(`/admin/posts/${id}`)
   }
 
+  async approvePost(id: string): Promise<unknown> {
+    return await HttpService.put(`/admin/posts/${id}/approve`, {})
+  }
+
+  async unpublishPost(id: string): Promise<unknown> {
+    return await HttpService.put(`/admin/posts/${id}/unpublish`, {})
+  }
+
   async togglePostHide(id: string): Promise<unknown> {
     return await HttpService.post(`/posts/${id}/hide`, {})
   }
 
-  async getComments(page: number = 1, limit: number = 10): Promise<PaginatedResult<CommentItem>> {
+  async getComments(
+    page: number = 1,
+    limit: number = 10,
+    filters?: { q?: string }
+  ): Promise<PaginatedResult<CommentItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerComment[]; pagination?: any }>>
-      >('/admin/comments', { page, limit })
+      >('/admin/comments', {
+        page,
+        limit,
+        ...(filters?.q ? { q: filters.q } : {})
+      })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)
@@ -305,12 +346,22 @@ export class AdminRepoImpl implements AdminRepository {
     await HttpService.delete(`/admin/comments/${id}`)
   }
 
-  async getUsers(page: number = 1, limit: number = 10): Promise<PaginatedResult<UserItem>> {
+  async getUsers(
+    page: number = 1,
+    limit: number = 10,
+    filters?: { q?: string; role?: string; status?: string }
+  ): Promise<PaginatedResult<UserItem>> {
     try {
       const response = await HttpService.get<
         unknown,
         AxiosResponse<ApiResponse<{ items: WorkerUser[]; pagination?: any }>>
-      >('/admin/users', { page, limit })
+      >('/admin/users', {
+        page,
+        limit,
+        ...(filters?.q ? { q: filters.q } : {}),
+        ...(filters?.role ? { role: filters.role } : {}),
+        ...(filters?.status ? { status: filters.status } : {})
+      })
       const data = response.data?.data
       const list =
         data && 'items' in data && Array.isArray(data.items)

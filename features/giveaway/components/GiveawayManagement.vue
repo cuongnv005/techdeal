@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+
 import {
   Search,
   Plus,
@@ -12,10 +13,13 @@ import {
   Key,
   Calendar,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  Pencil
 } from 'lucide-vue-next'
-import type { Giveaway, CreateGiveawayInput, GiveawayAdminDetail } from '../types/giveaway.type'
+
 import { useAdminGiveaways, useAdminGiveawayDetail } from '../composables/use-giveaway'
+
+import type { Giveaway, CreateGiveawayInput, GiveawayAdminDetail } from '../types/giveaway.type'
 
 const {
   giveawaysData,
@@ -25,13 +29,14 @@ const {
   finishGiveaway,
   deleteGiveaway,
   actionError,
-  currentPage
+  currentPage,
+  searchQuery
 } = useAdminGiveaways()
-
-const searchQuery = ref('')
 
 // Modals state
 const isCreateModalOpen = ref(false)
+const isEditMode = ref(false)
+const editingGiveawayId = ref<string | null>(null)
 const isDetailsModalOpen = ref(false)
 const selectedGiveawayId = ref<string | null>(null)
 const detailsLoading = ref(false)
@@ -48,16 +53,8 @@ const form = ref<CreateGiveawayInput>({
   image_url: ''
 })
 
-const filteredGiveaways = computed(() => {
-  const list = giveawaysData.value?.items || []
-  if (!searchQuery.value.trim()) return list
-  const query = searchQuery.value.toLowerCase()
-  return list.filter((g) => g.app_name.toLowerCase().includes(query))
-})
-
-const paginatedGiveaways = computed(() => {
-  return filteredGiveaways.value
-})
+const paginatedGiveaways = computed(() => giveawaysData.value?.items || [])
+const filteredGiveaways = paginatedGiveaways
 
 const totalPages = computed(() => {
   return giveawaysData.value?.pagination?.total_pages || 1
@@ -93,7 +90,9 @@ watch(searchQuery, () => {
 })
 
 // Action triggers
-const openCreateModal = () => {
+const openCreateModal = (): void => {
+  isEditMode.value = false
+  editingGiveawayId.value = null
   const targetDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const tzOffset = targetDate.getTimezoneOffset() * 60000 // offset in milliseconds
   const localISODate = new Date(targetDate.getTime() - tzOffset).toISOString().slice(0, 16)
@@ -110,15 +109,46 @@ const openCreateModal = () => {
   isCreateModalOpen.value = true
 }
 
-const handleCreate = async () => {
+const openEditModal = (giveaway: Giveaway): void => {
+  isEditMode.value = true
+  editingGiveawayId.value = giveaway.id
+
+  let localISODate = ''
+  if (giveaway.expiry_date) {
+    const targetDate = new Date(giveaway.expiry_date)
+    const tzOffset = targetDate.getTimezoneOffset() * 60000
+    localISODate = new Date(targetDate.getTime() - tzOffset).toISOString().slice(0, 16)
+  }
+
+  form.value = {
+    app_name: giveaway.app_name,
+    activation_link: giveaway.activation_link,
+    key_quantity: giveaway.key_quantity,
+    original_price: giveaway.original_price,
+    expiry_date: localISODate,
+    is_block: giveaway.is_block !== false,
+    image_url: giveaway.image_url || ''
+  }
+  isCreateModalOpen.value = true
+}
+
+const handleSubmitForm = async (): Promise<void> => {
   // Format expiry_date as ISO string
   const formattedData: CreateGiveawayInput = {
     ...form.value,
     expiry_date: new Date(form.value.expiry_date).toISOString()
   }
-  const resultId = await createGiveaway(formattedData)
-  if (resultId) {
-    isCreateModalOpen.value = false
+
+  if (isEditMode.value && editingGiveawayId.value) {
+    const success = await updateGiveaway(editingGiveawayId.value, formattedData)
+    if (success) {
+      isCreateModalOpen.value = false
+    }
+  } else {
+    const resultId = await createGiveaway(formattedData)
+    if (resultId) {
+      isCreateModalOpen.value = false
+    }
   }
 }
 
@@ -278,7 +308,7 @@ const formatPrice = (price: number) => {
               class="border-b border-gray-250 dark:border-zinc-850 bg-gray-50 dark:bg-zinc-950 text-[10px] font-black uppercase tracking-wider text-zinc-500"
             >
               <th class="px-6 py-4">Tên Ứng Dụng</th>
-              <th class="px-6 py-4">Số lượng Key (Đã nhận)</th>
+              <th class="px-6 py-4">Số lượng Key</th>
               <th class="px-6 py-4">Giá gốc</th>
               <th class="px-6 py-4">Thời Hạn</th>
               <th class="px-6 py-4">Bảo Mật</th>
@@ -356,6 +386,14 @@ const formatPrice = (price: number) => {
                     title="Xem chi tiết người đã nhận key"
                   >
                     <Eye class="w-4 h-4" />
+                  </button>
+
+                  <button
+                    @click="openEditModal(giveaway)"
+                    class="p-2 rounded-xl transition-all cursor-pointer text-zinc-400 hover:text-[#3498db] hover:bg-[#3498db]/10"
+                    title="Chỉnh sửa chương trình"
+                  >
+                    <Pencil class="w-4 h-4" />
                   </button>
 
                   <button
@@ -440,7 +478,7 @@ const formatPrice = (price: number) => {
           class="flex items-center justify-between px-6 py-4 border-b border-gray-150 dark:border-zinc-800"
         >
           <h3 class="text-xs font-black uppercase text-zinc-900 dark:text-white">
-            Tạo chương trình Giveaway mới
+            {{ isEditMode ? 'Chỉnh sửa chương trình Giveaway' : 'Tạo chương trình Giveaway mới' }}
           </h3>
           <button
             @click="isCreateModalOpen = false"
@@ -450,7 +488,7 @@ const formatPrice = (price: number) => {
           </button>
         </div>
 
-        <form @submit.prevent="handleCreate" class="p-6 space-y-4">
+        <form @submit.prevent="handleSubmitForm" class="p-6 space-y-4">
           <div class="space-y-1">
             <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
               >Tên Ứng Dụng</label
@@ -557,9 +595,18 @@ const formatPrice = (price: number) => {
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl cursor-pointer"
+              :disabled="isPending"
+              class="px-4 py-2 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl cursor-pointer disabled:opacity-50"
             >
-              Tạo mới
+              {{
+                isPending
+                  ? isEditMode
+                    ? 'Đang lưu...'
+                    : 'Đang tạo...'
+                  : isEditMode
+                    ? 'Cập nhật'
+                    : 'Tạo mới'
+              }}
             </button>
           </div>
         </form>

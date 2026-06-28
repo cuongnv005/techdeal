@@ -1,6 +1,7 @@
-import type { AxiosResponse } from 'axios'
-import { HttpService } from '@core/api/service'
 import type { UserDetailsResponse, UserProfile, UserProfileUpdatePayload } from '../types/user.type'
+import type { AxiosResponse } from 'axios'
+
+import { HttpService } from '@core/api/service'
 
 export interface ApiResponse<T> {
   success: boolean

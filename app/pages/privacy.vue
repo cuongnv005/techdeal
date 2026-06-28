@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Header from '@features/blog/components/Header.vue'
 import Footer from '@features/blog/components/Footer.vue'
+import Header from '@features/blog/components/Header.vue'
 
 useSeoMeta({
   title: 'Chính sách Bảo mật',

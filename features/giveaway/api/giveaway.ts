@@ -1,7 +1,8 @@
-import type { AxiosResponse } from 'axios'
-import { HttpService } from '@core/api/service'
-import type { Giveaway, GiveawayAdminDetail, CreateGiveawayInput } from '../types/giveaway.type'
 import type { DashboardPagination } from '../../admin/types/dashboard.type'
+import type { Giveaway, GiveawayAdminDetail, CreateGiveawayInput } from '../types/giveaway.type'
+import type { AxiosResponse } from 'axios'
+
+import { HttpService } from '@core/api/service'
 
 interface ApiResponse<T> {
   success: boolean
@@ -15,7 +16,8 @@ export abstract class GiveawayRepository {
   abstract claimKey(id: string): Promise<ApiResponse<{ activation_link: string }>>
   abstract adminList(
     page?: number,
-    limit?: number
+    limit?: number,
+    filters?: { q?: string }
   ): Promise<ApiResponse<{ items: Giveaway[]; pagination: DashboardPagination }>>
   abstract adminGet(id: string): Promise<ApiResponse<GiveawayAdminDetail>>
   abstract adminCreate(data: CreateGiveawayInput): Promise<ApiResponse<{ id: string }>>
@@ -57,25 +59,31 @@ export class GiveawayRepoImpl implements GiveawayRepository {
 
   async adminList(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    filters?: { q?: string }
   ): Promise<ApiResponse<{ items: Giveaway[]; pagination: DashboardPagination }>> {
     try {
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<any>>>(
         '/admin/giveaways',
-        { page, limit }
+        { page, limit, ...(filters?.q ? { q: filters.q } : {}) }
       )
 
       const respData = response.data
-      if (respData.success && Array.isArray(respData.data)) {
-        return {
-          success: true,
-          data: {
-            items: respData.data,
-            pagination: {
-              current_page: page,
-              per_page: limit,
-              total_items: respData.data.length,
-              total_pages: Math.ceil(respData.data.length / limit) || 1
+      if (respData.success) {
+        if (respData.data && typeof respData.data === 'object' && 'items' in respData.data) {
+          return respData
+        }
+        if (Array.isArray(respData.data)) {
+          return {
+            success: true,
+            data: {
+              items: respData.data,
+              pagination: {
+                current_page: page,
+                per_page: limit,
+                total_items: respData.data.length,
+                total_pages: Math.ceil(respData.data.length / limit) || 1
+              }
             }
           }
         }

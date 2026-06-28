@@ -1,5 +1,7 @@
 import { ref } from 'vue'
+
 import { GiveawayRepoImpl } from '../api/giveaway'
+
 import type { CreateGiveawayInput } from '../types/giveaway.type'
 
 export async function usePublicGiveaway(id: string) {
@@ -61,6 +63,7 @@ export function useAdminGiveaways() {
   const isPending = ref(false)
   const currentPage = ref(1)
   const limit = ref(10)
+  const searchQuery = ref('')
 
   const {
     data: giveawaysData,
@@ -68,16 +71,18 @@ export function useAdminGiveaways() {
     error,
     refresh
   } = useAsyncData(
-    () => `giveaway-admin-list-page-${currentPage.value}`,
+    () => `giveaway-admin-list-p${currentPage.value}-q${searchQuery.value}`,
     async () => {
-      const resp = await repo.adminList(currentPage.value, limit.value)
+      const resp = await repo.adminList(currentPage.value, limit.value, {
+        q: searchQuery.value
+      })
       if (!resp.success) {
         throw new Error(resp.error || 'Không thể lấy danh sách chương trình giveaway')
       }
       return resp.data
     },
     {
-      watch: [currentPage],
+      watch: [currentPage, searchQuery],
       server: false,
       default: () => ({
         items: [],
@@ -85,6 +90,10 @@ export function useAdminGiveaways() {
       })
     }
   )
+
+  watch(searchQuery, () => {
+    currentPage.value = 1
+  })
 
   const createGiveaway = async (data: CreateGiveawayInput) => {
     isPending.value = true
@@ -163,7 +172,8 @@ export function useAdminGiveaways() {
     actionError,
     isPending,
     refresh,
-    currentPage
+    currentPage,
+    searchQuery
   }
 }
 

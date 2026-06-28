@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Header from '@features/blog/components/Header.vue'
-import Footer from '@features/blog/components/Footer.vue'
+
 import { Sparkles, Mail, Rss, Laptop, Gamepad2 } from 'lucide-vue-next'
+
+import Footer from '@features/blog/components/Footer.vue'
+import Header from '@features/blog/components/Header.vue'
 
 useSeoMeta({
   title: 'Giới thiệu & Bản tin',

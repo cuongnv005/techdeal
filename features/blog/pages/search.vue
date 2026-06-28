@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+
 import { useRoute, useAsyncData } from '#app'
 import { Search, TrendingUp } from 'lucide-vue-next'
 
 import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import PostCard from '../components/PostCard.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
-import Footer from '../components/Footer.vue'
 
 import type { BlogPost } from '../types/post.type'
 
