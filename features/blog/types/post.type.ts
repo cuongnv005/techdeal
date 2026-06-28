@@ -14,4 +14,6 @@ export interface BlogPost {
   authorAvatar?: string
   authorBio?: string
   scheduledAt?: string | null
+  status?: string
+  isHidden?: boolean
 }

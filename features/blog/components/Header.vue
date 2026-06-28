@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from '#imports'
 
-import { Search, Menu, X, Sun, Moon } from 'lucide-vue-next'
+import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
 import { useDark, useToggle } from '@vueuse/core'
 
 import { useUserStore } from '@stores/user'
@@ -143,6 +143,33 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           active-class="!text-[#3498db]"
           >PC máy tính</NuxtLink
         >
+        <div class="relative group cursor-pointer py-2">
+          <span
+            class="inline-flex items-center gap-1 transition-colors duration-200"
+            :class="textHoverClass"
+          >
+            Ưu đãi
+            <ChevronDown
+              class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
+            />
+          </span>
+          <div
+            class="absolute left-0 top-full hidden group-hover:block w-36 bg-white dark:bg-zinc-900 shadow-xl rounded-xl border border-gray-150 dark:border-zinc-800 py-1.5 z-50 transition-all"
+          >
+            <NuxtLink
+              to="/deals/ios"
+              class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-sky-500 transition-colors"
+            >
+              iOS
+            </NuxtLink>
+            <NuxtLink
+              to="/deals/android"
+              class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-sky-500 transition-colors"
+            >
+              Android
+            </NuxtLink>
+          </div>
+        </div>
         <NuxtLink
           to="/game"
           class="transition-colors duration-200"
@@ -367,6 +394,32 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                   @click="isSidebarOpen = false"
                 >
                   PC máy tính
+                </NuxtLink>
+                <NuxtLink
+                  to="/deals/ios"
+                  class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors flex items-center justify-between"
+                  :class="textHoverClass"
+                  active-class="!text-[#3498db] font-bold"
+                  @click="isSidebarOpen = false"
+                >
+                  <span>Ưu đãi iOS</span>
+                  <span
+                    class="text-[10px] bg-sky-500/10 text-sky-500 font-bold px-2 py-0.5 rounded-md"
+                    >FREE</span
+                  >
+                </NuxtLink>
+                <NuxtLink
+                  to="/deals/android"
+                  class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors flex items-center justify-between"
+                  :class="textHoverClass"
+                  active-class="!text-[#3498db] font-bold"
+                  @click="isSidebarOpen = false"
+                >
+                  <span>Ưu đãi Android</span>
+                  <span
+                    class="text-[10px] bg-emerald-500/10 text-emerald-500 font-bold px-2 py-0.5 rounded-md"
+                    >FREE</span
+                  >
                 </NuxtLink>
                 <NuxtLink
                   to="/game"
