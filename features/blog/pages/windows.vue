@@ -33,21 +33,21 @@ useSeoMeta({
     'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
   ogTitle: 'Chuyên mục Windows - TechDeal',
   ogDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Chuyên mục Windows - TechDeal',
   twitterDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 const currentPage = computed(() => Number(route.query.page) || 1)
 

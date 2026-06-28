@@ -33,21 +33,21 @@ useSeoMeta({
     'Chuyên mục Công nghệ: Cập nhật nhanh nhất các xu hướng công nghệ, tin tức AI, phần cứng và thế giới số.',
   ogTitle: 'Chuyên mục Công nghệ - TechDeal',
   ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Chuyên mục Công nghệ - TechDeal',
   twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 const currentPage = computed(() => Number(route.query.page) || 1)
 

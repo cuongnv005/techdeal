@@ -33,21 +33,21 @@ useSeoMeta({
     'Chuyên mục Android: Cập nhật tin tức điện thoại Android, các bản cập nhật Android 16 mới nhất, đánh giá thiết bị và thủ thuật.',
   ogTitle: 'Chuyên mục Android - TechDeal',
   ogDescription: 'Cập nhật tin tức Android mới nhất hàng ngày.',
-  ogUrl: requestUrl,
+  ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Chuyên mục Android - TechDeal',
   twitterDescription: 'Cập nhật tin tức Android mới nhất hàng ngày.'
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: requestUrl
+      href: requestUrl.value
     }
   ]
-})
+}))
 
 const currentPage = computed(() => Number(route.query.page) || 1)
 

@@ -62,68 +62,58 @@ const tags = computed<string[]>(() => dealData.value?.tags || [])
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
 useSeoMeta({
-  title: computed(() =>
+  title: () =>
     post.value?.title
       ? `${post.value.title}`
-      : `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`
-  ),
-  description: computed(
-    () =>
-      post.value?.summary ||
-      `Tổng hợp game và ứng dụng ${platformTitle.value} bản quyền đang miễn phí mới nhất.`
-  ),
-  ogTitle: computed(() =>
-    post.value?.title ? `${post.value.title}` : `Ưu đãi ${platformTitle.value} Miễn Phí`
-  ),
-  ogDescription: computed(
-    () =>
-      post.value?.summary ||
-      `Tổng hợp game và ứng dụng ${platformTitle.value} bản quyền đang miễn phí, được cập nhật liên tục mỗi ngày.`
-  ),
-  ogUrl: requestUrl,
+      : `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
+  description: () =>
+    post.value?.summary ||
+    `Tổng hợp game và ứng dụng ${platformTitle.value} bản quyền đang miễn phí mới nhất.`,
+  ogTitle: () =>
+    post.value?.title ? `${post.value.title}` : `Ưu đãi ${platformTitle.value} Miễn Phí`,
+  ogDescription: () =>
+    post.value?.summary ||
+    `Tổng hợp game và ứng dụng ${platformTitle.value} bản quyền đang miễn phí, được cập nhật liên tục mỗi ngày.`,
+  ogUrl: () => requestUrl.value,
   ogType: 'article',
-  articlePublishedTime: computed(() => post.value?.createdAt || new Date().toISOString()),
-  articleModifiedTime: computed(
-    () => post.value?.updatedAt || post.value?.createdAt || new Date().toISOString()
-  ),
+  articlePublishedTime: () => post.value?.createdAt || new Date().toISOString(),
+  articleModifiedTime: () => post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 })
 
-useHead({
-  link: [{ rel: 'canonical', href: requestUrl }],
+useHead(() => ({
+  link: [{ rel: 'canonical', href: requestUrl.value }],
   meta: [{ name: 'revisit-after', content: '1 days' }],
   script: [
     {
       type: 'application/ld+json',
-      children: computed(() =>
-        JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'NewsArticle',
-          headline:
-            post.value?.title || `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
-          description:
-            post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
-          image: post.value?.thumbnail ? [post.value.thumbnail] : [],
-          datePublished: post.value?.createdAt || new Date().toISOString(),
-          dateModified: post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
-          author: {
-            '@type': 'Person',
-            name: post.value?.author || 'TechDeal Admin'
-          },
-          publisher: {
-            '@type': 'Organization',
-            name: 'TechDeal',
-            url: 'https://techdeal.io.vn'
-          },
-          mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': requestUrl
-          }
-        })
-      )
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline:
+          post.value?.title || `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
+        description:
+          post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
+        image: post.value?.thumbnail ? [post.value.thumbnail] : [],
+        datePublished: post.value?.createdAt || new Date().toISOString(),
+        dateModified: post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
+        author: {
+          '@type': 'Person',
+          name: post.value?.author || 'TechDeal Admin'
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'TechDeal',
+          url: 'https://techdeal.io.vn'
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': requestUrl.value
+        }
+      })
     }
   ]
-})
+}))
 
 const isAdminOrMod = computed(() => {
   if (!userStore.isAuthenticated) return false
