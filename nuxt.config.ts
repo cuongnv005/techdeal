@@ -182,6 +182,7 @@ export default defineNuxtConfig({
     '/search': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
+    '/deals/**': { ssr: true, swr: 3600 },
     '/admin/**': { ssr: false },
     '/en': { redirect: '/' },
     '/en/**': { redirect: '/' }

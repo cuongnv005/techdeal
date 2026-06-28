@@ -48,6 +48,7 @@ const categoryName = computed(() => {
   const found = categories.value.find((c) => c.id === categoryId.value)
   if (found) return found.name
   const map: Record<string, string> = {
+    deals: 'Deals Game & Apps',
     gaming: 'Thế giới Game',
     android: 'Android',
     ios: 'iOS',
@@ -61,6 +62,7 @@ const categoryName = computed(() => {
 // Map category key to Route URL
 const categoryUrl = computed(() => {
   const map: Record<string, string> = {
+    deals: '/deals/ios',
     gaming: '/game',
     android: '/android',
     ios: '/ios',
@@ -83,6 +85,8 @@ const fetchPostToEdit = async () => {
       selectedTags.value = detail.tags || []
       if (detail.post.category) {
         const categoryMap: Record<string, string> = {
+          'deals game & apps': 'deals',
+          deals: 'deals',
           'thế giới game': 'gaming',
           android: 'android',
           ios: 'ios',
@@ -210,6 +214,11 @@ onMounted(async () => {
   await fetchCategories()
   if (isEditMode.value) {
     fetchPostToEdit()
+  } else if (route.query.tag) {
+    const queryTag = (route.query.tag as string).trim()
+    if (queryTag && !selectedTags.value.includes(queryTag)) {
+      selectedTags.value.push(queryTag)
+    }
   }
   try {
     await loadScript('https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js')

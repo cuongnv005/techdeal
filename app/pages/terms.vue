@@ -72,14 +72,18 @@ useSeoMeta({
 
         <section class="space-y-3">
           <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-            4. Tuyên bố Liên kết Tiếp thị (Affiliate Disclosure)
+            4. Liên kết đến nền tảng bên thứ ba (Third-Party Links)
           </h2>
           <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Một số bài viết trên TechDeal có chứa liên kết tiếp thị liên kết (affiliate links) đến
-            các nền tảng bên thứ ba như Google Play, App Store, Steam và Epic Games Store. Điều này
-            có nghĩa là TechDeal có thể nhận được hoa hồng nếu bạn thực hiện giao dịch thông qua các
-            liên kết đó, <strong>hoàn toàn không phát sinh thêm chi phí nào cho bạn</strong>. Các
-            liên kết này không ảnh hưởng đến tính khách quan trong nội dung biên tập của chúng tôi.
+            Các bài viết và ưu đãi trên TechDeal có thể chứa đường dẫn trực tiếp đến các ứng dụng,
+            cửa hàng hoặc trang web của bên thứ ba (như Google Play, App Store, Steam, Epic Games
+            Store...). Các liên kết này được cung cấp thuần túy nhằm mục đích mang lại sự thuận tiện
+            và thông tin ưu đãi minh bạch cho người dùng.
+            <strong
+              >TechDeal không thực hiện tiếp thị liên kết (affiliate marketing) và không nhận bất kỳ
+              khoản hoa hồng hay lợi ích tài chính nào</strong
+            >
+            từ các truy cập hoặc giao dịch của bạn trên các nền tảng này.
           </p>
         </section>
 

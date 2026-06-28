@@ -19,8 +19,11 @@ export interface ApiPost {
   author_id?: string
   scheduled_at?: string | null
   thumbnail?: string
+  thumbnail_url?: string
   author_avatar?: string
   author_bio?: string
+  status?: string
+  is_hidden?: boolean
 }
 
 export interface ApiComment {
@@ -67,8 +70,9 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
   // Use backend thumbnail directly if available, fallback to extraction or default
   let imageUrl =
     post.thumbnail ||
+    post.thumbnail_url ||
     'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
-  if (!post.thumbnail && post.content) {
+  if (!post.thumbnail && !post.thumbnail_url && post.content) {
     const imgMatch = post.content.match(/\[img\]([\s\S]*?)\[\/img\]/i)
     if (imgMatch && imgMatch[1]) {
       imageUrl = imgMatch[1].trim()
@@ -138,7 +142,9 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     authorId: post.author_id,
     authorAvatar: post.author_avatar,
     authorBio: post.author_bio,
-    scheduledAt: post.scheduled_at
+    scheduledAt: post.scheduled_at,
+    status: post.status,
+    isHidden: post.is_hidden
   }
 }
 
@@ -421,6 +427,31 @@ export class BlogRepository {
     } catch (error) {
       console.error('Error fetching popular posts:', error)
       return []
+    }
+  }
+
+  async getDealByPlatform(platform: string): Promise<{
+    post: BlogPost
+    tags: string[]
+    comments: ApiComment[]
+  } | null> {
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
+        `/posts/deals/${platform}`
+      )
+      if (response.data && response.data.success && response.data.data) {
+        const detail = response.data.data
+        const blogPost = mapApiPostToBlogPost(detail)
+        return {
+          post: blogPost,
+          tags: detail.tags || [],
+          comments: detail.comments || []
+        }
+      }
+      return null
+    } catch (error) {
+      console.error(`Error fetching deal post for ${platform}:`, error)
+      return null
     }
   }
 }
