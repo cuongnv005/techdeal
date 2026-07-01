@@ -34,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex justify-center py-4">
+  <div v-if="false" class="w-full flex justify-center py-4">
     <!-- Google AdSense Mode -->
     <div
       v-if="isGoogleAd"

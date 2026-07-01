@@ -186,11 +186,11 @@ const handleSubscribe = () => {
               <span class="text-green-500 font-black text-sm mt-0.5">✓</span>
               <div>
                 <p class="text-xs font-bold text-zinc-900 dark:text-white">
-                  Minh bạch về liên kết tiếp thị
+                  Liên kết an toàn & Sạch sẽ
                 </p>
                 <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Một số liên kết trong bài viết là affiliate links. Chúng tôi luôn công khai điều
-                  này và nó không ảnh hưởng đến tính trung thực của nội dung.
+                  Chúng tôi nói không với link rác, link rút gọn chứa quảng cáo độc hại hay mã độc. Tất cả các liên kết
+                  tải về hoặc mua sắm đều được kiểm duyệt kỹ lưỡng để bảo vệ trải nghiệm của bạn.
                 </p>
               </div>
             </div>
