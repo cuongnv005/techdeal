@@ -89,26 +89,14 @@ useHead(() => ({
       type: 'application/ld+json',
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
-        headline:
-          post.value?.title || `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
-        description:
-          post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
-        image: post.value?.thumbnail ? [post.value.thumbnail] : [],
-        datePublished: post.value?.createdAt || new Date().toISOString(),
-        dateModified: post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
-        author: {
-          '@type': 'Person',
-          name: post.value?.author || 'TechDeal Admin'
-        },
+        '@type': 'CollectionPage',
+        name: post.value?.title || `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
+        description: post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
+        url: requestUrl.value,
         publisher: {
           '@type': 'Organization',
           name: 'TechDeal',
           url: 'https://techdeal.io.vn'
-        },
-        mainEntityOfPage: {
-          '@type': 'WebPage',
-          '@id': requestUrl.value
         }
       })
     }
@@ -384,10 +372,10 @@ const parsedContentHtml = computed(() => {
                   <Facebook class="w-4 h-4" />
                 </a>
                 <a
-                  href="https://www.facebook.com/ThuVienGame1"
+                  href="https://x.com/MDChannelVn1"
                   target="_blank"
                   class="p-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
-                  title="Chia sẻ Twitter"
+                  title="Chia sẻ X"
                 >
                   <Twitter class="w-4 h-4" />
                 </a>

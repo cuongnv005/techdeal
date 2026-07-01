@@ -23,25 +23,25 @@ defineProps<{
       </h4>
       <div class="grid grid-cols-2 gap-3 text-xs font-bold text-zinc-700 dark:text-zinc-300">
         <a
-          href="#"
+          href="https://www.facebook.com/ThuVienGame1"
           class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded hover:opacity-90"
         >
           <Facebook class="w-4 h-4" /> Facebook
         </a>
         <a
-          href="#"
+          href="https://x.com/MDChannelVn1"
           class="flex items-center gap-2 p-2 bg-sky-50 dark:bg-sky-900/20 text-sky-500 dark:text-sky-400 rounded hover:opacity-90"
         >
-          <Twitter class="w-4 h-4" /> Twitter
+          <Twitter class="w-4 h-4" /> X
         </a>
         <a
-          href="#"
+          href="https://www.instagram.com/mdchannelvn1/"
           class="flex items-center gap-2 p-2 bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded hover:opacity-90"
         >
           <Instagram class="w-4 h-4" /> Instagram
         </a>
         <a
-          href="#"
+          href="https://www.youtube.com/@mdchannelvn1"
           class="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 text-red-650 dark:text-red-400 rounded hover:opacity-90"
         >
           <Youtube class="w-4 h-4" /> YouTube
@@ -106,6 +106,7 @@ defineProps<{
 
     <!-- Ad Slot Sidebar -->
     <div
+      v-if="false"
       class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-3 rounded-xl flex items-center justify-center shadow-xs"
     >
       <AdBanner width="300px" height="250px" :is-google-ad="true" />

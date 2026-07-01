@@ -497,10 +497,10 @@ const handleSubscribe = () => {
                 <Facebook class="w-4 h-4" />
               </a>
               <a
-                href="https://www.facebook.com/ThuVienGame1"
+                href="https://x.com/MDChannelVn1"
                 target="_blank"
                 class="p-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
-                title="Chia sẻ Twitter"
+                title="Chia sẻ X"
               >
                 <Twitter class="w-4 h-4" />
               </a>

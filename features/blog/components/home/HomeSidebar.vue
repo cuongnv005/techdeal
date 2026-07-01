@@ -167,6 +167,7 @@ const getCategoryLink = (id: string) => {
 
     <!-- Sidebar Advertisement Banner -->
     <div
+      v-if="false"
       class="bg-white dark:bg-zinc-900 p-3 rounded-xl border border-border shadow-sm flex flex-col items-center justify-center"
     >
       <AdBanner width="300px" height="250px" :is-google-ad="true" />
