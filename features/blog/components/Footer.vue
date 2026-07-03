@@ -29,7 +29,7 @@ const descriptionText = computed(() =>
 )
 const middleColTitle = computed(() => 'Liên kết hữu ích')
 const supportEmail = computed(() => 'contact@techdeal.io.vn')
-const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822144589' : '+84 (0) 874557944'))
+const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822 344 589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
   isBlue.value
     ? '© 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.'
@@ -93,14 +93,16 @@ const copyrightText = computed(() =>
           <address class="not-italic space-y-2 text-zinc-500">
             <p>
               Email:
-              <a href="mailto:contact@techdeal.io.vn" class="hover:text-white transition-colors"
-                >contact@techdeal.io.vn</a
-              >
+              <a :href="`mailto:${supportEmail}`" class="hover:text-white transition-colors">{{
+                supportEmail
+              }}</a>
             </p>
             <p>
               Điện thoại:
-              <a href="tel:+84822344589" class="hover:text-white transition-colors"
-                >+84 (0) 822 344 589</a
+              <a
+                :href="`tel:${supportPhone.replace(/[^\d+]/g, '')}`"
+                class="hover:text-white transition-colors"
+                >{{ supportPhone }}</a
               >
             </p>
           </address>

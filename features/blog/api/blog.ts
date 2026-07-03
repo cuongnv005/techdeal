@@ -125,6 +125,7 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     id: post.id,
     title: post.title,
     category: post.category_name || post.category_id || 'Technology',
+    categoryId: post.category_id,
     author: post.author_name || 'Admin',
     publishDate: new Date(post.created_at).toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -143,6 +144,8 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     authorAvatar: post.author_avatar,
     authorBio: post.author_bio,
     scheduledAt: post.scheduled_at,
+    createdAt: post.created_at,
+    updatedAt: post.updated_at,
     status: post.status,
     isHidden: post.is_hidden
   }

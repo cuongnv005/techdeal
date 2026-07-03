@@ -15,9 +15,13 @@ export default defineEventHandler(async (event) => {
 
     const posts = response.data?.data?.items || []
 
-    // Filter posts published in the last 48 hours (Google News Sitemap rule)
+    // Filter posts published in the last 48 hours (Google News Sitemap rule).
+    // Loại bài chuyên mục "deals": /blog của chúng bị 301 về /deals/{platform},
+    // không đưa URL redirect vào News sitemap.
     const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000)
-    const recentPosts = posts.filter((post: any) => new Date(post.created_at) >= fortyEightHoursAgo)
+    const recentPosts = posts.filter(
+      (post: any) => post.category_id !== 'deals' && new Date(post.created_at) >= fortyEightHoursAgo
+    )
 
     const escapeXml = (unsafe: string) => {
       return unsafe.replace(/[<>&'"]/g, (c) => {

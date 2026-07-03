@@ -61,6 +61,15 @@ const tags = computed<string[]>(() => dealData.value?.tags || [])
 // SEO Metadata
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+
+// Real social share intents (not links to our own social pages)
+const facebookShareUrl = computed(
+  () => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(requestUrl.value)}`
+)
+const twitterShareUrl = computed(
+  () =>
+    `https://twitter.com/intent/tweet?url=${encodeURIComponent(requestUrl.value)}&text=${encodeURIComponent(post.value?.title || 'TechDeal')}`
+)
 useSeoMeta({
   title: () =>
     post.value?.title
@@ -77,7 +86,8 @@ useSeoMeta({
   ogUrl: () => requestUrl.value,
   ogType: 'article',
   articlePublishedTime: () => post.value?.createdAt || new Date().toISOString(),
-  articleModifiedTime: () => post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
+  articleModifiedTime: () =>
+    post.value?.updatedAt || post.value?.createdAt || new Date().toISOString(),
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 })
 
@@ -91,7 +101,8 @@ useHead(() => ({
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: post.value?.title || `Tổng hợp Ưu đãi Game & App ${platformTitle.value} Miễn Phí`,
-        description: post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
+        description:
+          post.value?.summary || `Danh sách game bản quyền miễn phí cho ${platformTitle.value}`,
         url: requestUrl.value,
         publisher: {
           '@type': 'Organization',
@@ -364,16 +375,18 @@ const parsedContentHtml = computed(() => {
               </span>
               <div class="flex items-center gap-2">
                 <a
-                  href="https://www.facebook.com/ThuVienGame1"
+                  :href="facebookShareUrl"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                   title="Chia sẻ Facebook"
                 >
                   <Facebook class="w-4 h-4" />
                 </a>
                 <a
-                  href="https://x.com/MDChannelVn1"
+                  :href="twitterShareUrl"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="p-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                   title="Chia sẻ X"
                 >

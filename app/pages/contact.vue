@@ -22,7 +22,12 @@ useSeoMeta({
     'Liên hệ với TechDeal. Gửi phản hồi, báo cáo lỗi bài viết hoặc cơ hội hợp tác quảng cáo tại đây.',
   ogTitle: 'Liên hệ - TechDeal',
   ogType: 'website',
+  ogUrl: 'https://techdeal.io.vn/contact',
   robots: 'index, follow'
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://techdeal.io.vn/contact' }]
 })
 
 const form = ref({

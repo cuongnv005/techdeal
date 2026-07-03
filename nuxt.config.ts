@@ -35,6 +35,12 @@ export default defineNuxtConfig({
           name: 'google-site-verification',
           content: '5IYbs9tdevZ7SmaVUYza_dFxPiVJFsj2o_BxPNOC_aw'
         },
+        // Xác nhận quyền sở hữu AdSense — chỉ là thẻ ownership, KHÔNG phải quảng cáo,
+        // nên an toàn đặt trên mọi trang. Script ads được inject riêng theo route (xem app.vue).
+        {
+          name: 'google-adsense-account',
+          content: process.env['VITE_AD_CLIENT_ID'] || 'ca-pub-3940256099942544'
+        },
         {
           name: 'description',
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
@@ -90,14 +96,9 @@ export default defineNuxtConfig({
           title: 'TechDeal RSS Feed',
           href: '/rss.xml'
         }
-      ],
-      script: [
-        {
-          src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env['VITE_AD_CLIENT_ID'] || 'ca-pub-3940256099942544'}`,
-          async: true,
-          crossorigin: 'anonymous'
-        }
       ]
+      // Script AdSense KHÔNG để global nữa — được inject có điều kiện theo route trong app.vue
+      // để không bao giờ tải trên /giveaway, /go, auth... (tránh Auto Ads chạy trên trang cấm).
     },
     pageTransition: { name: 'page', mode: 'out-in' }
   },
@@ -182,7 +183,9 @@ export default defineNuxtConfig({
     '/search': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
-    '/deals/**': { ssr: true, swr: 3600 },
+    // Deals pages được biên tập thủ công và cần hiển thị nội dung mới ngay sau khi sửa.
+    // Không dùng swr (cache) để tránh phục vụ bản HTML cũ.
+    '/deals/**': { ssr: true },
     '/admin/**': { ssr: false },
     '/en': { redirect: '/' },
     '/en/**': { redirect: '/' }

@@ -8,7 +8,12 @@ useSeoMeta({
     'Chính sách bảo mật của TechDeal, mô tả cách chúng tôi thu thập, sử dụng và bảo vệ thông tin cá nhân của bạn.',
   ogTitle: 'Chính sách Bảo mật',
   ogType: 'website',
+  ogUrl: 'https://techdeal.io.vn/privacy',
   robots: 'index, follow'
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://techdeal.io.vn/privacy' }]
 })
 </script>
 
