@@ -12,7 +12,34 @@ useSeoMeta({
     'Tìm hiểu thêm về blog TechDeal, chuyên mục tin tức game và công nghệ của chúng tôi, và đăng ký nhận bản tin khuyến mãi.',
   ogTitle: 'Giới thiệu & Bản tin',
   ogType: 'website',
+  ogUrl: 'https://techdeal.io.vn/about',
   robots: 'index, follow'
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://techdeal.io.vn/about' }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'TechDeal',
+        url: 'https://techdeal.io.vn',
+        logo: 'https://techdeal.io.vn/images/logo.png',
+        description:
+          'Trang tin tức công nghệ, game và tổng hợp ưu đãi phần mềm, ứng dụng miễn phí.',
+        email: 'contact@techdeal.io.vn',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+84822344589',
+          contactType: 'customer support',
+          areaServed: 'VN',
+          availableLanguage: 'Vietnamese'
+        }
+      })
+    }
+  ]
 })
 
 const emailInput = ref('')
@@ -189,8 +216,9 @@ const handleSubscribe = () => {
                   Liên kết an toàn & Sạch sẽ
                 </p>
                 <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Chúng tôi nói không với link rác, link rút gọn chứa quảng cáo độc hại hay mã độc. Tất cả các liên kết
-                  tải về hoặc mua sắm đều được kiểm duyệt kỹ lưỡng để bảo vệ trải nghiệm của bạn.
+                  Chúng tôi nói không với link rác, link rút gọn chứa quảng cáo độc hại hay mã độc.
+                  Tất cả các liên kết tải về hoặc mua sắm đều được kiểm duyệt kỹ lưỡng để bảo vệ
+                  trải nghiệm của bạn.
                 </p>
               </div>
             </div>

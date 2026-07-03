@@ -56,10 +56,14 @@ export default defineSitemapEventHandler(async () => {
     const response = await fetch(`${apiUrl}/posts?limit=100`)
     const resData = await response.json()
     if (resData && resData.success && resData.data && Array.isArray(resData.data.items)) {
-      const dynamicPages = resData.data.items.map((post: any) => ({
-        loc: `/blog/${post.slug}.${post.id}`,
-        lastmod: post.updated_at || post.created_at
-      }))
+      const dynamicPages = resData.data.items
+        // Bài chuyên mục "deals" được phục vụ tại /deals/{platform} (đã thêm ở trên) và
+        // /blog/... của chúng bị 301 về đó — không submit bản /blog để tránh trùng lặp.
+        .filter((post: any) => post.category_id !== 'deals')
+        .map((post: any) => ({
+          loc: `/blog/${post.slug}.${post.id}`,
+          lastmod: post.updated_at || post.created_at
+        }))
       return [...staticPages, ...dealsPages, ...dynamicPages]
     }
   } catch (error) {

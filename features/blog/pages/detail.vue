@@ -135,6 +135,26 @@ if (
   await navigateTo('https://techdeal.io.vn', { external: true, redirectCode: 301 })
 }
 
+// Bài thuộc chuyên mục "deals" là bản evergreen được phục vụ chính thức tại /deals/{platform}.
+// 301 chuyển hướng URL /blog/{slug}.{id} của chúng về /deals/{platform} để gộp nội dung trùng lặp,
+// dồn toàn bộ tín hiệu SEO về trang deals (tránh Google index bản /blog thay vì /deals).
+if (postDetail.value?.post?.categoryId === 'deals') {
+  const dealTags = (postDetail.value.tags || []).map((t) => t.toLowerCase())
+  const platform = dealTags.includes('ios')
+    ? 'ios'
+    : dealTags.includes('android')
+      ? 'android'
+      : null
+  if (platform) {
+    // Dùng external:true (tải lại toàn trang) — giống redirect bài ẩn ở trên — để tránh
+    // màn hình trắng do page transition "out-in" khi điều hướng nội bộ trong setup.
+    await navigateTo(`https://techdeal.io.vn/deals/${platform}`, {
+      external: true,
+      redirectCode: 301
+    })
+  }
+}
+
 const tags = computed<string[]>(() => postDetail.value?.tags || [])
 
 const post = computed<BlogPost>(() => {
@@ -291,6 +311,15 @@ const copyUrl = () => {
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
 
+// Real social share intents (not links to our own social pages)
+const facebookShareUrl = computed(
+  () => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(requestUrl.value)}`
+)
+const twitterShareUrl = computed(
+  () =>
+    `https://twitter.com/intent/tweet?url=${encodeURIComponent(requestUrl.value)}&text=${encodeURIComponent(post.value.title)}`
+)
+
 const truncatedSummary = computed(() => {
   const sum = post.value.summary || ''
   if (sum.length > 155) {
@@ -329,11 +358,12 @@ useHead(() => ({
         headline: post.value.title,
         description: truncatedSummary.value,
         image: [post.value.imageUrl],
-        datePublished: post.value.scheduledAt || new Date().toISOString(),
-        dateModified: post.value.scheduledAt || new Date().toISOString(),
+        datePublished: post.value.createdAt || post.value.scheduledAt,
+        dateModified:
+          post.value.updatedAt || post.value.createdAt || post.value.scheduledAt,
         author: {
           '@type': 'Person',
-          name: post.value.author || 'Cuong'
+          name: post.value.author || 'Nguyễn Văn Cương'
         },
         publisher: {
           '@type': 'Organization',
@@ -489,16 +519,18 @@ const handleSubscribe = () => {
             </span>
             <div class="flex items-center gap-2">
               <a
-                href="https://www.facebook.com/ThuVienGame1"
+                :href="facebookShareUrl"
                 target="_blank"
+                rel="noopener noreferrer"
                 class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 title="Chia sẻ Facebook"
               >
                 <Facebook class="w-4 h-4" />
               </a>
               <a
-                href="https://x.com/MDChannelVn1"
+                :href="twitterShareUrl"
                 target="_blank"
+                rel="noopener noreferrer"
                 class="p-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 title="Chia sẻ X"
               >

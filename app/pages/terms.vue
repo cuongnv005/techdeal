@@ -8,7 +8,12 @@ useSeoMeta({
     'Điều khoản và điều kiện sử dụng TechDeal, trang tin tức công nghệ, game và khuyến mãi thiết bị điện tử.',
   ogTitle: 'Điều khoản Dịch vụ',
   ogType: 'website',
+  ogUrl: 'https://techdeal.io.vn/terms',
   robots: 'index, follow'
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://techdeal.io.vn/terms' }]
 })
 </script>
 

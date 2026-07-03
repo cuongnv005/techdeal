@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 
-import { useRoute } from '#app'
+import { navigateTo, useRoute } from '#app'
 import {
   ArrowLeft,
   Save,
@@ -19,6 +19,18 @@ import {
 import { blogRepository } from '../api/blog'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
+
+import { useUserStore } from '@stores/user'
+
+// Auth guard: trang này chỉ dành cho admin/mod đăng & chỉnh sửa bài viết.
+// userStore đã được khởi tạo từ cookie ở app.vue (chạy cả SSR lẫn client) nên
+// role/isAuthenticated đã sẵn sàng trước khi setup() của trang này chạy.
+const userStore = useUserStore()
+if (!userStore.isAuthenticated) {
+  await navigateTo('/login', { redirectCode: 302 })
+} else if (userStore.role !== 'admin' && userStore.role !== 'mod') {
+  await navigateTo('/', { redirectCode: 302 })
+}
 
 // Load SCEditor CDN dependencies
 useHead({
@@ -498,9 +510,7 @@ const handlePreview = () => {
         content = textarea.value
       }
     }
-    console.log('Preview raw content:', content)
     previewHtml.value = parseBBCode(content)
-    console.log('Parsed HTML content:', previewHtml.value)
     isPreviewing.value = !isPreviewing.value
   } catch (err: any) {
     console.error('Preview error:', err)

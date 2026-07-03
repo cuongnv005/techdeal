@@ -25,7 +25,7 @@ import {
 } from 'lucide-vue-next'
 
 import { AuthRepository } from '../../auth/api/auth'
-import AdBanner from '../../blog/components/AdBanner.vue'
+import StaticBanner from '../../blog/components/StaticBanner.vue'
 import { usePublicGiveaway } from '../composables/use-giveaway'
 
 import { useUserStore } from '@stores/user'
@@ -38,6 +38,10 @@ const config = useRuntimeConfig()
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }]
 })
+
+// Cờ bật/tắt banner tĩnh. Tạm để false (ẩn) — bật lại khi có banner thật.
+// LƯU Ý: chỉ dùng banner tĩnh (ảnh + link), TUYỆT ĐỐI không đặt Google AdSense ở trang này.
+const showStaticBanners = false
 
 const giveawayId = computed(() => (route.query.id as string) || '')
 
@@ -334,21 +338,21 @@ const formatPrice = (price: number) => {
       class="absolute top-[-20%] left-[50%] translate-x-[-50%] w-[900px] h-[700px] bg-[#7c3aed]/5 rounded-full blur-[160px] pointer-events-none"
     ></div>
 
-    <!-- Left Skyscraper Ad -->
-    <div class="hidden xl:block 2xl:hidden fixed left-4 top-[150px] z-20 w-[160px]">
-      <AdBanner width="160px" height="600px" :is-google-ad="true" />
-    </div>
-    <div class="hidden 2xl:block fixed left-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
-      <AdBanner width="300px" height="600px" :is-google-ad="true" />
-    </div>
-
-    <!-- Right Skyscraper Ad -->
-    <div class="hidden xl:block 2xl:hidden fixed right-4 top-[150px] z-20 w-[160px]">
-      <AdBanner width="160px" height="600px" :is-google-ad="true" />
-    </div>
-    <div class="hidden 2xl:block fixed right-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
-      <AdBanner width="300px" height="600px" :is-google-ad="true" />
-    </div>
+    <!-- Banner tĩnh 2 bên (ảnh + link, KHÔNG phải Google ad). Thay href/image bằng banner thật. -->
+    <template v-if="showStaticBanners">
+      <div class="hidden xl:block 2xl:hidden fixed left-4 top-[150px] z-20 w-[160px]">
+        <StaticBanner href="#" image="/banners/skyscraper-160.jpg" width="160px" height="600px" />
+      </div>
+      <div class="hidden 2xl:block fixed left-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
+        <StaticBanner href="#" image="/banners/skyscraper-300.jpg" width="300px" height="600px" />
+      </div>
+      <div class="hidden xl:block 2xl:hidden fixed right-4 top-[150px] z-20 w-[160px]">
+        <StaticBanner href="#" image="/banners/skyscraper-160.jpg" width="160px" height="600px" />
+      </div>
+      <div class="hidden 2xl:block fixed right-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
+        <StaticBanner href="#" image="/banners/skyscraper-300.jpg" width="300px" height="600px" />
+      </div>
+    </template>
 
     <!-- Minimal Header (Zee Cast Style) -->
     <header
@@ -455,9 +459,9 @@ const formatPrice = (price: number) => {
             </div>
           </section>
 
-          <!-- Mobile Ad 1 (Below Hero Header, above PRO CARD) -->
-          <div class="xl:hidden max-w-xl mx-auto px-4">
-            <AdBanner width="100%" height="90px" :is-google-ad="true" />
+          <!-- Banner tĩnh (mobile) — ảnh + link, KHÔNG phải Google ad -->
+          <div v-if="showStaticBanners" class="xl:hidden max-w-xl mx-auto px-4">
+            <StaticBanner href="#" image="/banners/inline-970.jpg" width="100%" height="90px" />
           </div>
 
           <!-- PRO CARD / GIVEAWAY SPECIFICATIONS (Zee Cast Style) -->
@@ -580,9 +584,9 @@ const formatPrice = (price: number) => {
             </div>
           </section>
 
-          <!-- Mobile Ad 2 (Below PRO CARD, above CTA Claim block) -->
-          <div class="xl:hidden max-w-md mx-auto px-4">
-            <AdBanner width="100%" height="90px" :is-google-ad="true" />
+          <!-- Banner tĩnh (mobile) — ảnh + link, KHÔNG phải Google ad -->
+          <div v-if="showStaticBanners" class="xl:hidden max-w-md mx-auto px-4">
+            <StaticBanner href="#" image="/banners/inline-970.jpg" width="100%" height="90px" />
           </div>
 
           <!-- CTA Claim block -->

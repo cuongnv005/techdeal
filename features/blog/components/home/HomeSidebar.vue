@@ -65,8 +65,8 @@ const getCategoryLink = (id: string) => {
 
 <template>
   <aside class="lg:col-span-3 space-y-8">
-    <!-- Social Stats Widget -->
-    <div class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
+    <!-- Social Stats Widget — ẩn tạm cho tới khi có tài khoản mạng xã hội TechDeal chính thức -->
+    <div v-if="false" class="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-border shadow-sm">
       <h3
         class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white"
       >

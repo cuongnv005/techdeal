@@ -2,6 +2,7 @@ export interface BlogPost {
   id: string
   title: string
   category: string
+  categoryId?: string
   author: string
   publishDate: string
   views: number
@@ -14,6 +15,8 @@ export interface BlogPost {
   authorAvatar?: string
   authorBio?: string
   scheduledAt?: string | null
+  createdAt?: string
+  updatedAt?: string
   status?: string
   isHidden?: boolean
 }

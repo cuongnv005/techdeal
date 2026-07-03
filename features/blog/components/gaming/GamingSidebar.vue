@@ -12,8 +12,9 @@ defineProps<{
 
 <template>
   <aside class="lg:col-span-3 space-y-8">
-    <!-- Social Follow Us -->
+    <!-- Social Follow Us — ẩn tạm cho tới khi có tài khoản mạng xã hội TechDeal chính thức -->
     <div
+      v-if="false"
       class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-5 rounded-xl shadow-xs"
     >
       <h4
