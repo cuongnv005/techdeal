@@ -359,8 +359,7 @@ useHead(() => ({
         description: truncatedSummary.value,
         image: [post.value.imageUrl],
         datePublished: post.value.createdAt || post.value.scheduledAt,
-        dateModified:
-          post.value.updatedAt || post.value.createdAt || post.value.scheduledAt,
+        dateModified: post.value.updatedAt || post.value.createdAt || post.value.scheduledAt,
         author: {
           '@type': 'Person',
           name: post.value.author || 'Nguyễn Văn Cương'
