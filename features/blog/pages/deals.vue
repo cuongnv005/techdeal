@@ -51,12 +51,78 @@ const {
   data: dealData,
   pending,
   error
-} = await useAsyncData(`deal-post-${props.platform}`, () =>
-  blogRepository.getDealByPlatform(props.platform)
-)
+} = await useAsyncData(`deal-post-${props.platform}`, async () => {
+  const detail = await blogRepository.getDealByPlatform(props.platform)
+  let finalRelated: BlogPost[] = []
+
+  if (detail && detail.post) {
+    // 1. Try finding related posts by similar tag if [similar] is in content
+    if (detail.post.content) {
+      const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
+      if (similarMatch && similarMatch[1]) {
+        const tag = similarMatch[1].trim().normalize('NFC')
+        try {
+          const candidates = Array.from(
+            new Set([
+              tag,
+              tag.toLowerCase(),
+              tag.toUpperCase(),
+              tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+            ])
+          )
+          let tagPosts: BlogPost[] = []
+          for (const cand of candidates) {
+            const tagPostsRes = await blogRepository.getPosts({
+              tag: cand,
+              limit: 6,
+              enrich: false
+            })
+            tagPosts = tagPostsRes.items
+            if (tagPosts && tagPosts.length > 0) {
+              break
+            }
+          }
+          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+        } catch (err) {
+          console.error('Error fetching similar tag posts:', err)
+        }
+      }
+    }
+
+    // 2. Fallback: If no related posts found by tag, get posts from the same category
+    if (finalRelated.length === 0 && detail.post.category) {
+      try {
+        const categoryMap: Record<string, string> = {
+          'thế giới game': 'gaming',
+          android: 'android',
+          ios: 'ios',
+          'công nghệ': 'technology',
+          windows: 'windows',
+          pc: 'pc'
+        }
+        const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
+        const catPostsRes = await blogRepository.getPosts({
+          category: categoryId,
+          limit: 6,
+          enrich: false
+        })
+        const catPosts = catPostsRes.items
+        finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+      } catch (err) {
+        console.error('Error fetching fallback category posts:', err)
+      }
+    }
+  }
+
+  return {
+    ...(detail || {}),
+    relatedPosts: finalRelated
+  }
+})
 
 const post = computed<BlogPost | null>(() => dealData.value?.post || null)
 const tags = computed<string[]>(() => dealData.value?.tags || [])
+const relatedPosts = computed<BlogPost[]>(() => dealData.value?.relatedPosts || [])
 
 // SEO Metadata
 const siteUrl = 'https://techdeal.io.vn'
@@ -475,6 +541,50 @@ const parsedContentHtml = computed(() => {
                     <p class="text-xs text-zinc-650 dark:text-zinc-350 leading-relaxed">
                       {{ c.content }}
                     </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Related Articles Section (Bottom) -->
+            <div v-if="relatedPosts.length > 0" class="border-t border-gray-200 dark:border-zinc-850 mt-16 pt-12 space-y-6">
+              <h3 class="text-xl font-black uppercase text-zinc-900 dark:text-white tracking-tight">
+                📚 Bài viết liên quan
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div
+                  v-for="rp in relatedPosts"
+                  :key="rp.id"
+                  class="flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group"
+                >
+                  <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
+                    <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`" class="block w-full h-full">
+                      <img
+                        :src="rp.imageUrl"
+                        :alt="rp.title"
+                        class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                      />
+                    </NuxtLink>
+                  </div>
+                  <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                      <span
+                        class="text-[9px] font-extrabold uppercase tracking-wider text-[#3498db] mb-2 inline-block"
+                      >
+                        {{ rp.category }}
+                      </span>
+                      <h4
+                        class="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
+                      >
+                        <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
+                      </h4>
+                    </div>
+                    <div
+                      class="flex items-center justify-between text-[9px] text-zinc-500 pt-2.5 mt-3 border-t border-gray-100 dark:border-zinc-850/50"
+                    >
+                      <span>{{ rp.publishDate }}</span>
+                      <span class="text-red-500 dark:text-red-400 font-medium">👁️ {{ rp.views }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
