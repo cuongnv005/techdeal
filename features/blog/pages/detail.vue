@@ -213,7 +213,7 @@ const mappedComments = computed(() => {
       c.author_avatar ||
       c.avatar_url ||
       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
-    date: new Date(c.created_at).toLocaleString('vi-VN'),
+    date: new Date(c.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
     content: c.content
   }))
 })

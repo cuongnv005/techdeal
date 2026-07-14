@@ -127,12 +127,17 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     category: post.category_name || post.category_id || 'Technology',
     categoryId: post.category_id,
     author: post.author_name || 'Admin',
+    // Chỉ định rõ timeZone: nếu không, kết quả phụ thuộc múi giờ mặc định của môi trường đang
+    // chạy code (server SSR trên Vercel thường chạy UTC, còn browser dùng giờ máy người dùng) -
+    // gây lệch giờ giữa bản render server và client. Site phục vụ người đọc Việt Nam nên luôn
+    // hiển thị theo giờ Việt Nam, bất kể code chạy ở đâu.
     publishDate: new Date(post.created_at).toLocaleDateString('vi-VN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'Asia/Ho_Chi_Minh'
     }),
     views: post.views || 0,
     comments: post.comment_count || 0,

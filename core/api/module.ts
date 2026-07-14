@@ -13,6 +13,21 @@ class HttpModule {
       timeout
     })
 
+    // Tắt keep-alive cho các request phía server (SSR trên Vercel gọi sang Cloudflare Worker).
+    // Lý do: môi trường serverless "đóng băng" instance giữa các lần gọi, khiến socket keep-alive
+    // cũ có thể đã bị phía xa đóng âm thầm — lần gọi sau tái sử dụng đúng socket chết đó và treo
+    // tới khi hết timeout (triệu chứng: "reusedSocket: true" trong lỗi ECONNABORTED).
+    // QUAN TRỌNG: 'http'/'https' là module Node, không tồn tại trong trình duyệt. File này chạy
+    // cả ở client lẫn server nên KHÔNG được import tĩnh ở đầu file (Vite sẽ "externalize" và
+    // crash ngay khi truy cập http.Agent trong bundle client). Dùng dynamic import + process.server
+    // để module này chỉ được tải khi chạy trong Node (SSR), không bao giờ chạy ở trình duyệt.
+    if (process.server) {
+      Promise.all([import('http'), import('https')]).then(([http, https]) => {
+        this.instance.defaults.httpAgent = new http.Agent({ keepAlive: false })
+        this.instance.defaults.httpsAgent = new https.Agent({ keepAlive: false })
+      })
+    }
+
     this.instance.interceptors.request.use(
       (config) => {
         return config
