@@ -101,7 +101,8 @@ const formattedJoinDate = computed(() => {
   return new Date(props.profile.created_at).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh'
   })
 })
 
@@ -111,7 +112,8 @@ const formattedDob = computed(() => {
   return new Date(props.profile.dob).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh'
   })
 })
 

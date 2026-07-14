@@ -220,7 +220,7 @@ const mappedComments = computed(() => {
       c.author_avatar ||
       c.avatar_url ||
       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
-    date: new Date(c.created_at).toLocaleString('vi-VN'),
+    date: new Date(c.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
     content: c.content
   }))
 })
@@ -547,7 +547,10 @@ const parsedContentHtml = computed(() => {
             </div>
 
             <!-- Related Articles Section (Bottom) -->
-            <div v-if="relatedPosts.length > 0" class="border-t border-gray-200 dark:border-zinc-850 mt-16 pt-12 space-y-6">
+            <div
+              v-if="relatedPosts.length > 0"
+              class="border-t border-gray-200 dark:border-zinc-850 mt-16 pt-12 space-y-6"
+            >
               <h3 class="text-xl font-black uppercase text-zinc-900 dark:text-white tracking-tight">
                 📚 Bài viết liên quan
               </h3>
@@ -583,7 +586,9 @@ const parsedContentHtml = computed(() => {
                       class="flex items-center justify-between text-[9px] text-zinc-500 pt-2.5 mt-3 border-t border-gray-100 dark:border-zinc-850/50"
                     >
                       <span>{{ rp.publishDate }}</span>
-                      <span class="text-red-500 dark:text-red-400 font-medium">👁️ {{ rp.views }}</span>
+                      <span class="text-red-500 dark:text-red-400 font-medium"
+                        >👁️ {{ rp.views }}</span
+                      >
                     </div>
                   </div>
                 </div>

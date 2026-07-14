@@ -20,7 +20,8 @@ const formattedDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh'
   })
 }
 
