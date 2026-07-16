@@ -1,4 +1,9 @@
-import type { UserDetailsResponse, UserProfile, UserProfileUpdatePayload } from '../types/user.type'
+import type {
+  UserDetailsResponse,
+  UserProfile,
+  UserProfileUpdatePayload,
+  TeamResponse
+} from '../types/user.type'
 import type { AxiosResponse } from 'axios'
 
 import { HttpService } from '@core/api/service'
@@ -17,6 +22,8 @@ export abstract class UserRepository {
   ): Promise<ApiResponse<UserDetailsResponse>>
 
   abstract updateProfile(data: UserProfileUpdatePayload): Promise<ApiResponse<UserProfile>>
+
+  abstract getTeam(): Promise<ApiResponse<TeamResponse>>
 }
 
 export class UserRepoImpl implements UserRepository {
@@ -55,6 +62,21 @@ export class UserRepoImpl implements UserRepository {
         success: false,
         error: e.response?.data?.error || e.message || 'Lỗi khi cập nhật thông tin cá nhân',
         data: {} as UserProfile
+      }
+    }
+  }
+
+  async getTeam(): Promise<ApiResponse<TeamResponse>> {
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<TeamResponse>>>(
+        '/users/team'
+      )
+      return response.data
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.response?.data?.error || e.message || 'Lỗi khi tải danh sách đội ngũ',
+        data: { team: [] }
       }
     }
   }
