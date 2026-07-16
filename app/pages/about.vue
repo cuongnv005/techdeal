@@ -3,8 +3,40 @@ import { ref } from 'vue'
 
 import { Sparkles, Mail, Rss, Laptop, Gamepad2 } from 'lucide-vue-next'
 
+import type { TeamMember } from '@features/users/types/user.type'
+
 import Footer from '@features/blog/components/Footer.vue'
 import Header from '@features/blog/components/Header.vue'
+import { useTeam } from '@features/users/composables/use-team'
+
+const { team } = useTeam()
+
+const ROLE_META: Record<
+  TeamMember['role'],
+  { label: string; textClass: string; borderClass: string; gradientClass: string }
+> = {
+  admin: {
+    label: 'Founder & Editor-in-Chief',
+    textClass: 'text-[#3498db]',
+    borderClass: 'border-[#3498db]/30',
+    gradientClass: 'from-sky-400 to-blue-600'
+  },
+  mod: {
+    label: 'Editor — Game & Windows',
+    textClass: 'text-red-500',
+    borderClass: 'border-red-300/30',
+    gradientClass: 'from-red-400 to-orange-500'
+  }
+}
+
+// Chữ cái đầu của 2 từ cuối trong họ tên, dùng làm avatar fallback khi chưa có avatar_url.
+const getInitials = (fullName: string) => {
+  const words = fullName.trim().split(/\s+/)
+  return words
+    .slice(-2)
+    .map((w) => w.charAt(0).toUpperCase())
+    .join('')
+}
 
 useSeoMeta({
   title: 'Giới thiệu & Bản tin',
@@ -142,44 +174,40 @@ const handleSubscribe = () => {
         <div class="border-t border-gray-200 dark:border-zinc-800 pt-8 space-y-5">
           <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Đội ngũ biên tập</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Author 1 -->
-            <div
-              class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850"
+            <NuxtLink
+              v-for="member in team"
+              :key="member.id"
+              :to="`/user/${member.id}`"
+              class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850 hover:border-[#3498db]/40 dark:hover:border-[#3498db]/40 transition-colors"
             >
               <img
-                src="https://i.ibb.co/6chzMbZ2/2026-06-17-002902.png"
-                alt="Nguyễn Văn Cương"
-                class="w-12 h-12 rounded-full object-cover shrink-0 border-2 border-[#3498db]/30"
+                v-if="member.avatar_url"
+                :src="member.avatar_url"
+                :alt="member.full_name"
+                class="w-12 h-12 rounded-full object-cover shrink-0 border-2"
+                :class="ROLE_META[member.role].borderClass"
               />
-              <div>
-                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Văn Cương</p>
-                <p class="text-[10px] text-[#3498db] font-semibold mb-1">
-                  Founder & Editor-in-Chief
-                </p>
-                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Hơn 10 năm kinh nghiệm trong lĩnh vực công nghệ và truyền thông số. Chuyên sâu về
-                  hệ sinh thái iOS, Android và các xu hướng AI mới nhất.
-                </p>
-              </div>
-            </div>
-            <!-- Author 2 -->
-            <div
-              class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850"
-            >
               <div
-                class="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center shrink-0 text-white font-black text-sm border-2 border-red-300/30"
+                v-else
+                class="w-12 h-12 rounded-full bg-gradient-to-br flex items-center justify-center shrink-0 text-white font-black text-sm border-2"
+                :class="[ROLE_META[member.role].gradientClass, ROLE_META[member.role].borderClass]"
               >
-                TK
+                {{ getInitials(member.full_name) }}
               </div>
               <div>
-                <p class="text-xs font-black text-zinc-900 dark:text-white">Nguyễn Tuấn Khải</p>
-                <p class="text-[10px] text-red-500 font-semibold mb-1">Editor — Game & Windows</p>
-                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Game thủ kỳ cựu với 8 năm theo dõi ngành công nghiệp game. Chuyên viết về Windows,
-                  PC gaming và các deal phần mềm hấp dẫn.
+                <p class="text-xs font-black text-zinc-900 dark:text-white">
+                  {{ member.full_name }}
+                </p>
+                <p class="text-[10px] font-semibold mb-1" :class="ROLE_META[member.role].textClass">
+                  {{ ROLE_META[member.role].label }}
+                </p>
+                <p
+                  class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-4"
+                >
+                  {{ member.bio }}
                 </p>
               </div>
-            </div>
+            </NuxtLink>
           </div>
         </div>
 

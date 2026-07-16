@@ -42,3 +42,15 @@ export interface UserProfileUpdatePayload {
   bio?: string
   avatar_url?: string
 }
+
+export interface TeamMember {
+  id: string
+  full_name: string
+  avatar_url?: string
+  bio?: string
+  role: 'admin' | 'mod'
+}
+
+export interface TeamResponse {
+  team: TeamMember[]
+}
