@@ -32,7 +32,7 @@ useHead({
         >
           Chính sách Bảo mật
         </h1>
-        <p class="text-zinc-550 text-sm italic">Cập nhật lần cuối: 18 tháng 6, 2026</p>
+        <p class="text-zinc-550 text-sm italic">Cập nhật lần cuối: 20 tháng 7, 2026</p>
         <p class="text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
           Chính sách Bảo mật này mô tả cách TechDeal (<strong>techdeal.io.vn</strong>) thu thập, sử
           dụng và bảo vệ thông tin của bạn khi bạn truy cập trang web. Bằng cách sử dụng trang web,
@@ -82,7 +82,7 @@ useHead({
             <li>Kiểm duyệt bình luận và ngăn chặn spam.</li>
             <li>Phân tích lưu lượng truy cập để nâng cao chất lượng nội dung.</li>
             <li>Phản hồi các yêu cầu hỗ trợ và liên hệ từ người dùng.</li>
-            <li>Hiển thị quảng cáo phù hợp thông qua Google AdSense.</li>
+            <li>Hiển thị quảng cáo phù hợp thông qua các đối tác quảng cáo của chúng tôi.</li>
           </ul>
         </section>
 
@@ -97,24 +97,26 @@ useHead({
             trình duyệt, tuy nhiên một số tính năng của trang web có thể không hoạt động đúng.
           </p>
           <p class="text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
-            Ngoài cookies của TechDeal, các đối tác bên thứ ba như Google cũng có thể đặt cookies
-            trên thiết bị của bạn trong quá trình phân phối quảng cáo.
+            Ngoài cookies của TechDeal, các đối tác quảng cáo bên thứ ba của chúng tôi cũng có thể
+            đặt cookies trên thiết bị của bạn trong quá trình phân phối quảng cáo.
           </p>
         </section>
 
         <!-- 4 -->
         <section class="space-y-3">
           <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-            4. Quảng cáo — Google AdSense
+            4. Quảng cáo — Đối tác quảng cáo bên thứ ba
           </h2>
           <div
             class="bg-blue-50 dark:bg-zinc-900/50 p-5 rounded-xl border-l-4 border-[#3498db] space-y-3"
           >
             <p class="text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
-              TechDeal sử dụng Google AdSense để hiển thị quảng cáo. Google, với tư cách là nhà cung
-              cấp quảng cáo bên thứ ba, sử dụng cookies để phân phối quảng cáo dựa trên lịch sử
-              duyệt web của bạn trên trang này và các trang khác. Các cookies này không thu thập
-              thông tin nhận dạng cá nhân như tên, email hay số điện thoại.
+              TechDeal hợp tác với các mạng quảng cáo bên thứ ba, bao gồm nhưng không giới hạn ở
+              <strong>Google AdSense</strong> và <strong>MGID</strong>, để hiển thị quảng cáo trên
+              trang web. Các đối tác này, với tư cách là nhà cung cấp quảng cáo bên thứ ba, sử dụng
+              cookies để phân phối quảng cáo dựa trên lịch sử duyệt web của bạn trên trang này và
+              các trang khác. Các cookies này không thu thập thông tin nhận dạng cá nhân như tên,
+              email hay số điện thoại.
             </p>
             <p class="text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
               Bạn có thể từ chối quảng cáo cá nhân hóa bằng cách truy cập:
