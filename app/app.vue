@@ -91,5 +91,7 @@ useHead(() => ({
   <ClientOnly>
     <UiThemeToggle />
   </ClientOnly>
-  <UiCookieConsentBanner />
+  <ClientOnly>
+    <UiPrivacyNotice />
+  </ClientOnly>
 </template>
