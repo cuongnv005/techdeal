@@ -204,8 +204,5 @@ export default defineNuxtConfig({
   sourcemap: {
     client: 'hidden'
   },
-  components: [
-    { path: path.resolve(__dirname, './shared/ui'), prefix: 'Ui' },
-    '~/components'
-  ]
+  components: [{ path: '@shared/ui', prefix: 'Ui' }, '~/components']
 })
