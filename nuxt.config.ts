@@ -41,6 +41,11 @@ export default defineNuxtConfig({
           name: 'google-adsense-account',
           content: process.env['VITE_AD_CLIENT_ID'] || 'ca-pub-3940256099942544'
         },
+        // Xác nhận quyền sở hữu domain cho Monetag — chỉ là thẻ ownership, không phải quảng cáo.
+        {
+          name: 'monetag',
+          content: '14873d9f10b09a903fe9a25cb8c7125c'
+        },
         {
           name: 'description',
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
