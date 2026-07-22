@@ -13,15 +13,10 @@ import {
 
 import Footer from '../../blog/components/Footer.vue'
 import Header from '../../blog/components/Header.vue'
-import StaticBanner from '../../blog/components/StaticBanner.vue'
 import { usePublicShortlink } from '../composables/use-shortlink'
 
 const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')
-
-// Cờ bật/tắt banner tĩnh. Tạm để false (ẩn) — bật lại khi có banner thật.
-// LƯU Ý: chỉ dùng banner tĩnh (ảnh + link), TUYỆT ĐỐI không đặt Google AdSense ở trang này.
-const showStaticBanners = false
 
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }]
@@ -88,21 +83,15 @@ onMounted(() => {
   >
     <Header />
 
-    <!-- Banner tĩnh 2 bên (ảnh + link, KHÔNG phải Google ad). Thay href/image bằng banner thật. -->
-    <template v-if="showStaticBanners">
-      <div class="hidden xl:block 2xl:hidden fixed left-4 top-[150px] z-20 w-[160px]">
-        <StaticBanner href="#" image="/banners/skyscraper-160.jpg" width="160px" height="600px" />
+    <!-- Banner HilltopAds 300x250 — chỉ desktop (xl trở lên). -->
+    <ClientOnly>
+      <div class="hidden xl:block fixed left-4 top-[150px] z-20">
+        <UiHilltopBanner300x250 />
       </div>
-      <div class="hidden 2xl:block fixed left-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
-        <StaticBanner href="#" image="/banners/skyscraper-300.jpg" width="300px" height="600px" />
+      <div class="hidden xl:block fixed right-4 top-[150px] z-20">
+        <UiHilltopBanner300x250 />
       </div>
-      <div class="hidden xl:block 2xl:hidden fixed right-4 top-[150px] z-20 w-[160px]">
-        <StaticBanner href="#" image="/banners/skyscraper-160.jpg" width="160px" height="600px" />
-      </div>
-      <div class="hidden 2xl:block fixed right-[calc(50%-770px)] top-[150px] z-20 w-[300px]">
-        <StaticBanner href="#" image="/banners/skyscraper-300.jpg" width="300px" height="600px" />
-      </div>
-    </template>
+    </ClientOnly>
 
     <main
       class="flex-grow py-20 px-4 flex flex-col items-center justify-center relative overflow-hidden"
@@ -239,10 +228,12 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Banner tĩnh inline (ảnh + link, KHÔNG phải Google ad) -->
-        <div v-if="showStaticBanners" class="mt-8 flex justify-center w-full relative z-10">
-          <StaticBanner href="#" image="/banners/inline-970.jpg" width="100%" height="90px" />
-        </div>
+        <!-- Banner HilltopAds 300x100 — chỉ mobile/tablet (dưới xl), thay cho banner giữa desktop 300x250 sau này. -->
+        <ClientOnly>
+          <div class="xl:hidden mt-8 flex justify-center w-full relative z-10">
+            <UiHilltopBanner300x100 />
+          </div>
+        </ClientOnly>
       </div>
     </main>
 
