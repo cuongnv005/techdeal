@@ -46,11 +46,6 @@ export default defineNuxtConfig({
           name: 'monetag',
           content: '14873d9f10b09a903fe9a25cb8c7125c'
         },
-        // Xác nhận quyền sở hữu domain cho HilltopAds — chỉ là thẻ ownership, không phải quảng cáo.
-        {
-          name: '74a0ca2ef541da15ac02c1ce0adfefc1410a96d2',
-          content: '74a0ca2ef541da15ac02c1ce0adfefc1410a96d2'
-        },
         {
           name: 'description',
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
