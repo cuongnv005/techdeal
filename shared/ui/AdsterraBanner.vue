@@ -10,24 +10,44 @@ const props = defineProps<{
 const container = ref<HTMLDivElement | null>(null)
 
 onMounted(() => {
-  // atOptions là biến TOÀN CỤC mà invoke.js đọc ngay khi chạy — vì trang có
-  // nhiều banner Adsterra cùng lúc (trái/phải/giữa), phải ép invoke.js chạy
-  // ĐÚNG THỨ TỰ ngay sau khi set atOptions của chính nó (async = false), nếu
-  // không dễ bị lẫn kích thước giữa các vị trí khi nhiều component cùng mount.
-  const optionsScript = document.createElement('script')
-  optionsScript.text = `atOptions = {
-    'key': '${props.adKey}',
-    'format': 'iframe',
-    'height': ${props.height},
-    'width': ${props.width},
-    'params': {}
-  };`
-  container.value?.appendChild(optionsScript)
+  // atOptions là biến TOÀN CỤC mà invoke.js đọc — nếu nhiều banner Adsterra
+  // cùng đặt trên 1 trang (trái/phải/giữa), việc set atOptions tuần tự trên
+  // CÙNG 1 window sẽ bị ghi đè lẫn nhau trước khi từng invoke.js (tải file
+  // ngoài, có độ trễ mạng) kịp đọc đúng giá trị của chính nó — dẫn tới chỉ
+  // banner set atOptions SAU CÙNG mới nhận đúng, các banner còn lại không
+  // hiện gì (đã xác nhận qua HTML thật: chỉ 1/4 banner có iframe được tạo).
+  // Cách sửa: mỗi banner chạy trong 1 <iframe> riêng, có window/document độc
+  // lập — atOptions của banner này không thể bị banner khác ghi đè.
+  const iframe = document.createElement('iframe')
+  iframe.style.border = 'none'
+  iframe.style.width = `${props.width}px`
+  iframe.style.height = `${props.height}px`
+  iframe.style.overflow = 'hidden'
+  iframe.setAttribute('scrolling', 'no')
+  container.value?.appendChild(iframe)
 
-  const invokeScript = document.createElement('script')
-  invokeScript.src = `https://www.highperformanceformat.com/${props.adKey}/invoke.js`
-  invokeScript.async = false
-  container.value?.appendChild(invokeScript)
+  const doc = iframe.contentWindow?.document
+  if (!doc) return
+  const closeTag = '</' + 'script>'
+  doc.open()
+  doc.write(`
+    <!DOCTYPE html>
+    <html>
+      <body style="margin:0;padding:0;">
+        <script>
+          atOptions = {
+            'key': '${props.adKey}',
+            'format': 'iframe',
+            'height': ${props.height},
+            'width': ${props.width},
+            'params': {}
+          };
+        ${closeTag}
+        <script src="https://www.highperformanceformat.com/${props.adKey}/invoke.js">${closeTag}
+      </body>
+    </html>
+  `)
+  doc.close()
 })
 </script>
 
