@@ -12,14 +12,18 @@ userStore.initializeAuth()
 // và toàn bộ logic chặn theo route đã gỡ, không còn ích gì khi chưa duyệt.
 // Vẫn giữ Consent Mode vì Google Analytics (gtag.client.ts) dùng chung cơ chế
 // này, và sẽ cần lại ngay khi AdSense được duyệt trong tương lai.
+// analytics_storage KHÔNG khai báo ở đây — cố tình để GA hoạt động bình thường
+// (thu thập đầy đủ) bất kể user Đồng ý hay Từ chối. Chỉ 3 tín hiệu quảng cáo
+// (ad_storage/ad_user_data/ad_personalization) theo lựa chọn của user: Từ
+// chối → AdSense chuyển sang quảng cáo không cá nhân hóa, không dùng dữ liệu
+// đã thu thập để nhắm quảng cáo.
 const CONSENT_DEFAULT_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
     'ad_storage': 'denied',
     'ad_user_data': 'denied',
-    'ad_personalization': 'denied',
-    'analytics_storage': 'denied'
+    'ad_personalization': 'denied'
   });
 `
 
@@ -31,8 +35,7 @@ function pushConsentUpdate(value: 'accepted' | 'declined' | null) {
   ;(window as any).gtag('consent', 'update', {
     ad_storage: granted,
     ad_user_data: granted,
-    ad_personalization: granted,
-    analytics_storage: granted
+    ad_personalization: granted
   })
 }
 
