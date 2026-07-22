@@ -48,6 +48,10 @@ const giveawayId = computed(() => (route.query.id as string) || '')
 const { giveaway, isLoading, error, claim, claimError, isClaiming, refresh } =
   await usePublicGiveaway(giveawayId.value)
 
+useSeoMeta({
+  title: () => giveaway.value?.app_name || 'Giveaway'
+})
+
 // Modals
 const isAuthModalOpen = ref(false)
 const authTab = ref<'login' | 'register'>('login')

@@ -29,6 +29,10 @@ useHead({
 
 const { shortlink, isLoading, error, recordClick } = usePublicShortlink(hash.value)
 
+useSeoMeta({
+  title: () => shortlink.value?.name || 'Đang chuyển hướng'
+})
+
 const countdown = ref(5)
 const isFinished = ref(false)
 const hasRedirected = ref(false)
@@ -65,24 +69,14 @@ const triggerRedirect = async () => {
   }
 }
 
-/** Manual fallback button — uses same logic as auto-redirect */
-const handleManualRedirect = (e: Event) => {
-  e.preventDefault()
-  if (!shortlink.value?.target_url) return
-  if (process.client) {
-    window.location.replace(resolveTargetUrl(shortlink.value.target_url))
-  }
-}
-
 onMounted(() => {
   const timer = setInterval(() => {
-    if (countdown.value > 1) {
-      countdown.value--
-    } else {
+    countdown.value--
+    if (countdown.value <= 0) {
+      countdown.value = 0
       clearInterval(timer)
       isFinished.value = true
-      // Auto redirect
-      triggerRedirect()
+      // Không tự động chuyển hướng nữa — user phải bấm nút "Tới trang đích".
     }
   }, 1000)
 })
@@ -189,7 +183,8 @@ onMounted(() => {
               class="absolute inset-0 rounded-full border-4 border-gray-100 dark:border-zinc-850"
             ></div>
             <div
-              class="absolute inset-0 rounded-full border-4 border-[#3498db] dark:border-[#e74c3c] border-t-transparent animate-spin"
+              class="absolute inset-0 rounded-full border-4 border-[#3498db] dark:border-[#e74c3c] border-t-transparent"
+              :class="{ 'animate-spin': !isFinished }"
               style="animation-duration: 2s"
             ></div>
             <div class="text-center">
@@ -207,7 +202,7 @@ onMounted(() => {
               Vui lòng đợi trong giây lát
             </p>
             <p class="text-[10px] text-zinc-400 max-w-sm mx-auto leading-relaxed">
-              Trang web đích sẽ tự động mở sau khi quá trình đếm ngược kết thúc.
+              Sau khi đếm ngược kết thúc, bấm nút bên dưới để tới trang đích.
             </p>
           </div>
 
@@ -215,12 +210,10 @@ onMounted(() => {
           <div class="pt-4 border-t border-gray-100 dark:border-zinc-850">
             <Transition name="fade">
               <div v-if="isFinished" class="space-y-3">
-                <p class="text-[10px] text-zinc-400">
-                  Nếu trình duyệt của bạn không tự động chuyển hướng, vui lòng bấm nút dưới đây:
-                </p>
+                <p class="text-[10px] text-zinc-400">Bấm nút bên dưới để tiếp tục:</p>
                 <a
                   href="javascript:void(0)"
-                  @click="handleManualRedirect"
+                  @click="triggerRedirect"
                   class="inline-flex items-center gap-1.5 px-6 py-3 bg-zinc-900 dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-lg uppercase tracking-wider cursor-pointer"
                 >
                   Tới trang đích <ArrowRight class="w-4 h-4" />
