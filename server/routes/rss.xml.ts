@@ -6,7 +6,9 @@ export default defineEventHandler(async (event) => {
 
   try {
     const apiUrl = process.env.VITE_API_URL || 'https://techdeal-worker.mdchannelvn.workers.dev/api'
-    const appUrl = process.env.APP_URL || 'https://techdeal.io.vn/'
+    // Chuẩn hoá: bỏ mọi dấu "/" ở cuối rồi tự thêm "/" tại từng chỗ ghép. APP_URL trong .env
+    // KHÔNG có "/" cuối, nếu ghép trực tiếp sẽ ra "https://techdeal.io.vnblog/..." (link gãy).
+    const appUrl = (process.env.APP_URL || 'https://techdeal.io.vn').replace(/\/+$/, '')
 
     // Fetch latest 50 posts
     const response = await axios.get(`${apiUrl}/posts`, {
@@ -17,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
     const feedItems = posts
       .map((post: any) => {
-        const link = `${appUrl}blog/${post.slug}.${post.id}`
+        const link = `${appUrl}/blog/${post.slug}.${post.id}`
         const date = new Date(post.created_at).toUTCString()
 
         let summary = post.summary || ''
@@ -77,11 +79,11 @@ export default defineEventHandler(async (event) => {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>TechDeal - Tin tức công nghệ, game và khuyến mãi</title>
-  <link>${appUrl}</link>
+  <link>${appUrl}/</link>
   <description>Cập nhật tin tức công nghệ mới nhất, đánh giá game, khuyến mãi phần cứng và phần mềm.</description>
   <language>vi-vn</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-  <atom:link href="${appUrl}rss.xml" rel="self" type="application/rss+xml" />
+  <atom:link href="${appUrl}/rss.xml" rel="self" type="application/rss+xml" />
   ${feedItems}
 </channel>
 </rss>`
