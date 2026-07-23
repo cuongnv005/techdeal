@@ -41,14 +41,16 @@ function pushConsentUpdate(value: 'accepted' | 'declined' | null) {
 
 watch(cookieConsent, pushConsentUpdate, { immediate: true })
 
-// ---- Monetag (In-Page Push + Vignette Banner) — chỉ /go và /giveaway ------
+// ---- Monetag (In-Page Push + Vignette Banner) — CHỈ /go -------------------
 // Zone cũ (11362747, 11363009) đã bị Monetag deactivate do nghi ngờ invalid
 // traffic (test lặp lại bằng công cụ tự động + IP LAN) — tài khoản đã được mở
 // lại, đây là 2 zone MỚI (11370001, 11367556). Cố tình KHÔNG đặt trên
 // blog/trang chủ trong lúc MGID đang chờ xét duyệt.
+// /giveaway ĐÃ GỠ IPP+Vignette (interstitial chặn luồng nhận key) — trang đó
+// nay chỉ chạy Adsterra banner + Social Bar (khai báo ngay bên dưới).
 // LƯU Ý: không test lặp lại nhiều lần bằng công cụ tự động trên zone này —
 // chỉ xem qua trình duyệt thường 1-2 lần, để tránh lặp lại sự cố deactivate.
-const MONETAG_ALLOWED_PREFIXES = ['/go', '/giveaway']
+const MONETAG_ALLOWED_PREFIXES = ['/go']
 
 const route = useRoute()
 const monetagAllowed = computed(() => {
@@ -58,6 +60,17 @@ const monetagAllowed = computed(() => {
 
 const MONETAG_IPP_SCRIPT = `(function(s){s.dataset.zone='11370001',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
 const MONETAG_VIGNETTE_SCRIPT = `(function(s){s.dataset.zone='11367556',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
+
+// ---- Social Bar — CHỈ /giveaway -------------------------------------------
+// Widget nổi, KHÔNG chặn thao tác → hợp trang cần user bấm claim tới cùng
+// (khác Vignette/interstitial nên cố tình chỉ dùng format này ở đây).
+const SOCIALBAR_ALLOWED_PREFIXES = ['/giveaway']
+const socialBarAllowed = computed(() => {
+  const path = route.path
+  return SOCIALBAR_ALLOWED_PREFIXES.some((p) => path === p || path.startsWith(p + '/'))
+})
+const SOCIALBAR_SRC =
+  'https://pl30479529.effectivecpmnetwork.com/15/ca/9b/15ca9b44193b21b86a4339747cf54092.js'
 
 /* ---- AdSense (tạm tắt — tài khoản chưa được duyệt) ------------------------
  * Bỏ comment toàn bộ khối dưới đây + đổi useHead() cuối file khi AdSense được
@@ -98,7 +111,8 @@ useHead(() => ({
           { innerHTML: MONETAG_IPP_SCRIPT, type: 'text/javascript' },
           { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
         ]
-      : [])
+      : []),
+    ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
     // Bỏ comment dòng dưới khi AdSense được duyệt lại (cần cả khối trên đã bật):
     // ...(adsAllowed.value
     //   ? [
