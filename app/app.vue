@@ -106,6 +106,8 @@ const SOCIALBAR_SRC =
 useHead(() => ({
   script: [
     { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
+    // Tạm thời comment phần hiển thị quảng cáo của Monetag và Adsterra (Social Bar)
+    /*
     ...(monetagAllowed.value
       ? [
           { innerHTML: MONETAG_IPP_SCRIPT, type: 'text/javascript' },
@@ -113,6 +115,7 @@ useHead(() => ({
         ]
       : []),
     ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
+    */
     // Bỏ comment dòng dưới khi AdSense được duyệt lại (cần cả khối trên đã bật):
     // ...(adsAllowed.value
     //   ? [
