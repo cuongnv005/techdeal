@@ -27,6 +27,7 @@ import {
 import { AuthRepository } from '../../auth/api/auth'
 import { usePublicGiveaway } from '../composables/use-giveaway'
 
+import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 import { useUserStore } from '@stores/user'
 
 const route = useRoute()
@@ -42,6 +43,9 @@ const giveawayId = computed(() => (route.query.id as string) || '')
 
 const { giveaway, isLoading, error, claim, claimError, isClaiming, refresh } =
   await usePublicGiveaway(giveawayId.value)
+
+// Banner chỉ mount đúng breakpoint của nó — xem lý do trong use-ad-breakpoint.
+const { isDesktopAd, isMobileAd } = useAdBreakpoint()
 
 useSeoMeta({
   title: () => giveaway.value?.app_name || 'Giveaway'
@@ -339,10 +343,10 @@ const formatPrice = (price: number) => {
 
     <!-- Banner Adsterra 160x600 — 2 bên, chỉ desktop (xl trở lên). -->
     <ClientOnly>
-      <div class="hidden xl:block fixed left-4 top-[150px] z-20">
+      <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
-      <div class="hidden xl:block fixed right-4 top-[150px] z-20">
+      <div v-if="isDesktopAd" class="fixed right-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
     </ClientOnly>
@@ -454,14 +458,14 @@ const formatPrice = (price: number) => {
 
           <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
           <ClientOnly>
-            <div class="hidden xl:flex justify-center max-w-xl mx-auto px-4">
+            <div v-if="isDesktopAd" class="flex justify-center max-w-xl mx-auto px-4">
               <UiAdsterraBanner
                 adKey="d27b0d6bc702034be86f143c0b574ec9"
                 :width="728"
                 :height="90"
               />
             </div>
-            <div class="xl:hidden flex justify-center max-w-xl mx-auto px-4">
+            <div v-else-if="isMobileAd" class="flex justify-center max-w-xl mx-auto px-4">
               <UiAdsterraBanner
                 adKey="de4c283a402db789fc1517d138bbe90b"
                 :width="300"
@@ -592,7 +596,7 @@ const formatPrice = (price: number) => {
 
           <!-- Banner Adsterra 300x250 — chỉ mobile (dưới xl); desktop đã có đủ 2 bên + giữa ở trên, tránh dày đặc -->
           <ClientOnly>
-            <div class="xl:hidden flex justify-center max-w-md mx-auto px-4">
+            <div v-if="isMobileAd" class="flex justify-center max-w-md mx-auto px-4">
               <UiAdsterraBanner
                 adKey="de4c283a402db789fc1517d138bbe90b"
                 :width="300"
