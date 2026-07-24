@@ -338,7 +338,6 @@ const formatPrice = (price: number) => {
     ></div>
 
     <!-- Banner Adsterra 160x600 — 2 bên, chỉ desktop (xl trở lên). -->
-    <!-- Tạm thời comment quảng cáo Adsterra
     <ClientOnly>
       <div class="hidden xl:block fixed left-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
@@ -347,7 +346,6 @@ const formatPrice = (price: number) => {
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
     </ClientOnly>
-    -->
 
     <!-- Minimal Header (Zee Cast Style) -->
     <header
@@ -455,7 +453,6 @@ const formatPrice = (price: number) => {
           </section>
 
           <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
-          <!-- Tạm thời comment quảng cáo Adsterra
           <ClientOnly>
             <div class="hidden xl:flex justify-center max-w-xl mx-auto px-4">
               <UiAdsterraBanner
@@ -472,7 +469,6 @@ const formatPrice = (price: number) => {
               />
             </div>
           </ClientOnly>
-          -->
 
           <!-- PRO CARD / GIVEAWAY SPECIFICATIONS (Zee Cast Style) -->
           <section class="max-w-xl mx-auto">
@@ -595,7 +591,6 @@ const formatPrice = (price: number) => {
           </section>
 
           <!-- Banner Adsterra 300x250 — chỉ mobile (dưới xl); desktop đã có đủ 2 bên + giữa ở trên, tránh dày đặc -->
-          <!-- Tạm thời comment quảng cáo Adsterra
           <ClientOnly>
             <div class="xl:hidden flex justify-center max-w-md mx-auto px-4">
               <UiAdsterraBanner
@@ -605,7 +600,6 @@ const formatPrice = (price: number) => {
               />
             </div>
           </ClientOnly>
-          -->
 
           <!-- CTA Claim block -->
           <div class="max-w-md mx-auto pt-4 space-y-4">
