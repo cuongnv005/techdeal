@@ -41,7 +41,13 @@ function pushConsentUpdate(value: 'accepted' | 'declined' | null) {
 
 watch(cookieConsent, pushConsentUpdate, { immediate: true })
 
-// ---- Monetag (In-Page Push + Vignette Banner) — CHỈ /go -------------------
+// ---- Monetag (In-Page Push + Vignette Banner) — ĐANG TẮT ------------------
+// TẮT vì 2 lý do: (1) user báo trên /go, sau khi tắt popup Vignette, bấm nút
+// "Tới trang đích" bị cướp click nhảy sang loạt trang lạ — IPP/Vignette chèn
+// vào chính luồng redirect, phá trải nghiệm và làm mất click thật; (2) CPM
+// Monetag lẹt đẹt, không bù được thiệt hại đó. Giữ nguyên code + zone để bật
+// lại nếu sau này muốn thử format không chặn thao tác. Khi bật lại thì bỏ
+// comment khối trong useHead() ở cuối file.
 // Zone cũ (11362747, 11363009) đã bị Monetag deactivate do nghi ngờ invalid
 // traffic (test lặp lại bằng công cụ tự động + IP LAN) — tài khoản đã được mở
 // lại, đây là 2 zone MỚI (11370001, 11367556). Cố tình KHÔNG đặt trên
@@ -61,10 +67,13 @@ const monetagAllowed = computed(() => {
 const MONETAG_IPP_SCRIPT = `(function(s){s.dataset.zone='11370001',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
 const MONETAG_VIGNETTE_SCRIPT = `(function(s){s.dataset.zone='11367556',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
 
-// ---- Social Bar — CHỈ /giveaway -------------------------------------------
-// Widget nổi, KHÔNG chặn thao tác → hợp trang cần user bấm claim tới cùng
-// (khác Vignette/interstitial nên cố tình chỉ dùng format này ở đây).
-const SOCIALBAR_ALLOWED_PREFIXES = ['/giveaway']
+// ---- Social Bar — /giveaway + /go -----------------------------------------
+// Widget nổi, KHÔNG chặn thao tác → hợp trang cần user bấm claim / bấm "Tới
+// trang đích" tới cùng (khác Vignette/interstitial nên cố tình chỉ dùng format
+// này ở đây). Thêm /go (2026-07-24) để bù doanh thu sau khi bỏ Monetag —
+// chọn đúng format không cướp click, tránh lặp lại lỗi Monetag đã gây ra.
+// Vẫn KHÔNG đặt trên blog/trang chủ (giữ sạch cho MGID/AdSense sau này).
+const SOCIALBAR_ALLOWED_PREFIXES = ['/giveaway', '/go']
 const socialBarAllowed = computed(() => {
   const path = route.path
   return SOCIALBAR_ALLOWED_PREFIXES.some((p) => path === p || path.startsWith(p + '/'))
@@ -106,7 +115,7 @@ const SOCIALBAR_SRC =
 useHead(() => ({
   script: [
     { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
-    // Tạm thời comment phần hiển thị quảng cáo của Monetag và Adsterra (Social Bar)
+    // Monetag TẮT (xem lý do ở khối MONETAG_* phía trên). Chỉ chạy Adsterra.
     /*
     ...(monetagAllowed.value
       ? [
@@ -114,8 +123,8 @@ useHead(() => ({
           { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
         ]
       : []),
-    ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
     */
+    ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
     // Bỏ comment dòng dưới khi AdSense được duyệt lại (cần cả khối trên đã bật):
     // ...(adsAllowed.value
     //   ? [

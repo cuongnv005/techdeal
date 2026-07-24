@@ -84,7 +84,6 @@ onMounted(() => {
     <Header />
 
     <!-- Banner Adsterra 160x600 — 2 bên, chỉ desktop (xl trở lên). -->
-    <!-- Tạm thời comment quảng cáo Adsterra
     <ClientOnly>
       <div class="hidden xl:block fixed left-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
@@ -93,7 +92,6 @@ onMounted(() => {
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
     </ClientOnly>
-    -->
 
     <main
       class="flex-grow py-20 px-4 flex flex-col items-center justify-center relative overflow-hidden"
@@ -231,7 +229,6 @@ onMounted(() => {
         </div>
 
         <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
-        <!-- Tạm thời comment quảng cáo Adsterra
         <ClientOnly>
           <div class="hidden xl:flex mt-8 justify-center w-full relative z-10">
             <UiAdsterraBanner adKey="d27b0d6bc702034be86f143c0b574ec9" :width="728" :height="90" />
@@ -240,7 +237,6 @@ onMounted(() => {
             <UiAdsterraBanner adKey="de4c283a402db789fc1517d138bbe90b" :width="300" :height="250" />
           </div>
         </ClientOnly>
-        -->
       </div>
     </main>
 
