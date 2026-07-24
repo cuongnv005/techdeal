@@ -114,8 +114,11 @@ const SOCIALBAR_SRC =
 
 useHead(() => ({
   script: [
-    { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
-    // Monetag TẮT (xem lý do ở khối MONETAG_* phía trên). Chỉ chạy Adsterra.
+    { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' }
+    // Monetag TẮT (xem lý do ở khối MONETAG_* phía trên).
+    // Social Bar Adsterra TẮT (2026-07-24): user thấy trải nghiệm không ổn.
+    // Giờ /go + /giveaway CHỈ chạy Adsterra banner (khối UiAdsterraBanner trong
+    // template từng trang). Bỏ comment dòng dưới để bật lại Social Bar.
     /*
     ...(monetagAllowed.value
       ? [
@@ -123,8 +126,8 @@ useHead(() => ({
           { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
         ]
       : []),
-    */
     ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
+    */
     // Bỏ comment dòng dưới khi AdSense được duyệt lại (cần cả khối trên đã bật):
     // ...(adsAllowed.value
     //   ? [
