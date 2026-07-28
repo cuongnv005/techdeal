@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { computed } from 'vue'
 
 import {
   Facebook,
@@ -15,6 +15,7 @@ import {
 
 import { blogRepository } from '../../api/blog'
 import AdBanner from '../AdBanner.vue'
+import AdskeeperWidget from '../AdskeeperWidget.vue'
 
 import type { BlogPost } from '../../types/post.type'
 
@@ -198,5 +199,8 @@ const getCategoryLink = (id: string) => {
         </li>
       </ul>
     </div>
+
+    <!-- Adskeeper Home Sidebar Widget -->
+    <AdskeeperWidget widget-id="2060620" script-url="https://jsc.adskeeper.com/site/1106120.js" />
   </aside>
 </template>
