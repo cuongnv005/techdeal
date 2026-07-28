@@ -120,19 +120,29 @@ const ADS_BLOCKED_PREFIXES = [
   '/reset-password',
   '/admin',
   '/blog/publish',
-  '/giveaway',
   '/about',
   '/privacy',
   '/terms',
   '/search',
   '/user'
-  // /go KHÔNG block — script cần load ở đây để passage widget 2060574
-  // có đủ session context từ các trang trước và tự fire khi user vào /go.
+  // /go và /giveaway KHÔNG block — script cần load ở đây để passage widget
+  // 2060574 có đủ session context từ các trang trước và tự fire.
 ]
 
 const isAdskeeperAllowed = computed(() => {
   const path = route.path
   return !ADS_BLOCKED_PREFIXES.some((p) => path === p || path.startsWith(p + '/'))
+})
+
+// Toaster widget (2060411) ẩn thêm trên /go và /giveaway:
+// - /go là trang redirect có dwell time rất ngắn → low-quality impression
+// - /giveaway là landing page riêng, passage (2060574) đã đủ
+// Script Adskeeper vẫn load (isAdskeeperAllowed) để passage tự fire.
+const TOASTER_EXTRA_BLOCKED = ['/go', '/giveaway']
+const isToasterAllowed = computed(() => {
+  if (!isAdskeeperAllowed.value) return false
+  const path = route.path
+  return !TOASTER_EXTRA_BLOCKED.some((p) => path === p || path.startsWith(p + '/'))
 })
 
 if (process.client) {
@@ -201,9 +211,7 @@ useHead(() => ({
     <UiPrivacyNotice />
   </ClientOnly>
 
-  <!-- Adskeeper Mobile Web Widget (Sticky Toaster) -->
-  <!-- /go đã nằm trong ADS_BLOCKED_PREFIXES → isAdskeeperAllowed = false → không cần check thêm -->
   <ClientOnly>
-    <div v-if="isAdskeeperAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
+    <div v-if="isToasterAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
   </ClientOnly>
 </template>

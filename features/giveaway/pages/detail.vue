@@ -57,6 +57,7 @@ const authTab = ref<'login' | 'register'>('login')
 const isExpiredModalOpen = ref(false)
 const isHowItWorksOpen = ref(false)
 const claimSuccessLink = ref<string | null>(null)
+const lightboxOpen = ref(false)
 
 // Login / Register Form Fields
 const email = ref('')
@@ -588,15 +589,45 @@ const formatPrice = (price: number) => {
                 <Sparkles class="w-3.5 h-3.5 fill-current text-yellow-400" /> HƯỚNG DẪN CHI TIẾT
                 BẰNG HÌNH ẢNH
               </div>
-              <div class="border-2 border-black rounded-2xl overflow-hidden bg-zinc-50">
+              <div
+                class="border-2 border-black rounded-2xl overflow-hidden bg-zinc-50 cursor-zoom-in"
+                @click="lightboxOpen = true"
+                title="Bấm để xem to"
+              >
                 <img
                   :src="giveaway.image_url"
                   alt="Hướng dẫn nhận giveaway"
-                  class="w-full h-auto object-contain mx-auto max-h-[500px]"
+                  class="w-full h-auto object-contain mx-auto max-h-[500px] hover:opacity-90 transition-opacity"
                 />
               </div>
+              <p class="text-[10px] text-zinc-400 font-medium">🔍 Bấm vào ảnh để xem to hơn</p>
             </div>
           </section>
+
+          <!-- Lightbox: phóng to ảnh hướng dẫn -->
+          <Teleport to="body">
+            <Transition name="lightbox">
+              <div
+                v-if="lightboxOpen"
+                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                @click.self="lightboxOpen = false"
+              >
+                <button
+                  @click="lightboxOpen = false"
+                  class="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full flex items-center justify-center text-white transition-all cursor-pointer"
+                  aria-label="Đóng"
+                >
+                  <X class="w-5 h-5" />
+                </button>
+                <img
+                  :src="giveaway.image_url"
+                  alt="Hướng dẫn nhận giveaway"
+                  class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+                  @click.stop
+                />
+              </div>
+            </Transition>
+          </Teleport>
 
           <!-- Banner Adsterra 300x250 — chỉ mobile (dưới xl); desktop đã có đủ 2 bên + giữa ở trên, tránh dày đặc -->
           <!--
@@ -720,6 +751,13 @@ const formatPrice = (price: number) => {
       </div>
       <div class="text-[10px] text-zinc-400">© 2026 TechDeal.io.vn. Đã được bảo lưu mọi quyền.</div>
     </footer>
+
+    <!-- Adskeeper Passage Widget 2060574 — giống trang /go.
+         Script load từ app.vue (không bị block), Adskeeper tự quyết fire
+         passage dựa trên session context của user. -->
+    <Teleport to="body">
+      <div data-type="_mgwidget" data-widget-id="2060574"></div>
+    </Teleport>
 
     <!-- Modals (Zee Cast inspired premium design) -->
 
@@ -1091,5 +1129,25 @@ const formatPrice = (price: number) => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Lightbox transition */
+.lightbox-enter-active,
+.lightbox-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.lightbox-enter-from,
+.lightbox-leave-to {
+  opacity: 0;
+}
+.lightbox-enter-active img,
+.lightbox-leave-active img {
+  transition: transform 0.2s ease;
+}
+.lightbox-enter-from img,
+.lightbox-leave-to img {
+  transform: scale(0.92);
 }
 </style>
