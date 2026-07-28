@@ -2,20 +2,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import {
-  ShieldAlert,
-  CheckCircle,
-  ExternalLink,
-  ArrowRight,
-  ShieldCheck,
-  HelpCircle
-} from 'lucide-vue-next'
+import { ShieldAlert, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
 import Header from '../../blog/components/Header.vue'
 import { usePublicShortlink } from '../composables/use-shortlink'
 
-import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
+// import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 
 const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')
@@ -26,8 +19,8 @@ useHead({
 
 const { shortlink, isLoading, error, recordClick } = usePublicShortlink(hash.value)
 
-// Banner chỉ mount đúng breakpoint của nó — xem lý do trong use-ad-breakpoint.
-const { isDesktopAd, isMobileAd } = useAdBreakpoint()
+// // Banner chỉ mount đúng breakpoint của nó — xem lý do trong use-ad-breakpoint.
+// const { isDesktopAd, isMobileAd } = useAdBreakpoint()
 
 useSeoMeta({
   title: () => shortlink.value?.name || 'Đang chuyển hướng'
@@ -36,6 +29,20 @@ useSeoMeta({
 const countdown = ref(5)
 const isFinished = ref(false)
 const hasRedirected = ref(false)
+
+// Quảng cáo xen kẽ (Adskeeper) chỉ được mount vào DOM khi user bấm nút
+// "Tới trang đích" — KHÔNG mount sẵn khi vào trang go. Việc này để tuân thủ
+// chính sách của Adskeeper (không auto-redirect / không hiện ad mà không có
+// hành động chủ động của user) và tránh chồng 2 lớp full-page overlay liên tiếp.
+const showInterstitialAd = ref(false)
+
+// Vì widget quảng cáo không có callback báo "đã đóng", ta không đoán thời
+// gian bằng setTimeout mù nữa. Thay vào đó tách thành 2 bước tường minh:
+//  - adTriggered = false: nút hiển thị "Tới trang đích" (lần bấm 1: mở ad)
+//  - adTriggered = true : nút đổi hẳn giao diện + text thành bước xác nhận
+//                         thứ 2 (user tự đóng ad xong quay lại bấm tiếp)
+const adTriggered = ref(false)
+const isRedirecting = ref(false)
 
 /**
  * Resolve the target URL, converting Apple App Store deep link schemes
@@ -55,17 +62,37 @@ const resolveTargetUrl = (url: string): string => {
   return url
 }
 
-const triggerRedirect = async () => {
-  if (hasRedirected.value || !shortlink.value?.target_url) return
-  hasRedirected.value = true
+// Bấm lần 1: kích hoạt quảng cáo xen kẽ. Đây là hành động chủ động của user,
+// đúng tinh thần chính sách interstitial của Adskeeper (không tự ý
+// auto-redirect/auto-show khi vừa vào trang).
+const showAdStep = async () => {
+  if (adTriggered.value || !shortlink.value?.target_url) return
+  adTriggered.value = true
+  showInterstitialAd.value = true
 
   // Record click to API
   const referrer = typeof document !== 'undefined' ? document.referrer : ''
   await recordClick(referrer)
+}
 
-  // Redirect user to target URL
+// Bấm lần 2 (sau khi user đã tự đóng quảng cáo bằng nút X của chính nó và
+// quay lại thấy nút này): thực hiện redirect thật. Không cần đoán thời gian
+// bằng setTimeout vì bước này chỉ chạy được sau khi user đã chủ động bấm.
+const confirmRedirect = () => {
+  if (hasRedirected.value || !shortlink.value?.target_url) return
+  hasRedirected.value = true
+  isRedirecting.value = true
+
   if (process.client) {
     window.location.replace(resolveTargetUrl(shortlink.value.target_url))
+  }
+}
+
+const triggerRedirect = () => {
+  if (!adTriggered.value) {
+    showAdStep()
+  } else {
+    confirmRedirect()
   }
 }
 
@@ -206,14 +233,38 @@ onMounted(() => {
           <div class="pt-4 border-t border-gray-100 dark:border-zinc-850">
             <Transition name="fade">
               <div v-if="isFinished" class="space-y-3">
-                <p class="text-[10px] text-zinc-400">Bấm nút bên dưới để tiếp tục:</p>
-                <a
-                  href="javascript:void(0)"
-                  @click="triggerRedirect"
-                  class="inline-flex items-center gap-1.5 px-6 py-3 bg-zinc-900 dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-lg uppercase tracking-wider cursor-pointer"
-                >
-                  Tới trang đích <ArrowRight class="w-4 h-4" />
-                </a>
+                <!-- Bước 1: chưa bấm lần nào -->
+                <template v-if="!adTriggered">
+                  <p class="text-[10px] text-zinc-400">Bấm nút bên dưới để tiếp tục:</p>
+                  <a
+                    href="javascript:void(0)"
+                    @click="triggerRedirect"
+                    class="inline-flex items-center gap-1.5 px-6 py-3 bg-zinc-900 dark:bg-[#e74c3c] hover:opacity-90 text-white text-xs font-bold rounded-xl transition-all shadow-lg uppercase tracking-wider cursor-pointer"
+                  >
+                    Tới trang đích <ArrowRight class="w-4 h-4" />
+                  </a>
+                </template>
+
+                <!-- Bước 2: đã bấm lần 1 (ad đang/đã hiện) — đổi hẳn giao diện
+                     để user nhận ra đây là bước tiếp theo, không phải nút cũ -->
+                <template v-else>
+                  <p class="text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] animate-pulse">
+                    Quảng cáo đã đóng? Bấm nút bên dưới để tiếp tục
+                  </p>
+                  <a
+                    href="javascript:void(0)"
+                    @click="triggerRedirect"
+                    class="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl transition-all shadow-lg uppercase tracking-wider border-2"
+                    :class="
+                      isRedirecting
+                        ? 'opacity-60 cursor-not-allowed border-zinc-300 dark:border-zinc-700 bg-transparent text-zinc-400'
+                        : 'cursor-pointer border-[#3498db] dark:border-[#e74c3c] bg-[#3498db]/10 dark:bg-[#e74c3c]/10 text-[#3498db] dark:text-[#e74c3c] hover:bg-[#3498db]/20 dark:hover:bg-[#e74c3c]/20 animate-pulse text-sm font-black'
+                    "
+                  >
+                    <template v-if="!isRedirecting">Tiếp tục đến trang đích</template>
+                    <template v-else>Đang chuyển hướng...</template>
+                  </a>
+                </template>
               </div>
             </Transition>
           </div>
@@ -248,6 +299,12 @@ onMounted(() => {
         -->
       </div>
     </main>
+
+    <!-- Adskeeper Interstitial (Xen kẽ) Widget — chỉ mount khi user bấm "Tới trang đích",
+         KHÔNG mount sẵn lúc vào trang go. -->
+    <ClientOnly>
+      <div v-if="showInterstitialAd" data-type="_mgwidget" data-widget-id="2060574"></div>
+    </ClientOnly>
 
     <Footer />
   </div>

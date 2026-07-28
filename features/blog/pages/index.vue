@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed, watch } from 'vue'
 
 import { TrendingUp } from 'lucide-vue-next'
 
@@ -135,15 +135,6 @@ watch(currentPage, () => {
     })
   }
 })
-
-// Search query
-const searchQuery = ref('')
-
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    navigateTo(`/search?q=${encodeURIComponent(searchQuery.value.trim())}`)
-  }
-}
 </script>
 
 <template>

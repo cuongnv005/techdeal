@@ -120,7 +120,6 @@ const ADS_BLOCKED_PREFIXES = [
   '/reset-password',
   '/admin',
   '/blog/publish',
-  '/go',
   '/giveaway',
   '/about',
   '/privacy',
@@ -202,6 +201,10 @@ useHead(() => ({
 
   <!-- Adskeeper Mobile Web Widget (Sticky Toaster) -->
   <ClientOnly>
-    <div v-if="isAdskeeperAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
+    <div
+      v-if="isAdskeeperAllowed && !route.path.startsWith('/go')"
+      data-type="_mgwidget"
+      data-widget-id="2060411"
+    ></div>
   </ClientOnly>
 </template>
