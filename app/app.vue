@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch, onMounted, nextTick } from 'vue'
 
 import { useCookieConsent } from '@shared/composables/use-cookie-consent'
 import { useUserStore } from '@stores/user'
@@ -112,9 +112,56 @@ const SOCIALBAR_SRC =
  * const adClientId = import.meta.env.VITE_AD_CLIENT_ID || 'ca-pub-3940256099942544'
  * -------------------------------------------------------------------------- */
 
+// ---- Adskeeper (Global Script & Mobile Toaster Widget) ---------------------
+const ADS_BLOCKED_PREFIXES = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/admin',
+  '/blog/publish',
+  '/go',
+  '/giveaway',
+  '/about',
+  '/privacy',
+  '/terms',
+  '/search',
+  '/user'
+]
+
+const isAdskeeperAllowed = computed(() => {
+  const path = route.path
+  return !ADS_BLOCKED_PREFIXES.some((p) => path === p || path.startsWith(p + '/'))
+})
+
+if (process.client) {
+  const triggerAdskeeper = () => {
+    nextTick(() => {
+      try {
+        const w = window as any
+        w._mgq = w._mgq || []
+        w._mgq.push(['_mgc.load'])
+      } catch (e) {
+        console.warn('Adskeeper load trigger error:', e)
+      }
+    })
+  }
+
+  onMounted(triggerAdskeeper)
+  watch(() => route.path, triggerAdskeeper)
+}
+
 useHead(() => ({
   script: [
-    { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' }
+    { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
+    ...(isAdskeeperAllowed.value
+      ? [
+          {
+            src: 'https://jsc.adskeeper.com/site/1106120.js',
+            async: true
+          }
+        ]
+      : [])
     // Monetag TẮT (xem lý do ở khối MONETAG_* phía trên).
     // Social Bar Adsterra TẮT (2026-07-24): user thấy trải nghiệm không ổn.
     // Giờ /go + /giveaway CHỈ chạy Adsterra banner (khối UiAdsterraBanner trong
@@ -151,5 +198,10 @@ useHead(() => ({
   </ClientOnly>
   <ClientOnly>
     <UiPrivacyNotice />
+  </ClientOnly>
+
+  <!-- Adskeeper Mobile Web Widget (Sticky Toaster) -->
+  <ClientOnly>
+    <div v-if="isAdskeeperAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
   </ClientOnly>
 </template>

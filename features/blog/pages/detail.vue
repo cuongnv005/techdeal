@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { useRoute, useAsyncData, navigateTo } from '#app'
 import {
@@ -20,6 +20,7 @@ import {
 
 import { blogRepository, type ApiComment } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import AdskeeperWidget from '../components/AdskeeperWidget.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import { parseBBCode } from '../utils/bbcode'
@@ -59,7 +60,7 @@ const slugText = computed<string>(() => {
 })
 
 // Fetch post by slug using useAsyncData
-const { data: postDetail, error } = await useAsyncData(`post-${slugText.value}`, async () => {
+const { data: postDetail } = await useAsyncData(`post-${slugText.value}`, async () => {
   const detail = await blogRepository.getPostBySlug(slugText.value)
   if (detail && detail.post) {
     let finalRelated: BlogPost[] = []
@@ -401,10 +402,6 @@ useHead(() => ({
 //     document.head.appendChild(script)
 //   }
 // })
-
-const handleSubscribe = () => {
-  alert('Cảm ơn bạn đã đăng ký!')
-}
 </script>
 
 <template>
@@ -556,6 +553,12 @@ const handleSubscribe = () => {
           </div>
           <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
+          <!-- Adskeeper Widget Dưới Bài Viết -->
+          <AdskeeperWidget
+            widget-id="2060410"
+            script-url="https://jsc.adskeeper.com/site/1106120.js"
+          />
+
           <!-- Comments Section -->
           <div class="space-y-6 pt-6">
             <h3
@@ -658,13 +661,11 @@ const handleSubscribe = () => {
 
         <!-- Right Column: Sidebar (4 cols) -->
         <aside class="lg:col-span-4 space-y-8">
-          <!-- Sidebar Ad Banner -->
-          <AdBanner
-            width="300px"
-            height="250px"
-            :is-google-ad="true"
-            slot-id="sidebar-ad"
-            ad-format="rectangle"
+          <!-- Sidebar Ad Banner (Desktop Only) -->
+          <AdskeeperWidget
+            widget-id="2060423"
+            script-url="https://jsc.adskeeper.com/site/1106120.js"
+            class="hidden lg:block"
           />
 
           <!-- Popular news widget -->
