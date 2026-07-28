@@ -77,6 +77,18 @@ const showAdStep = async () => {
       const w = window as any
       w._mgq = w._mgq || []
       w._mgq.push(['_mgc.load'])
+
+      // Buộc nạp lại file script Adskeeper cùng cache buster để quét DOM và hiển thị quảng cáo ngay khi phần tử vừa được chèn
+      const scriptId = 'adskeeper-interstitial-script'
+      const oldScript = document.getElementById(scriptId)
+      if (oldScript) {
+        oldScript.remove()
+      }
+      const script = document.createElement('script')
+      script.id = scriptId
+      script.src = 'https://jsc.adskeeper.com/site/1106120.js?t=' + Date.now()
+      script.async = true
+      document.body.appendChild(script)
     } catch (e) {
       console.warn('Adskeeper load trigger error:', e)
     }
@@ -314,9 +326,7 @@ onMounted(() => {
 
     <!-- Adskeeper Interstitial (Xen kẽ) Widget — chỉ mount khi user bấm "Tới trang đích",
          KHÔNG mount sẵn lúc vào trang go. -->
-    <ClientOnly>
-      <div v-if="showInterstitialAd" data-type="_mgwidget" data-widget-id="2060574"></div>
-    </ClientOnly>
+    <div v-if="showInterstitialAd" data-type="_mgwidget" data-widget-id="2060574"></div>
 
     <Footer />
   </div>
