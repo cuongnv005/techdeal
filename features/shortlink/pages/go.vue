@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { ShieldAlert, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-vue-next'
@@ -69,6 +69,18 @@ const showAdStep = async () => {
   if (adTriggered.value || !shortlink.value?.target_url) return
   adTriggered.value = true
   showInterstitialAd.value = true
+
+  await nextTick()
+
+  if (process.client) {
+    try {
+      const w = window as any
+      w._mgq = w._mgq || []
+      w._mgq.push(['_mgc.load'])
+    } catch (e) {
+      console.warn('Adskeeper load trigger error:', e)
+    }
+  }
 
   // Record click to API
   const referrer = typeof document !== 'undefined' ? document.referrer : ''
