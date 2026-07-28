@@ -125,7 +125,8 @@ const ADS_BLOCKED_PREFIXES = [
   '/privacy',
   '/terms',
   '/search',
-  '/user'
+  '/user',
+  '/go'
 ]
 
 const isAdskeeperAllowed = computed(() => {
