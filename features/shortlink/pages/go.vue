@@ -297,12 +297,11 @@ onMounted(() => {
             </Transition>
           </div>
 
-          <!-- Adskeeper/MGID Interstitial (Xen kẽ) Widget — chỉ mount khi user bấm "Tới trang đích",
-               KHÔNG mount sẵn lúc vào trang go. Widget này do MGID tự render thành full-page overlay. -->
+          <!-- Adskeeper Interstitial Widget — chỉ mount khi user bấm "Tới trang đích".
+               Teleport thẳng vào body để Adskeeper nhận đủ events (pointer-events, resize...).
+               Adskeeper tự render full-page overlay (z-index 2147483646) — không cần wrapper bọc. -->
           <Teleport to="body">
-            <div v-if="showInterstitialAd" class="mgid-interstitial-host">
-              <div data-type="_mgwidget" data-widget-id="2060574"></div>
-            </div>
+            <div v-if="showInterstitialAd" data-type="_mgwidget" data-widget-id="2060574"></div>
           </Teleport>
 
           <!-- Bottom Advice Tip Box -->
@@ -348,17 +347,5 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-</style>
-
-<style>
-/* Host container cho MGID interstitial — đặt trong body qua Teleport.
-   MGID tự inject overlay/iframe vào đây, không cần thêm style phức tạp.
-   z-index cao để nằm trên tất cả nội dung trang. */
-.mgid-interstitial-host {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  pointer-events: none; /* MGID tự quản lý pointer-events trên phần tử nó tạo */
 }
 </style>
