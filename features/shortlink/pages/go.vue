@@ -71,15 +71,17 @@ const showAdStep = async () => {
   showInterstitialAd.value = true
 
   await nextTick()
+  // Trì hoãn 150ms để đảm bảo trình duyệt đã hoàn tất vẽ (reflow/repaint) phần tử DOM mới
+  await new Promise((resolve) => setTimeout(resolve, 150))
 
   if (process.client) {
     try {
-      // 1. Thêm lệnh load vào queue của Adskeeper
+      // Khởi tạo queue của Adskeeper và push lệnh load
       const w = window as any
       w._mgq = w._mgq || []
       w._mgq.push(['_mgc.load'])
 
-      // 2. Nạp script Adskeeper lần đầu tiên trên trang /go sau khi phần tử DOM đã xuất hiện
+      // Nạp script Adskeeper sau khi widget div đã có trong DOM
       const scriptId = 'adskeeper-interstitial-script'
       if (!document.getElementById(scriptId)) {
         const script = document.createElement('script')
@@ -87,6 +89,9 @@ const showAdStep = async () => {
         script.src = 'https://jsc.adskeeper.com/site/1106120.js'
         script.async = true
         document.body.appendChild(script)
+      } else {
+        // Script đã tồn tại — chỉ cần push lại lệnh load để trigger widget mới
+        w._mgq.push(['_mgc.load'])
       }
     } catch (e) {
       console.warn('Adskeeper load trigger error:', e)
@@ -292,6 +297,14 @@ onMounted(() => {
             </Transition>
           </div>
 
+          <!-- Adskeeper/MGID Interstitial (Xen kẽ) Widget — chỉ mount khi user bấm "Tới trang đích",
+               KHÔNG mount sẵn lúc vào trang go. Widget này do MGID tự render thành full-page overlay. -->
+          <Teleport to="body">
+            <div v-if="showInterstitialAd" class="mgid-interstitial-host">
+              <div data-type="_mgwidget" data-widget-id="2060574"></div>
+            </div>
+          </Teleport>
+
           <!-- Bottom Advice Tip Box -->
           <div
             class="bg-gray-50 dark:bg-zinc-950 p-4 rounded-2xl border border-gray-100 dark:border-zinc-850 text-left flex items-start gap-3"
@@ -323,10 +336,6 @@ onMounted(() => {
       </div>
     </main>
 
-    <!-- Adskeeper Interstitial (Xen kẽ) Widget — chỉ mount khi user bấm "Tới trang đích",
-         KHÔNG mount sẵn lúc vào trang go. -->
-    <div v-if="showInterstitialAd" data-type="_mgwidget" data-widget-id="2060574"></div>
-
     <Footer />
   </div>
 </template>
@@ -339,5 +348,17 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+</style>
+
+<style>
+/* Host container cho MGID interstitial — đặt trong body qua Teleport.
+   MGID tự inject overlay/iframe vào đây, không cần thêm style phức tạp.
+   z-index cao để nằm trên tất cả nội dung trang. */
+.mgid-interstitial-host {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none; /* MGID tự quản lý pointer-events trên phần tử nó tạo */
 }
 </style>

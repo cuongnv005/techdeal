@@ -201,9 +201,10 @@ useHead(() => ({
   </ClientOnly>
 
   <!-- Adskeeper Mobile Web Widget (Sticky Toaster) -->
+  <!-- /go đã nằm trong ADS_BLOCKED_PREFIXES → isAdskeeperAllowed = false → không cần check thêm -->
   <ClientOnly>
     <div
-      v-if="isAdskeeperAllowed && !route.path.startsWith('/go')"
+      v-if="isAdskeeperAllowed"
       data-type="_mgwidget"
       data-widget-id="2060411"
     ></div>
