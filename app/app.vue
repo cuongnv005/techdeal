@@ -125,8 +125,9 @@ const ADS_BLOCKED_PREFIXES = [
   '/privacy',
   '/terms',
   '/search',
-  '/user',
-  '/go'
+  '/user'
+  // /go KHÔNG block — script cần load ở đây để passage widget 2060574
+  // có đủ session context từ các trang trước và tự fire khi user vào /go.
 ]
 
 const isAdskeeperAllowed = computed(() => {
