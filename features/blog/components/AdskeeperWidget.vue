@@ -16,7 +16,11 @@ onMounted(() => {
   if (process.client) {
     // 1. Inject head script if not already present
     const scriptId = 'adskeeper-js-sdk'
-    if (!document.getElementById(scriptId)) {
+    const isScriptLoaded =
+      document.getElementById(scriptId) ||
+      document.querySelector(`script[src="${props.scriptUrl}"]`) ||
+      document.querySelector('script[src*="adskeeper.com"]')
+    if (!isScriptLoaded) {
       const script = document.createElement('script')
       script.id = scriptId
       script.src = props.scriptUrl

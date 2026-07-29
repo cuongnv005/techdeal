@@ -428,10 +428,18 @@ const parsedContentHtml = computed(() => {
             </div>
 
             <!-- Post Content Body -->
-            <div
-              class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
-              v-html="parsedContentHtml"
-            ></div>
+            <ClientOnly>
+              <div
+                class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
+                v-html="parsedContentHtml"
+              ></div>
+              <template #fallback>
+                <div
+                  class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
+                  v-html="parseBBCode(post.value.content)"
+                ></div>
+              </template>
+            </ClientOnly>
 
             <!-- Post Tags -->
             <div v-if="tags.length > 0" class="flex flex-wrap gap-1.5 pt-4">
