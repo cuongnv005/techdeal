@@ -168,6 +168,7 @@ useHead(() => ({
     ...(isAdskeeperAllowed.value
       ? [
           {
+            id: 'adskeeper-js-sdk',
             src: 'https://jsc.adskeeper.com/site/1106120.js',
             async: true
           }
