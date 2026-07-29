@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 
 import { useRoute, useAsyncData, navigateTo } from '#app'
 import {
@@ -190,6 +190,17 @@ watch(
   async (newId) => {
     if (newId) {
       comments.value = await blogRepository.getComments(newId)
+      if (process.client) {
+        nextTick(() => {
+          try {
+            const w = window as any
+            w._mgq = w._mgq || []
+            w._mgq.push(['_mgc.load'])
+          } catch (e) {
+            console.warn('Adskeeper load trigger error:', e)
+          }
+        })
+      }
     }
   },
   { immediate: true }
