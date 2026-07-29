@@ -156,3 +156,29 @@ export const parseBBCode = (bbcode: string): string => {
 
   return html
 }
+
+/**
+ * Injects an ad widget HTML block in the middle of the parsed content HTML.
+ * @param html The parsed content HTML
+ * @param adHtml The ad widget HTML block
+ * @returns The HTML content with the ad widget injected
+ */
+export const injectMiddleAd = (html: string, adHtml: string): string => {
+  if (!html) return ''
+
+  // Split by double line breaks (representing paragraph breaks)
+  const parts = html.split(/((?:<br\s*\/?>\s*){2,})/gi)
+  const pCount = Math.ceil(parts.length / 2)
+
+  if (pCount >= 3) {
+    const pIndex = Math.floor((pCount - 1) / 2)
+    const targetSepIndex = 2 * pIndex + 1
+    if (targetSepIndex > 0 && targetSepIndex < parts.length) {
+      parts[targetSepIndex] = adHtml + parts[targetSepIndex]
+      return parts.join('')
+    }
+  }
+
+  // Fallback: append to the end of the text if it is too short
+  return html + adHtml
+}

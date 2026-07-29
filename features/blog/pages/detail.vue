@@ -23,7 +23,7 @@ import AdBanner from '../components/AdBanner.vue'
 import AdskeeperWidget from '../components/AdskeeperWidget.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
-import { parseBBCode } from '../utils/bbcode'
+import { parseBBCode, injectMiddleAd } from '../utils/bbcode'
 
 import type { BlogPost } from '../types/post.type'
 
@@ -199,7 +199,10 @@ watch(
 
 const parsedContentHtml = computed(() => {
   if (post.value.content) {
-    return parseBBCode(post.value.content)
+    const rawHtml = parseBBCode(post.value.content)
+    const adHtml =
+      '<div class="adskeeper-widget-wrapper w-full my-6 flex justify-center overflow-hidden"><div data-type="_mgwidget" data-widget-id="2061790"></div></div>'
+    return injectMiddleAd(rawHtml, adHtml)
   }
   return ''
 })
