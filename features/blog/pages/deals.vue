@@ -436,7 +436,7 @@ const parsedContentHtml = computed(() => {
               <template #fallback>
                 <div
                   class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
-                  v-html="parseBBCode(post.value.content)"
+                  v-html="parseBBCode(post?.content)"
                 ></div>
               </template>
             </ClientOnly>
