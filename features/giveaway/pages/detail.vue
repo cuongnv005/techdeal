@@ -343,14 +343,14 @@ const formatPrice = (price: number) => {
     ></div>
 
     <!-- Banner Adsterra 160x600 — 2 bên, chỉ desktop (xl trở lên). -->
-    <ClientOnly>
+    <!-- <ClientOnly>
       <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
       <div v-if="isDesktopAd" class="fixed right-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
-    </ClientOnly>
+    </ClientOnly> -->
 
     <!-- Minimal Header (Zee Cast Style) -->
     <header
@@ -458,7 +458,7 @@ const formatPrice = (price: number) => {
           </section>
 
           <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
-          <ClientOnly>
+          <!-- <ClientOnly>
             <div v-if="isDesktopAd" class="flex justify-center max-w-xl mx-auto px-4">
               <UiAdsterraBanner
                 adKey="d27b0d6bc702034be86f143c0b574ec9"
@@ -473,7 +473,7 @@ const formatPrice = (price: number) => {
                 :height="250"
               />
             </div>
-          </ClientOnly>
+          </ClientOnly> -->
 
           <!-- PRO CARD / GIVEAWAY SPECIFICATIONS (Zee Cast Style) -->
           <section class="max-w-xl mx-auto">
@@ -626,7 +626,7 @@ const formatPrice = (price: number) => {
           </Teleport>
 
           <!-- Banner Adsterra 300x250 — chỉ mobile (dưới xl); desktop đã có đủ 2 bên + giữa ở trên, tránh dày đặc -->
-          <ClientOnly>
+          <!-- <ClientOnly>
             <div v-if="isMobileAd" class="flex justify-center max-w-md mx-auto px-4">
               <UiAdsterraBanner
                 adKey="de4c283a402db789fc1517d138bbe90b"
@@ -634,7 +634,7 @@ const formatPrice = (price: number) => {
                 :height="250"
               />
             </div>
-          </ClientOnly>
+          </ClientOnly> -->
 
           <!-- CTA Claim block -->
           <div class="max-w-md mx-auto pt-4 space-y-4">
