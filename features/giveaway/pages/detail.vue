@@ -36,7 +36,13 @@ const authRepo = new AuthRepository()
 const config = useRuntimeConfig()
 
 useHead({
-  meta: [{ name: 'robots', content: 'noindex, nofollow' }]
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+  script: [
+    {
+      async: true,
+      src: 'https://ss.mrmnd.com/banner.js'
+    }
+  ]
 })
 
 const giveawayId = computed(() => (route.query.id as string) || '')
@@ -352,6 +358,16 @@ const formatPrice = (price: number) => {
       </div>
     </ClientOnly> -->
 
+    <!-- Banner Mondiad 120x600 — 2 bên, chỉ desktop (xl trở lên). -->
+    <ClientOnly>
+      <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
+        <div data-mndbanid="698e597b-c463-4f8d-9683-0a8722a82790"></div>
+      </div>
+      <div v-if="isDesktopAd" class="fixed right-4 top-[150px] z-20">
+        <div data-mndbanid="3a14d44c-c271-4d67-9274-d703c06d1b28"></div>
+      </div>
+    </ClientOnly>
+
     <!-- Minimal Header (Zee Cast Style) -->
     <header
       class="w-full py-6 px-8 relative z-25 flex items-center justify-between border-b border-black/5 bg-white/70 backdrop-blur-md"
@@ -474,6 +490,11 @@ const formatPrice = (price: number) => {
               />
             </div>
           </ClientOnly> -->
+
+          <!-- Banner Mondiad giữa 300x250 -->
+          <div class="flex justify-center max-w-xl mx-auto px-4 mt-8">
+            <div data-mndbanid="6fb8e17f-b497-490b-8ce7-b12c570f3c78"></div>
+          </div>
 
           <!-- PRO CARD / GIVEAWAY SPECIFICATIONS (Zee Cast Style) -->
           <section class="max-w-xl mx-auto">
@@ -635,6 +656,11 @@ const formatPrice = (price: number) => {
               />
             </div>
           </ClientOnly> -->
+
+          <!-- Banner Mondiad bottom 300x250 -->
+          <div class="flex justify-center max-w-md mx-auto px-4 mt-8">
+            <div data-mndbanid="6fb8e17f-b497-490b-8ce7-b12c570f3c78"></div>
+          </div>
 
           <!-- CTA Claim block -->
           <div class="max-w-md mx-auto pt-4 space-y-4">
