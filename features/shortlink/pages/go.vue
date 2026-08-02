@@ -14,7 +14,13 @@ const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')
 
 useHead({
-  meta: [{ name: 'robots', content: 'noindex, nofollow' }]
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+  script: [
+    {
+      async: true,
+      src: 'https://ss.mrmnd.com/banner.js'
+    }
+  ]
 })
 
 const { shortlink, isLoading, error, recordClick } = usePublicShortlink(hash.value)
@@ -94,6 +100,16 @@ onMounted(() => {
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
     </ClientOnly> -->
+
+    <!-- Banner Mondiad 120x600 — 2 bên, chỉ desktop (xl trở lên). -->
+    <ClientOnly>
+      <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
+        <div data-mndbanid="698e597b-c463-4f8d-9683-0a8722a82790"></div>
+      </div>
+      <div v-if="isDesktopAd" class="fixed right-4 top-[150px] z-20">
+        <div data-mndbanid="3a14d44c-c271-4d67-9274-d703c06d1b28"></div>
+      </div>
+    </ClientOnly>
 
     <main
       class="flex-grow py-20 px-4 flex flex-col items-center justify-center relative overflow-hidden"
@@ -257,6 +273,11 @@ onMounted(() => {
             <UiAdsterraBanner adKey="de4c283a402db789fc1517d138bbe90b" :width="300" :height="250" />
           </div>
         </ClientOnly> -->
+
+        <!-- Banner Mondiad 300x250 -->
+        <div class="mt-8 flex justify-center w-full relative z-10">
+          <div data-mndbanid="6fb8e17f-b497-490b-8ce7-b12c570f3c78"></div>
+        </div>
       </div>
     </main>
 
