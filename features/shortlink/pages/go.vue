@@ -8,7 +8,7 @@ import Footer from '../../blog/components/Footer.vue'
 import Header from '../../blog/components/Header.vue'
 import { usePublicShortlink } from '../composables/use-shortlink'
 
-// import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
+import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 
 const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')
@@ -19,8 +19,8 @@ useHead({
 
 const { shortlink, isLoading, error, recordClick } = usePublicShortlink(hash.value)
 
-// // Banner chỉ mount đúng breakpoint của nó — xem lý do trong use-ad-breakpoint.
-// const { isDesktopAd, isMobileAd } = useAdBreakpoint()
+// Banner chỉ mount đúng breakpoint của nó — xem lý do trong use-ad-breakpoint.
+const { isDesktopAd, isMobileAd } = useAdBreakpoint()
 
 useSeoMeta({
   title: () => shortlink.value?.name || 'Đang chuyển hướng'
@@ -86,7 +86,6 @@ onMounted(() => {
     <Header />
 
     <!-- Banner Adsterra 160x600 — 2 bên, chỉ desktop (xl trở lên). -->
-    <!--
     <ClientOnly>
       <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
@@ -95,7 +94,6 @@ onMounted(() => {
         <UiAdsterraBanner adKey="e57cbadd5a5a30233c4d746856005893" :width="160" :height="600" />
       </div>
     </ClientOnly>
-    -->
 
     <main
       class="flex-grow py-20 px-4 flex flex-col items-center justify-center relative overflow-hidden"
@@ -251,7 +249,6 @@ onMounted(() => {
         </div>
 
         <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
-        <!--
         <ClientOnly>
           <div v-if="isDesktopAd" class="mt-8 flex justify-center w-full relative z-10">
             <UiAdsterraBanner adKey="d27b0d6bc702034be86f143c0b574ec9" :width="728" :height="90" />
@@ -260,7 +257,6 @@ onMounted(() => {
             <UiAdsterraBanner adKey="de4c283a402db789fc1517d138bbe90b" :width="300" :height="250" />
           </div>
         </ClientOnly>
-        -->
       </div>
     </main>
 
