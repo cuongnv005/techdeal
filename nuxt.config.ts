@@ -51,6 +51,11 @@ export default defineNuxtConfig({
           name: 'clckd',
           content: '924856bf1987a333eb9dceb83ef86ce7'
         },
+        // Xác nhận quyền sở hữu domain cho Mondiad — chỉ là thẻ ownership, không phải quảng cáo.
+        {
+          name: 'mnd-ver',
+          content: 'xr92whnj3bkwyju8uezdeg'
+        },
         {
           name: 'description',
           content: process.env['APP_DESCRIPTION'] || process.env['APP_NAME'] || ''
