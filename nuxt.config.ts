@@ -200,10 +200,18 @@ export default defineNuxtConfig({
     '/search': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
-    // Deals pages được biên tập thủ công và cần hiển thị nội dung mới ngay sau khi sửa.
-    // Không dùng swr (cache) để tránh phục vụ bản HTML cũ.
-    '/deals/**': { ssr: true },
+    // Deals pages được biên tập thủ công, cần thấy nội dung mới sớm.
+    // swr 30s: vẫn coi như gần real-time (lệch tối đa 30s) nhưng gộp các
+    // request đến cùng lúc (vd sau khi share link) thành 1 lần render thay vì
+    // render lại mỗi request — giảm CPU active trên Fluid Compute.
+    '/deals/**': { swr: 30 },
     '/admin/**': { ssr: false },
+    // Trang tĩnh tuyệt đối, không có dữ liệu theo user/thời gian thực —
+    // prerender ở build time, phục vụ như file tĩnh, không tốn CPU function.
+    '/about': { prerender: true },
+    '/privacy': { prerender: true },
+    '/terms': { prerender: true },
+    '/contact': { prerender: true },
     '/en': { redirect: '/' },
     '/en/**': { redirect: '/' }
   },
