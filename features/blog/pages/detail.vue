@@ -538,13 +538,6 @@ useHead(() => ({
 
         <!-- Right Column: Sidebar (4 cols) -->
         <aside class="lg:col-span-4 space-y-8">
-          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
-          <ClientOnly>
-            <div class="hidden lg:block">
-              <div data-type="_mgwidget" data-widget-id="2064159"></div>
-            </div>
-          </ClientOnly>
-
           <!-- Popular news widget -->
           <div
             class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
@@ -635,8 +628,6 @@ useHead(() => ({
             </div>
           </div>
 
-          <!-- Google Subscribe with Google Widget -->
-
           <div
             class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs bg-linear-to-tr from-sky-50/50 to-indigo-50/30 dark:from-zinc-900 dark:to-zinc-950"
           >
@@ -656,6 +647,13 @@ useHead(() => ({
               ></div>
             </div>
           </div>
+
+          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
+          <ClientOnly>
+            <div class="hidden lg:block">
+              <div data-type="_mgwidget" data-widget-id="2064159"></div>
+            </div>
+          </ClientOnly>
         </aside>
       </div>
 

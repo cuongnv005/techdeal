@@ -530,13 +530,6 @@ const parsedContentHtml = computed(() => {
             />
           </div>
 
-          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
-          <ClientOnly>
-            <div class="order-1 lg:order-1 hidden lg:block my-4">
-              <div data-type="_mgwidget" data-widget-id="2064159"></div>
-            </div>
-          </ClientOnly>
-
           <!-- Popular news widget -->
           <div
             class="order-1 lg:order-2 bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs"
@@ -648,6 +641,13 @@ const parsedContentHtml = computed(() => {
               ></div>
             </div>
           </div>
+
+          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
+          <ClientOnly>
+            <div class="order-5 lg:order-5 hidden lg:block my-4">
+              <div data-type="_mgwidget" data-widget-id="2064159"></div>
+            </div>
+          </ClientOnly>
         </aside>
       </div>
     </div>
