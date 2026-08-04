@@ -10,7 +10,8 @@ import {
   ArrowLeft,
   LayoutDashboard,
   Gift,
-  Link2
+  Link2,
+  Smartphone
 } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
@@ -23,6 +24,7 @@ import { useAdminStats } from '../composables/use-admin'
 
 import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
 import ShortlinkManagement from '@features/shortlink/components/ShortlinkManagement.vue'
+import ThreadManagement from '@features/thread/components/ThreadManagement.vue'
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
@@ -32,7 +34,9 @@ const hasAccess = computed(() => {
   return userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')
 })
 
-const activeTab = ref<'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink'>('stats')
+const activeTab = ref<
+  'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink' | 'threads'
+>('stats')
 
 // Call composables
 const { stats, isLoadingStats } = await useAdminStats()
@@ -170,6 +174,19 @@ const { stats, isLoadingStats } = await useAdminStats()
                 <Link2 class="w-4 h-4" />
                 Quản lý Shortlink
               </button>
+
+              <button
+                @click="activeTab = 'threads'"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                :class="
+                  activeTab === 'threads'
+                    ? 'bg-[#3498db]/15 text-[#3498db] dark:bg-[#e74c3c]/15 dark:text-[#e74c3c]'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-950'
+                "
+              >
+                <Smartphone class="w-4 h-4" />
+                Quản lý Threads
+              </button>
             </nav>
           </div>
         </aside>
@@ -207,6 +224,11 @@ const { stats, isLoadingStats } = await useAdminStats()
           <!-- Shortlink Tab -->
           <div v-else-if="activeTab === 'shortlink'">
             <ShortlinkManagement />
+          </div>
+
+          <!-- Threads Tab -->
+          <div v-else-if="activeTab === 'threads'">
+            <ThreadManagement />
           </div>
         </main>
       </div>
