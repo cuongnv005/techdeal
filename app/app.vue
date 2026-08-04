@@ -158,7 +158,8 @@ if (process.client) {
     })
   }
 
-  // Theme sync helper for MGID (pierces Shadow DOM)
+  // Theme sync helper for MGID (pierces Shadow DOM) - COMMENTED OUT TEMPORARILY
+  /*
   const syncMgidTheme = () => {
     const isDark = document.documentElement.classList.contains('dark')
     const widgets = document.querySelectorAll('div[data-type="_mgwidget"]')
@@ -189,12 +190,14 @@ if (process.client) {
       }
     })
   }
+  */
 
   onMounted(() => {
     triggerAdskeeper()
-    syncMgidTheme()
+    // syncMgidTheme()
 
-    // Observe theme toggling and new shadow roots rendering
+    // Observe theme toggling and new shadow roots rendering - COMMENTED OUT TEMPORARILY
+    /*
     const observer = new MutationObserver((mutations) => {
       let shouldSync = false
       for (const mutation of mutations) {
@@ -227,12 +230,13 @@ if (process.client) {
       childList: true,
       subtree: true
     })
+    */
   })
 
   watch(() => route.path, () => {
     triggerAdskeeper()
-    setTimeout(syncMgidTheme, 250)
-    setTimeout(syncMgidTheme, 1000)
+    // setTimeout(syncMgidTheme, 250)
+    // setTimeout(syncMgidTheme, 1000)
   })
 }
 
