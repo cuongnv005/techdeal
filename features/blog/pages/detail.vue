@@ -525,15 +525,15 @@ useHead(() => ({
           </div>
           <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
+          <!-- Comments Section -->
+          <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
+
           <!-- MGID Smart Ad Widget Dưới Bài Viết -->
           <ClientOnly>
             <div class="my-6">
               <div data-type="_mgwidget" data-widget-id="2064112"></div>
             </div>
           </ClientOnly>
-
-          <!-- Comments Section -->
-          <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
         </article>
 
         <!-- Right Column: Sidebar (4 cols) -->
