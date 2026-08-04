@@ -158,8 +158,86 @@ if (process.client) {
     })
   }
 
-  onMounted(triggerAdskeeper)
-  watch(() => route.path, triggerAdskeeper)
+  // Theme sync helper for MGID (pierces Shadow DOM) - COMMENTED OUT TEMPORARILY
+  /*
+  const syncMgidTheme = () => {
+    const isDark = document.documentElement.classList.contains('dark')
+    const widgets = document.querySelectorAll('div[data-type="_mgwidget"]')
+    widgets.forEach((widget) => {
+      // 1. Sync class on the host element
+      widget.classList.toggle('dark', isDark)
+
+      // 2. Inject styles inside shadow root if present
+      const shadow = widget.shadowRoot
+      if (shadow && !shadow.getElementById('mgid-dark-mode-override')) {
+        const style = document.createElement('style')
+        style.id = 'mgid-dark-mode-override'
+        style.innerHTML = `
+          :host(.dark) .mctitle a,
+          :host(.dark) .mctitle,
+          :host(.dark) .mghead {
+            color: #f3f4f6 !important;
+          }
+          :host(.dark) .mcdomain a,
+          :host(.dark) .mcdesc a {
+            color: #a1a1aa !important;
+          }
+          :host(.dark) .mgbox {
+            background-color: transparent !important;
+          }
+        `
+        shadow.appendChild(style)
+      }
+    })
+  }
+  */
+
+  onMounted(() => {
+    triggerAdskeeper()
+    // syncMgidTheme()
+
+    // Observe theme toggling and new shadow roots rendering - COMMENTED OUT TEMPORARILY
+    /*
+    const observer = new MutationObserver((mutations) => {
+      let shouldSync = false
+      for (const mutation of mutations) {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'class' &&
+          mutation.target === document.documentElement
+        ) {
+          shouldSync = true
+          break
+        }
+        if (mutation.type === 'childList') {
+          shouldSync = true
+          break
+        }
+      }
+      if (shouldSync) {
+        setTimeout(syncMgidTheme, 50)
+        setTimeout(syncMgidTheme, 250)
+        setTimeout(syncMgidTheme, 750)
+        setTimeout(syncMgidTheme, 2000)
+      }
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+    */
+  })
+
+  watch(() => route.path, () => {
+    triggerAdskeeper()
+    // setTimeout(syncMgidTheme, 250)
+    // setTimeout(syncMgidTheme, 1000)
+  })
 }
 
 useHead(() => ({
