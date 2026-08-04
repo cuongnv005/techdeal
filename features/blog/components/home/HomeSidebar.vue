@@ -200,7 +200,11 @@ const getCategoryLink = (id: string) => {
       </ul>
     </div>
 
-    <!-- Adskeeper Home Sidebar Widget -->
-    <AdskeeperWidget widget-id="2060620" script-url="https://jsc.adskeeper.com/site/1106120.js" />
+    <!-- MGID Home Sidebar Widget -->
+    <ClientOnly>
+      <div class="my-4">
+        <div data-type="_mgwidget" data-widget-id="2064159"></div>
+      </div>
+    </ClientOnly>
   </aside>
 </template>

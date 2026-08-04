@@ -243,9 +243,9 @@ onMounted(() => {
                Script (từ app.vue) đã được load kèm theo trang /go,
                Adskeeper tự quyết định fire passage dựa trên session context.
                Teleport vào body để widget nhận đủ events. -->
-          <Teleport to="body">
+          <!-- <Teleport to="body">
             <div data-type="_mgwidget" data-widget-id="2060574"></div>
-          </Teleport>
+          </Teleport> -->
 
           <!-- Bottom Advice Tip Box -->
           <div

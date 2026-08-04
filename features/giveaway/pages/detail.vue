@@ -775,9 +775,9 @@ const formatPrice = (price: number) => {
     <!-- Adskeeper Passage Widget 2060574 — giống trang /go.
          Script load từ app.vue (không bị block), Adskeeper tự quyết fire
          passage dựa trên session context của user. -->
-    <Teleport to="body">
+    <!-- <Teleport to="body">
       <div data-type="_mgwidget" data-widget-id="2060574"></div>
-    </Teleport>
+    </Teleport> -->
 
     <!-- Modals (Zee Cast inspired premium design) -->
 
