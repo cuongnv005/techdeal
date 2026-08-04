@@ -13,14 +13,14 @@ import {
   Twitter,
   Link,
   Check,
-  Send,
   Sparkles,
   Pencil
 } from 'lucide-vue-next'
 
-import { blogRepository, type ApiComment } from '../api/blog'
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
 import AdskeeperWidget from '../components/AdskeeperWidget.vue'
+import CommentList from '../components/CommentList.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import { parseBBCode, injectMiddleAd } from '../utils/bbcode'
@@ -181,26 +181,20 @@ const relatedPosts = computed<BlogPost[]>(() => {
   return postDetail.value?.relatedPosts || []
 })
 
-// Local comments state
-const comments = ref<ApiComment[]>([])
-
-// Populate local comments from comments API when post ID is available
+// Trigger tải lại Adskeeper widget khi bài viết đã sẵn sàng
 watch(
   () => post.value.id,
-  async (newId) => {
-    if (newId) {
-      comments.value = await blogRepository.getComments(newId)
-      if (process.client) {
-        nextTick(() => {
-          try {
-            const w = window as any
-            w._mgq = w._mgq || []
-            w._mgq.push(['_mgc.load'])
-          } catch (e) {
-            console.warn('Adskeeper load trigger error:', e)
-          }
-        })
-      }
+  (newId) => {
+    if (newId && process.client) {
+      nextTick(() => {
+        try {
+          const w = window as any
+          w._mgq = w._mgq || []
+          w._mgq.push(['_mgc.load'])
+        } catch (e) {
+          console.warn('Adskeeper load trigger error:', e)
+        }
+      })
     }
   },
   { immediate: true }
@@ -218,65 +212,14 @@ const parsedContentHtml = computed(() => {
   return ''
 })
 
-// Mapped comments for UI list
-const mappedComments = computed(() => {
-  return comments.value.map((c) => ({
-    id: c.id,
-    authorId: c.author_id,
-    author: c.author_name || 'Thành viên',
-    avatar:
-      c.author_avatar ||
-      c.avatar_url ||
-      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
-    date: new Date(c.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
-    content: c.content
-  }))
-})
-
 // Popular posts for sidebar
 const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
   blogRepository.getPopularPosts(5)
 )
 const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
-// Comments State
-const newCommentContent = ref('')
-const isCommentSubmitting = ref(false)
-
-const handleAddComment = async () => {
-  if (!userStore.isAuthenticated) {
-    alert('Vui lòng đăng nhập trước khi bình luận!')
-    return
-  }
-
-  if (!newCommentContent.value.trim()) {
-    alert('Vui lòng nhập nội dung bình luận!')
-    return
-  }
-
-  isCommentSubmitting.value = true
-
-  try {
-    const newComment = await blogRepository.submitComment(post.value.id, newCommentContent.value)
-    if (newComment) {
-      comments.value.unshift(newComment)
-      newCommentContent.value = ''
-    } else {
-      alert('Không thể gửi bình luận. Vui lòng kiểm tra lại trạng thái đăng nhập.')
-    }
-  } catch (e) {
-    console.error(e)
-    alert('Có lỗi xảy ra khi gửi bình luận!')
-  } finally {
-    isCommentSubmitting.value = false
-  }
-}
-
-// Local Likes Tracker
-const commentLikes = ref<Record<string | number, number>>({})
-const handleLikeComment = (id: string | number) => {
-  commentLikes.value[id] = (commentLikes.value[id] || 0) + 1
-}
+// Số lượng bình luận gốc - do CommentList tự tải và báo lên qua sự kiện @count
+const commentCount = ref(0)
 
 // Share status
 const isCopied = ref(false)
@@ -495,7 +438,7 @@ useHead(() => ({
               </span>
               <span class="flex items-center gap-1.5">
                 <MessageSquare class="w-4 h-4 text-zinc-450" />
-                {{ comments.length }} bình luận
+                {{ commentCount }} bình luận
               </span>
             </div>
           </div>
@@ -582,103 +525,7 @@ useHead(() => ({
           />
 
           <!-- Comments Section -->
-          <div class="space-y-6 pt-6">
-            <h3
-              class="text-lg font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-2"
-            >
-              <MessageSquare class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" />
-              Bình luận ({{ mappedComments.length }})
-            </h3>
-
-            <!-- Comment Form (Shown only if authenticated) -->
-            <form
-              v-if="userStore.isAuthenticated"
-              @submit.prevent="handleAddComment"
-              class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4"
-            >
-              <span
-                class="text-xs font-bold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5"
-              >
-                <Sparkles class="w-4 h-4 text-[#f1c40f]" />
-                Gửi ý kiến của bạn (Bình luận dưới tên:
-                <strong class="text-[#3498db]">{{ userStore.username }}</strong
-                >)
-              </span>
-              <textarea
-                v-model="newCommentContent"
-                placeholder="Nhập nội dung bình luận ở đây..."
-                rows="4"
-                class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] resize-none"
-                required
-              ></textarea>
-              <button
-                type="submit"
-                :disabled="isCommentSubmitting"
-                class="px-5 py-2.5 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <span>{{ isCommentSubmitting ? 'Đang gửi...' : 'Gửi bình luận' }}</span>
-                <Send class="w-4.5 h-4.5" />
-              </button>
-            </form>
-
-            <!-- Login Prompt (Shown if not authenticated) -->
-            <div
-              v-else
-              class="bg-blue-50 dark:bg-zinc-900/60 p-6 rounded-2xl border border-dashed border-blue-200 dark:border-zinc-800 text-center space-y-3"
-            >
-              <p class="text-xs text-zinc-600 dark:text-zinc-400">
-                Bạn cần đăng nhập để gửi ý kiến phản hồi về bài viết này.
-              </p>
-              <NuxtLink
-                to="/login"
-                class="inline-block px-5 py-2.5 bg-[#3498db] hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
-              >
-                Đăng nhập ngay
-              </NuxtLink>
-            </div>
-
-            <!-- Comments List -->
-            <div class="space-y-4">
-              <div
-                v-for="c in mappedComments"
-                :key="c.id"
-                class="flex gap-4 p-5 rounded-2xl bg-white dark:bg-zinc-900/50 border border-gray-150 dark:border-zinc-900 transition-all duration-300"
-              >
-                <NuxtLink :to="`/user/${c.authorId}`" class="shrink-0 block">
-                  <img
-                    :src="c.avatar"
-                    :alt="c.author"
-                    class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-zinc-850 hover:opacity-80 transition-opacity"
-                  />
-                </NuxtLink>
-                <div class="flex-grow space-y-1">
-                  <div class="flex items-center justify-between">
-                    <NuxtLink
-                      :to="`/user/${c.authorId}`"
-                      class="hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors"
-                    >
-                      <h5 class="text-xs font-bold text-zinc-900 dark:text-white">
-                        {{ c.author }}
-                      </h5>
-                    </NuxtLink>
-                    <span class="text-[10px] text-zinc-400">{{ c.date }}</span>
-                  </div>
-                  <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">
-                    {{ c.content }}
-                  </p>
-
-                  <div class="pt-2 flex items-center gap-3">
-                    <button
-                      @click="handleLikeComment(c.id)"
-                      class="text-[10px] font-bold text-zinc-500 hover:text-red-500 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      👍 Thích ({{ commentLikes[c.id] || 0 }})
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
         </article>
 
         <!-- Right Column: Sidebar (4 cols) -->

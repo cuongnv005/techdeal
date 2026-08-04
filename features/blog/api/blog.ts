@@ -26,21 +26,38 @@ export interface ApiPost {
   is_hidden?: boolean
 }
 
+export interface ApiCommentReplyTo {
+  comment_id: string
+  username: string
+}
+
 export interface ApiComment {
   id: string
-  post_id?: string
   author_id?: string
   author_name: string
-  avatar_url?: string
-  author_avatar?: string
+  author_avatar?: string | null
   content: string
   created_at: string
+  parent_comment_id: string | null
+  like_count: number
+  liked_by_me: boolean
+  reply_to: ApiCommentReplyTo | null
+  // Chỉ có ở bình luận gốc (cấp 1) - tối đa 3 trả lời mới nhất, xem thêm qua getReplies()
+  replies?: {
+    items: ApiComment[]
+    total: number
+    has_more: boolean
+  }
+}
+
+export interface CommentsPage {
+  items: ApiComment[]
+  pagination: ApiPagination
 }
 
 export interface ApiPostDetail extends ApiPost {
   tags: string[]
   related_similar_posts?: ApiPost[]
-  comments?: ApiComment[]
 }
 
 interface ApiResponse<T> {
@@ -229,31 +246,72 @@ export class BlogRepository {
     }
   }
 
-  async getComments(postId: string): Promise<ApiComment[]> {
+  // Bình luận gốc (cấp 1) của bài viết, phân trang 5/lần - mỗi gốc kèm tối đa 3 trả lời mới nhất
+  async getComments(
+    postId: string,
+    params?: { page?: number; limit?: number }
+  ): Promise<CommentsPage> {
+    const emptyPage: CommentsPage = {
+      items: [],
+      pagination: { current_page: 1, per_page: 5, total_items: 0, total_pages: 0 }
+    }
     try {
-      const response = await HttpService.get<
-        unknown,
-        AxiosResponse<ApiResponse<{ items: ApiComment[]; pagination?: ApiPagination }>>
-      >(`/posts/${postId}/comments`)
-
-      if (
-        response.data &&
-        response.data.success &&
-        response.data.data &&
-        Array.isArray(response.data.data.items)
-      ) {
-        return response.data.data.items
-      }
-
-      // Fallback for old array style response
-      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<CommentsPage>>>(
+        `/posts/${postId}/comments`,
+        { page: params?.page ?? 1, limit: params?.limit ?? 5 }
+      )
+      if (response.data && response.data.success && response.data.data) {
         return response.data.data
       }
-
-      return []
+      return emptyPage
     } catch (error) {
       console.error(`Error fetching comments for post ${postId}:`, error)
-      return []
+      return emptyPage
+    }
+  }
+
+  // Toàn bộ trả lời (cấp 2) của 1 bình luận gốc - dùng khi bấm "Xem thêm trả lời"
+  async getReplies(
+    postId: string,
+    commentId: string,
+    params?: { page?: number; limit?: number }
+  ): Promise<CommentsPage> {
+    const emptyPage: CommentsPage = {
+      items: [],
+      pagination: { current_page: 1, per_page: 10, total_items: 0, total_pages: 0 }
+    }
+    try {
+      const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<CommentsPage>>>(
+        `/posts/${postId}/comments/${commentId}/replies`,
+        { page: params?.page ?? 1, limit: params?.limit ?? 10 }
+      )
+      if (response.data && response.data.success && response.data.data) {
+        return response.data.data
+      }
+      return emptyPage
+    } catch (error) {
+      console.error(`Error fetching replies for comment ${commentId}:`, error)
+      return emptyPage
+    }
+  }
+
+  // Toggle like/unlike 1 bình luận (gốc hoặc trả lời)
+  async likeComment(
+    postId: string,
+    commentId: string
+  ): Promise<{ liked: boolean; like_count: number } | null> {
+    try {
+      const response = await HttpService.post<
+        unknown,
+        AxiosResponse<ApiResponse<{ liked: boolean; like_count: number }>>
+      >(`/posts/${postId}/comments/${commentId}/like`)
+      if (response.data && response.data.success && response.data.data) {
+        return response.data.data
+      }
+      return null
+    } catch (error) {
+      console.error(`Error toggling like for comment ${commentId}:`, error)
+      return null
     }
   }
 
@@ -261,7 +319,6 @@ export class BlogRepository {
     post: BlogPost
     tags: string[]
     relatedPosts: BlogPost[]
-    comments: ApiComment[]
   } | null> {
     try {
       let querySlug = slug
@@ -286,8 +343,7 @@ export class BlogRepository {
         return {
           post: blogPost,
           tags: detail.tags || [],
-          relatedPosts: related,
-          comments: detail.comments || []
+          relatedPosts: related
         }
       }
       return null
@@ -297,25 +353,22 @@ export class BlogRepository {
     }
   }
 
-  async submitComment(postId: string, content: string): Promise<ApiComment | null> {
+  // Đăng bình luận/trả lời - trả về đúng comment server đã tạo (không tự dựng từ user store)
+  async submitComment(
+    postId: string,
+    payload: { content: string; parentCommentId?: string; replyToCommentId?: string }
+  ): Promise<ApiComment | null> {
     try {
       const response = await HttpService.post<
-        { content: string },
-        AxiosResponse<ApiResponse<{ id: string }>>
-      >(`/posts/${postId}/comments`, { content })
+        { content: string; parent_comment_id?: string; reply_to_comment_id?: string },
+        AxiosResponse<ApiResponse<ApiComment>>
+      >(`/posts/${postId}/comments`, {
+        content: payload.content,
+        parent_comment_id: payload.parentCommentId,
+        reply_to_comment_id: payload.replyToCommentId
+      })
       if (response.data && response.data.success && response.data.data) {
-        const { useUserStore } = await import('@stores/user')
-        const userStore = useUserStore()
-        return {
-          id: response.data.data.id,
-          post_id: postId,
-          author_id: userStore.id || '',
-          author_name: userStore.username || 'Thành viên',
-          author_avatar: undefined,
-          avatar_url: undefined,
-          content: content,
-          created_at: new Date().toISOString()
-        }
+        return response.data.data
       }
       return null
     } catch (error) {
@@ -441,7 +494,6 @@ export class BlogRepository {
   async getDealByPlatform(platform: string): Promise<{
     post: BlogPost
     tags: string[]
-    comments: ApiComment[]
   } | null> {
     try {
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
@@ -452,8 +504,7 @@ export class BlogRepository {
         const blogPost = mapApiPostToBlogPost(detail)
         return {
           post: blogPost,
-          tags: detail.tags || [],
-          comments: detail.comments || []
+          tags: detail.tags || []
         }
       }
       return null
