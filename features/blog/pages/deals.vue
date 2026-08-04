@@ -13,15 +13,15 @@ import {
   Twitter,
   Link,
   Check,
-  Send,
   Pencil,
   Plus,
   Smartphone,
   Sparkles
 } from 'lucide-vue-next'
 
-import { blogRepository, type ApiComment } from '../api/blog'
+import { blogRepository } from '../api/blog'
 import AdBanner from '../components/AdBanner.vue'
+import CommentList from '../components/CommentList.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import HomeSidebar from '../components/home/HomeSidebar.vue'
@@ -194,20 +194,14 @@ const isAuthorOrAdmin = computed(() => {
   )
 })
 
-// Comments state
-const comments = ref<ApiComment[]>([])
-const newCommentContent = ref('')
-const isCommentSubmitting = ref(false)
+// Số lượng bình luận gốc - do CommentList tự tải và báo lên qua sự kiện @count
+const commentCount = ref(0)
 
+// Trigger tải lại Adskeeper widget khi bài viết đã sẵn sàng
 watch(
   () => dealData.value?.post?.id,
-  async (newId) => {
-    if (newId) {
-      comments.value = await blogRepository.getComments(newId)
-    } else if (dealData.value?.comments) {
-      comments.value = dealData.value.comments
-    }
-    if (process.client) {
+  (newId) => {
+    if (newId && process.client) {
       nextTick(() => {
         try {
           const w = window as any
@@ -221,50 +215,6 @@ watch(
   },
   { immediate: true }
 )
-
-const mappedComments = computed(() => {
-  return comments.value.map((c) => ({
-    id: c.id,
-    authorId: c.author_id,
-    author: c.author_name || 'Thành viên',
-    avatar:
-      c.author_avatar ||
-      c.avatar_url ||
-      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
-    date: new Date(c.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
-    content: c.content
-  }))
-})
-
-const handleAddComment = async () => {
-  if (!userStore.isAuthenticated) {
-    alert('Vui lòng đăng nhập trước khi bình luận!')
-    return
-  }
-  if (!newCommentContent.value.trim() || !post.value?.id) {
-    alert('Vui lòng nhập nội dung bình luận!')
-    return
-  }
-
-  isCommentSubmitting.value = true
-  try {
-    const newComment = await blogRepository.submitComment(
-      post.value.id,
-      newCommentContent.value.trim()
-    )
-    if (newComment) {
-      comments.value.unshift(newComment)
-      newCommentContent.value = ''
-    } else {
-      alert('Không thể gửi bình luận. Vui lòng thử lại sau!')
-    }
-  } catch (e) {
-    console.error(e)
-    alert('Có lỗi xảy ra khi gửi bình luận!')
-  } finally {
-    isCommentSubmitting.value = false
-  }
-}
 
 // Sidebar popular posts
 const { data: popularSidebarPostsData } = await useAsyncData(
@@ -422,7 +372,7 @@ const parsedContentHtml = computed(() => {
                 </span>
                 <span class="flex items-center gap-1.5">
                   <MessageSquare class="w-4 h-4 text-zinc-450" />
-                  {{ mappedComments.length }} bình luận
+                  {{ commentCount }} bình luận
                 </span>
               </div>
             </div>
@@ -500,73 +450,7 @@ const parsedContentHtml = computed(() => {
             </div>
             <AdBanner width="970px" height="90px" :is-google-ad="true" />
             <!-- Comments Section -->
-            <div class="space-y-6 pt-6">
-              <h3
-                class="text-lg font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-2"
-              >
-                <MessageSquare class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" />
-                Bình luận ({{ mappedComments.length }})
-              </h3>
-
-              <!-- Comment Form -->
-              <form
-                v-if="userStore.isAuthenticated"
-                @submit.prevent="handleAddComment"
-                class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-xs space-y-4"
-              >
-                <textarea
-                  v-model="newCommentContent"
-                  rows="3"
-                  placeholder="Viết bình luận của bạn..."
-                  class="w-full p-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-[#3498db]"
-                ></textarea>
-                <div class="flex justify-end">
-                  <button
-                    type="submit"
-                    :disabled="isCommentSubmitting"
-                    class="px-4 py-2 bg-[#3498db] hover:bg-sky-600 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    <Send class="w-3.5 h-3.5" /> Gửi bình luận
-                  </button>
-                </div>
-              </form>
-              <div
-                v-else
-                class="p-4 bg-gray-100 dark:bg-zinc-900 rounded-xl text-center text-xs text-zinc-500"
-              >
-                Vui lòng
-                <NuxtLink to="/login" class="text-[#3498db] font-bold hover:underline"
-                  >Đăng nhập</NuxtLink
-                >
-                để tham gia bình luận.
-              </div>
-
-              <!-- Comments List -->
-              <div class="space-y-4">
-                <div
-                  v-for="c in mappedComments"
-                  :key="c.id"
-                  class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-850 shadow-xs flex gap-3.5"
-                >
-                  <img
-                    :src="c.avatar"
-                    :alt="c.author"
-                    class="w-9 h-9 rounded-full object-cover shrink-0"
-                  />
-                  <div class="flex-1 space-y-1">
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-xs text-zinc-900 dark:text-zinc-100">{{
-                        c.author
-                      }}</span>
-                      <span class="text-[10px] text-zinc-400">{{ c.date }}</span>
-                    </div>
-                    <p class="text-xs text-zinc-650 dark:text-zinc-350 leading-relaxed">
-                      {{ c.content }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
 
             <!-- Related Articles Section (Bottom) -->
             <div
