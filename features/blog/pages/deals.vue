@@ -243,7 +243,7 @@ const parsedContentHtml = computed(() => {
   if (post.value?.content) {
     const rawHtml = parseBBCode(post.value.content)
     const adHtml =
-      '<div class="adskeeper-widget-wrapper w-full my-6 flex justify-center overflow-hidden"><div data-type="_mgwidget" data-widget-id="2061790"></div></div>'
+      '<div class="adskeeper-widget-wrapper w-full my-6 flex justify-center overflow-hidden"><div data-type="_mgwidget" data-widget-id="2064113"></div></div>'
     return injectMiddleAd(rawHtml, adHtml)
   }
   return ''
@@ -326,6 +326,13 @@ const parsedContentHtml = computed(() => {
 
           <!-- Post Content -->
           <template v-else-if="post">
+            <!-- MGID Header Ad Widget -->
+            <ClientOnly>
+              <div class="my-4">
+                <div data-type="_mgwidget" data-widget-id="2064115"></div>
+              </div>
+            </ClientOnly>
+
             <!-- Category and Meta -->
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -449,6 +456,12 @@ const parsedContentHtml = computed(() => {
               </div>
             </div>
             <AdBanner width="970px" height="90px" :is-google-ad="true" />
+            <!-- MGID Smart Ad Widget Dưới Bài Viết -->
+            <ClientOnly>
+              <div class="my-6">
+                <div data-type="_mgwidget" data-widget-id="2064112"></div>
+              </div>
+            </ClientOnly>
             <!-- Comments Section -->
             <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
 
@@ -515,6 +528,13 @@ const parsedContentHtml = computed(() => {
               ad-format="rectangle"
             />
           </div>
+
+          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
+          <ClientOnly>
+            <div class="order-1 lg:order-1 hidden lg:block my-4">
+              <div data-type="_mgwidget" data-widget-id="2064159"></div>
+            </div>
+          </ClientOnly>
 
           <!-- Popular news widget -->
           <div

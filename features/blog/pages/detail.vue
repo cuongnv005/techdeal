@@ -206,7 +206,7 @@ const parsedContentHtml = computed(() => {
   if (post.value.content) {
     const rawHtml = parseBBCode(post.value.content)
     const adHtml =
-      '<div class="adskeeper-widget-wrapper w-full my-6 flex justify-center overflow-hidden"><div data-type="_mgwidget" data-widget-id="2061790"></div></div>'
+      '<div class="adskeeper-widget-wrapper w-full my-6 flex justify-center overflow-hidden"><div data-type="_mgwidget" data-widget-id="2064113"></div></div>'
     return injectMiddleAd(rawHtml, adHtml)
   }
   return ''
@@ -399,6 +399,13 @@ useHead(() => ({
             Quay lại trang chủ
           </NuxtLink>
 
+          <!-- MGID Header Ad Widget -->
+          <ClientOnly>
+            <div class="my-4">
+              <div data-type="_mgwidget" data-widget-id="2064115"></div>
+            </div>
+          </ClientOnly>
+
           <!-- Category and Meta -->
           <div class="space-y-4">
             <span
@@ -518,11 +525,12 @@ useHead(() => ({
           </div>
           <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
-          <!-- Adskeeper Widget Dưới Bài Viết -->
-          <AdskeeperWidget
-            widget-id="2060410"
-            script-url="https://jsc.adskeeper.com/site/1106120.js"
-          />
+          <!-- MGID Smart Ad Widget Dưới Bài Viết -->
+          <ClientOnly>
+            <div class="my-6">
+              <div data-type="_mgwidget" data-widget-id="2064112"></div>
+            </div>
+          </ClientOnly>
 
           <!-- Comments Section -->
           <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
@@ -530,12 +538,12 @@ useHead(() => ({
 
         <!-- Right Column: Sidebar (4 cols) -->
         <aside class="lg:col-span-4 space-y-8">
-          <!-- Sidebar Ad Banner (Desktop Only) -->
-          <AdskeeperWidget
-            widget-id="2060423"
-            script-url="https://jsc.adskeeper.com/site/1106120.js"
-            class="hidden lg:block"
-          />
+          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
+          <ClientOnly>
+            <div class="hidden lg:block">
+              <div data-type="_mgwidget" data-widget-id="2064159"></div>
+            </div>
+          </ClientOnly>
 
           <!-- Popular news widget -->
           <div

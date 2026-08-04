@@ -165,11 +165,24 @@ if (process.client) {
 useHead(() => ({
   script: [
     { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
+    // Adskeeper TẮT (thay bằng MGID bên dưới)
+    /*
     ...(isAdskeeperAllowed.value
       ? [
           {
             id: 'adskeeper-js-sdk',
             src: 'https://jsc.adskeeper.com/site/1106120.js',
+            async: true
+          }
+        ]
+      : [])
+    */
+    // MGID Script
+    ...(isAdskeeperAllowed.value
+      ? [
+          {
+            id: 'mgid-js-sdk',
+            src: 'https://jsc.mgid.com/site/1104949.js',
             async: true
           }
         ]
@@ -212,7 +225,13 @@ useHead(() => ({
     <UiPrivacyNotice />
   </ClientOnly>
 
-  <ClientOnly>
+  <!-- Commented out Adskeeper toaster widget -->
+  <!-- <ClientOnly>
     <div v-if="isToasterAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
+  </ClientOnly> -->
+
+  <!-- MGID Smart Notification Widget -->
+  <ClientOnly>
+    <div data-type="_mgwidget" data-widget-id="2064116"></div>
   </ClientOnly>
 </template>
