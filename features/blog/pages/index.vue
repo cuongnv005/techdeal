@@ -4,6 +4,7 @@ import { computed, watch } from 'vue'
 import { TrendingUp } from 'lucide-vue-next'
 
 import { blogRepository } from '../api/blog'
+import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 import AdBanner from '../components/AdBanner.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
@@ -135,6 +136,8 @@ watch(currentPage, () => {
     })
   }
 })
+
+const { isMobileAd } = useAdBreakpoint()
 </script>
 
 <template>
@@ -238,6 +241,16 @@ watch(currentPage, () => {
         <HomeSidebar :most-viewed-posts="mostViewedPosts" />
       </div>
     </main>
+
+    <!-- MGID Swipe-up Widget (Mobile Only) -->
+    <ClientOnly>
+      <div v-if="isMobileAd">
+        <div data-type="_mgwidget" data-widget-id="2064563"></div>
+        <component :is="'script'">
+          (function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");
+        </component>
+      </div>
+    </ClientOnly>
 
     <!-- Footer -->
     <Footer />
