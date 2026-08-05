@@ -233,11 +233,14 @@ if (process.client) {
     */
   })
 
-  watch(() => route.path, () => {
-    triggerAdskeeper()
-    // setTimeout(syncMgidTheme, 250)
-    // setTimeout(syncMgidTheme, 1000)
-  })
+  watch(
+    () => route.path,
+    () => {
+      triggerAdskeeper()
+      // setTimeout(syncMgidTheme, 250)
+      // setTimeout(syncMgidTheme, 1000)
+    }
+  )
 }
 
 useHead(() => ({

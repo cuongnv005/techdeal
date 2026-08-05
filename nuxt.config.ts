@@ -113,9 +113,24 @@ export default defineNuxtConfig({
           title: 'TechDeal RSS Feed',
           href: '/rss.xml'
         }
-      ]
+      ],
       // Script AdSense KHÔNG để global nữa — được inject có điều kiện theo route trong app.vue
       // để không bao giờ tải trên /giveaway, /go, auth... (tránh Auto Ads chạy trên trang cấm).
+
+      // Chống nháy sai theme lúc load trang (FOIT): SSR luôn render <html> không có
+      // class "dark" (server không biết theme đã lưu), UiThemeToggle (dùng useDark của
+      // VueUse) lại chỉ chạy phía client SAU khi mount -> có 1 khoảng trễ hiển thị sai
+      // theme trước khi JS kịp sửa. Script inline này chạy đồng bộ ngay khi trình duyệt
+      // parse <head>, TRƯỚC khi Vue hydrate và trước khi <body> được vẽ, nên set đúng
+      // class "dark" ngay từ đầu. Logic phải khớp CHÍNH XÁC config mặc định của
+      // useDark() trong shared/ui/ThemeToggle.vue (storageKey "vueuse-color-scheme",
+      // giá trị "dark"/"light"/"auto", valueLight rỗng) — đổi 1 bên phải đổi bên kia.
+      script: [
+        {
+          key: 'theme-init',
+          innerHTML: `(function(){try{var s=localStorage.getItem('vueuse-color-scheme');var d=s==='dark'||((!s||s==='auto')&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})();`
+        }
+      ]
     },
     pageTransition: { name: 'page', mode: 'out-in' }
   },
