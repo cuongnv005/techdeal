@@ -642,12 +642,6 @@ const parsedContentHtml = computed(() => {
             </div>
           </div>
 
-          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
-          <ClientOnly>
-            <div class="order-5 lg:order-5 hidden lg:block my-4">
-              <div data-type="_mgwidget" data-widget-id="2064159"></div>
-            </div>
-          </ClientOnly>
         </aside>
       </div>
     </div>

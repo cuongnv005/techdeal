@@ -650,12 +650,6 @@ useHead(() => ({
             </div>
           </div>
 
-          <!-- MGID Sidebar Ad Banner (Desktop Only) -->
-          <ClientOnly>
-            <div class="hidden lg:block">
-              <div data-type="_mgwidget" data-widget-id="2064159"></div>
-            </div>
-          </ClientOnly>
         </aside>
       </div>
 
