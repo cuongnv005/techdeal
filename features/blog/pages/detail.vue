@@ -28,9 +28,11 @@ import { parseBBCode, injectMiddleAd } from '../utils/bbcode'
 import type { BlogPost } from '../types/post.type'
 
 import { useUserStore } from '@stores/user'
+import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 
 const route = useRoute()
 const userStore = useUserStore()
+const { isMobileAd } = useAdBreakpoint()
 
 const isAuthor = computed(() => {
   if (!userStore.isAuthenticated) return false
@@ -702,6 +704,16 @@ useHead(() => ({
       </div>
       <AdBanner width="970px" height="90px" :is-google-ad="true" />
     </div>
+
+    <!-- MGID Swipe-up Widget (Mobile Only) -->
+    <ClientOnly>
+      <div v-if="isMobileAd">
+        <div data-type="_mgwidget" data-widget-id="2064563"></div>
+        <component :is="'script'">
+          (function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");
+        </component>
+      </div>
+    </ClientOnly>
 
     <!-- Footer -->
     <Footer />
