@@ -29,7 +29,6 @@ import type { BlogPost } from '../types/post.type'
 
 import { useUserStore } from '@stores/user'
 import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
-import { useLocaleAlternateLink } from '@shared/composables/use-locale-alternate-link'
 
 const route = useRoute()
 const userStore = useUserStore()

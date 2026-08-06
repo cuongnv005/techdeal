@@ -162,7 +162,7 @@ export default defineNuxtConfig({
 
   shadcn: {
     prefix: '',
-    componentDir: '~/shared/ui'
+    componentDir: '@@/shared/ui'
   },
 
   site: {
@@ -252,5 +252,5 @@ export default defineNuxtConfig({
   sourcemap: {
     client: 'hidden'
   },
-  components: [{ path: '@shared/ui', prefix: 'Ui' }, '~/components']
+  components: [{ path: '@@/shared/ui', prefix: 'Ui', extensions: ['vue'] }, '~/components']
 })

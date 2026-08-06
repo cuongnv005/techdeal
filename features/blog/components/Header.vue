@@ -6,7 +6,6 @@ import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
 
 import { useRoute } from '#imports'
 import { useUserStore } from '@stores/user'
-import { useLocaleAlternateLink } from '@shared/composables/use-locale-alternate-link'
 
 const userStore = useUserStore()
 
