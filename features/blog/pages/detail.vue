@@ -138,6 +138,9 @@ const { data: postDetail } = await useAsyncData(
       detail.relatedPosts = finalRelated
     }
     return detail
+  },
+  {
+    watch: [slugText, locale]
   }
 )
 

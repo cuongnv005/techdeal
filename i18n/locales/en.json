@@ -216,5 +216,22 @@
     "like": "Like",
     "reply": "Reply",
     "load_more_replies": "Show {count} more replies"
+  },
+  "search": {
+    "tag_title": "Articles tagged #{tag}",
+    "query_title": "Search results for \"{term}\"",
+    "tag_desc": "Collection of articles tagged #{tag} on TechDeal.",
+    "query_desc": "Search results of articles for keyword \"{term}\" on TechDeal.",
+    "tag_og_title": "Tag: #{tag} - TechDeal",
+    "query_og_title": "Search: {term} - TechDeal",
+    "banner_subtitle": "Search Articles",
+    "tag_heading": "Tag: #{tag}",
+    "query_heading": "Results for: \"{term}\"",
+    "tag_count_desc": "Found {count} articles tagged #{tag}.",
+    "query_count_desc": "Found {count} articles matching your search query.",
+    "results_title": "Search Results",
+    "loading_text": "Loading articles...",
+    "empty_title": "No articles found",
+    "empty_desc": "No articles found matching your keyword. Please try searching with another keyword."
   }
 }

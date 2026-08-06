@@ -14,6 +14,8 @@ import HomeSidebar from '../components/home/HomeSidebar.vue'
 import type { BlogPost } from '../types/post.type'
 
 const route = useRoute()
+const { locale, t } = useI18n()
+const isEn = computed(() => locale.value === 'en')
 
 const queryTerm = computed(() => (route.query.q as string) || '')
 const titleTerm = computed(() => (route.query.title as string) || '')
@@ -22,16 +24,16 @@ const tagTerm = computed(() => (route.query.tag as string) || '')
 // Set page meta for SEO optimization
 useSeoMeta({
   title: computed(() => {
-    if (tagTerm.value) return `Bài viết về thẻ #${tagTerm.value}`
-    return `Kết quả tìm kiếm cho "${queryTerm.value || titleTerm.value}"`
+    if (tagTerm.value) return t('search.tag_title', { tag: tagTerm.value })
+    return t('search.query_title', { term: queryTerm.value || titleTerm.value })
   }),
   description: computed(() => {
-    if (tagTerm.value) return `Tổng hợp các bài viết gắn thẻ #${tagTerm.value} trên TechDeal.`
-    return `Kết quả tìm kiếm bài viết cho từ khóa "${queryTerm.value || titleTerm.value}" trên TechDeal.`
+    if (tagTerm.value) return t('search.tag_desc', { tag: tagTerm.value })
+    return t('search.query_desc', { term: queryTerm.value || titleTerm.value })
   }),
   ogTitle: computed(() => {
-    if (tagTerm.value) return `Thẻ: #${tagTerm.value} - TechDeal`
-    return `Tìm kiếm: ${queryTerm.value || titleTerm.value} - TechDeal`
+    if (tagTerm.value) return t('search.tag_og_title', { tag: tagTerm.value })
+    return t('search.query_og_title', { term: queryTerm.value || titleTerm.value })
   }),
   ogType: 'website'
 })
@@ -44,17 +46,19 @@ const {
   refresh,
   pending
 } = await useAsyncData(
-  () => `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}-${currentPage.value}`,
+  () =>
+    `search-posts-${queryTerm.value}-${titleTerm.value}-${tagTerm.value}-${currentPage.value}-${locale.value}`,
   () =>
     blogRepository.getPosts({
       q: queryTerm.value || undefined,
       title: titleTerm.value || undefined,
       tag: tagTerm.value || undefined,
       page: currentPage.value,
-      limit: 10
+      limit: 10,
+      lang: isEn.value ? 'en' : undefined
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -135,19 +139,19 @@ const mostViewedPosts = computed(() => {
           <span
             class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
           >
-            Tìm kiếm bài viết
+            {{ $t('search.banner_subtitle') }}
           </span>
           <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight mt-3">
-            <template v-if="tagTerm">Thẻ: #{{ tagTerm }}</template>
-            <template v-else>Kết quả cho: "{{ queryTerm || titleTerm }}"</template>
+            <template v-if="tagTerm">{{ $t('search.tag_heading', { tag: tagTerm }) }}</template>
+            <template v-else>{{
+              $t('search.query_heading', { term: queryTerm || titleTerm })
+            }}</template>
           </h1>
           <p class="text-xs text-blue-50 mt-2 max-w-xl">
-            <template v-if="tagTerm"
-              >Tìm thấy {{ totalItems }} bài viết gắn thẻ #{{ tagTerm }}.</template
-            >
-            <template v-else
-              >Tìm thấy {{ totalItems }} bài viết khớp với từ khóa tìm kiếm của bạn.</template
-            >
+            <template v-if="tagTerm">{{
+              $t('search.tag_count_desc', { count: totalItems, tag: tagTerm })
+            }}</template>
+            <template v-else>{{ $t('search.query_count_desc', { count: totalItems }) }}</template>
           </p>
         </div>
       </div>
@@ -166,7 +170,7 @@ const mostViewedPosts = computed(() => {
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Kết quả tìm kiếm
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('search.results_title') }}
             </h2>
           </div>
 
@@ -176,7 +180,7 @@ const mostViewedPosts = computed(() => {
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết...
+              {{ $t('search.loading_text') }}
             </p>
           </div>
 
@@ -187,11 +191,10 @@ const mostViewedPosts = computed(() => {
           >
             <span class="text-4xl mb-4 block">🔍</span>
             <h3 class="text-base font-bold text-zinc-900 dark:text-white mb-2">
-              Không tìm thấy bài viết nào
+              {{ $t('search.empty_title') }}
             </h3>
             <p class="text-xs text-zinc-500 max-w-md mx-auto">
-              Không tìm thấy bài viết khớp với từ khóa của bạn. Vui lòng thử tìm kiếm với một từ
-              khóa khác.
+              {{ $t('search.empty_desc') }}
             </p>
           </div>
 
@@ -210,7 +213,7 @@ const mostViewedPosts = computed(() => {
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -226,7 +229,7 @@ const mostViewedPosts = computed(() => {
                 :class="
                   currentPage === page
                     ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-                    : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855'
+                    : 'bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850'
                 "
               >
                 {{ page }}
@@ -237,7 +240,7 @@ const mostViewedPosts = computed(() => {
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

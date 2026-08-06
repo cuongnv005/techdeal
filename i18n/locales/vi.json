@@ -216,5 +216,22 @@
     "like": "Thích",
     "reply": "Trả lời",
     "load_more_replies": "Xem thêm {count} trả lời"
+  },
+  "search": {
+    "tag_title": "Bài viết về thẻ #{tag}",
+    "query_title": "Kết quả tìm kiếm cho \"{term}\"",
+    "tag_desc": "Tổng hợp các bài viết gắn thẻ #{tag} trên TechDeal.",
+    "query_desc": "Kết quả tìm kiếm bài viết cho từ khóa \"{term}\" trên TechDeal.",
+    "tag_og_title": "Thẻ: #{tag} - TechDeal",
+    "query_og_title": "Tìm kiếm: {term} - TechDeal",
+    "banner_subtitle": "Tìm kiếm bài viết",
+    "tag_heading": "Thẻ: #{tag}",
+    "query_heading": "Kết quả cho: \"{term}\"",
+    "tag_count_desc": "Tìm thấy {count} bài viết gắn thẻ #{tag}.",
+    "query_count_desc": "Tìm thấy {count} bài viết khớp với từ khóa tìm kiếm của bạn.",
+    "results_title": "Kết quả tìm kiếm",
+    "loading_text": "Đang tải bài viết...",
+    "empty_title": "Không tìm thấy bài viết nào",
+    "empty_desc": "Không tìm thấy bài viết khớp với từ khóa của bạn. Vui lòng thử tìm kiếm với một từ khóa khác."
   }
 }
