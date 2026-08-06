@@ -5,7 +5,9 @@ export interface Thread {
   app_name: string
   image_url?: string | null
   summary: string
+  summary_en?: string | null
   content?: string
+  content_en?: string | null
   deal_link?: string
   platform_type: ThreadPlatform
   is_vip_only: number
@@ -23,7 +25,9 @@ export interface Thread {
 export interface CreateThreadInput {
   app_name: string
   summary: string
+  summary_en?: string | null
   content: string
+  content_en?: string | null
   deal_link: string
   platform_type: ThreadPlatform
   image_url?: string
