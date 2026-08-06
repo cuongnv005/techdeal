@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import {
   Mail,
@@ -16,11 +16,12 @@ import {
 import Footer from '@features/blog/components/Footer.vue'
 import Header from '@features/blog/components/Header.vue'
 
+const { t } = useI18n()
+
 useSeoMeta({
-  title: 'Liên hệ',
-  description:
-    'Liên hệ với TechDeal. Gửi phản hồi, báo cáo lỗi bài viết hoặc cơ hội hợp tác quảng cáo tại đây.',
-  ogTitle: 'Liên hệ - TechDeal',
+  title: computed(() => t('contact.seo_title')),
+  description: computed(() => t('contact.seo_desc')),
+  ogTitle: computed(() => `${t('contact.seo_title')} - TechDeal`),
   ogType: 'website',
   ogUrl: 'https://techdeal.io.vn/contact',
   robots: 'index, follow'
@@ -33,7 +34,7 @@ useHead({
 const form = ref({
   name: '',
   email: '',
-  subject: 'Góp ý nội dung',
+  subject: computed(() => t('contact.subject_feedback')).value,
   message: ''
 })
 
@@ -44,7 +45,7 @@ const submitError = ref('')
 const handleSubmit = async () => {
   // Simple validation
   if (!form.value.name.trim() || !form.value.email.trim() || !form.value.message.trim()) {
-    submitError.value = 'Vui lòng điền đầy đủ các thông tin bắt buộc.'
+    submitError.value = t('contact.validation_error')
     return
   }
 
@@ -72,17 +73,16 @@ const handleSubmit = async () => {
       form.value = {
         name: '',
         email: '',
-        subject: 'Góp ý nội dung',
+        subject: t('contact.subject_feedback'),
         message: ''
       }
     } else {
       const data = await response.json()
       submitError.value =
-        data.errors?.map((e: any) => e.message).join(', ') ||
-        'Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại sau.'
+        data.errors?.map((e: any) => e.message).join(', ') || t('contact.network_error')
     }
   } catch (err) {
-    submitError.value = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại kết nối mạng.'
+    submitError.value = t('contact.network_error')
   } finally {
     isSubmitting.value = false
   }
@@ -91,7 +91,7 @@ const handleSubmit = async () => {
 
 <template>
   <div
-    class="min-h-screen bg-gray-50 dark:bg-zinc-955 text-zinc-800 dark:text-zinc-200 transition-colors duration-300 font-sans"
+    class="min-h-screen bg-gray-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors duration-300 font-sans"
   >
     <Header />
 
@@ -99,12 +99,11 @@ const handleSubmit = async () => {
       <!-- Page Header -->
       <div class="text-center max-w-2xl mx-auto mb-12 space-y-4">
         <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
-          Liên hệ với <span class="text-[#3498db] dark:text-[#e74c3c]">TechDeal</span>
+          {{ $t('contact.heading') }}
+          <span class="text-[#3498db] dark:text-[#e74c3c]">TechDeal</span>
         </h1>
         <p class="text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-          Bạn có câu hỏi, góp ý hoặc muốn hợp tác? Chúng tôi luôn sẵn sàng lắng nghe. Hãy liên hệ
-          qua form bên dưới hoặc trực tiếp qua thông tin liên hệ của chúng tôi — thường phản hồi
-          trong vòng 24 giờ làm việc.
+          {{ $t('contact.subheading') }}
         </p>
       </div>
 
@@ -113,12 +112,12 @@ const handleSubmit = async () => {
         <div class="lg:col-span-5 space-y-6">
           <!-- Information Card -->
           <div
-            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 shadow-xs space-y-6"
+            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 shadow-xs space-y-6"
           >
             <h2
               class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-wide border-b border-gray-150 dark:border-zinc-800 pb-3"
             >
-              Thông tin liên hệ
+              {{ $t('contact.info_heading') }}
             </h2>
 
             <div class="space-y-4 text-xs">
@@ -129,7 +128,9 @@ const handleSubmit = async () => {
                   <Mail class="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">Email</h4>
+                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">
+                    {{ $t('contact.email_label') }}
+                  </h4>
                   <a
                     href="mailto:contact@techdeal.io.vn"
                     class="text-zinc-900 dark:text-white font-semibold hover:text-[#3498db] transition-colors"
@@ -146,7 +147,9 @@ const handleSubmit = async () => {
                   <Phone class="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">Điện thoại</h4>
+                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">
+                    {{ $t('contact.phone_label') }}
+                  </h4>
                   <a
                     href="tel:+84822344589"
                     class="text-zinc-900 dark:text-white font-semibold hover:text-[#3498db] transition-colors"
@@ -163,8 +166,12 @@ const handleSubmit = async () => {
                   <MapPin class="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">Địa chỉ</h4>
-                  <p class="text-zinc-900 dark:text-white font-semibold">Hà Nội, Việt Nam</p>
+                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">
+                    {{ $t('contact.address_label') }}
+                  </h4>
+                  <p class="text-zinc-900 dark:text-white font-semibold">
+                    {{ $t('contact.address_value') }}
+                  </p>
                 </div>
               </div>
 
@@ -175,9 +182,11 @@ const handleSubmit = async () => {
                   <Clock class="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">Giờ làm việc</h4>
+                  <h4 class="font-bold text-zinc-550 dark:text-zinc-400">
+                    {{ $t('contact.hours_label') }}
+                  </h4>
                   <p class="text-zinc-900 dark:text-white font-semibold">
-                    Thứ 2 – Thứ 6, 8:00 – 18:00 (GMT+7)
+                    {{ $t('contact.hours_value') }}
                   </p>
                 </div>
               </div>
@@ -186,46 +195,42 @@ const handleSubmit = async () => {
 
           <!-- Common reasons Card -->
           <div
-            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 shadow-xs space-y-6"
+            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 shadow-xs space-y-6"
           >
             <h2
               class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-wide border-b border-gray-150 dark:border-zinc-800 pb-3"
             >
-              Các lý do liên hệ phổ biến
+              {{ $t('contact.reasons_heading') }}
             </h2>
 
             <div class="space-y-4 text-[11px] leading-relaxed">
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5 font-bold text-zinc-850 dark:text-zinc-200">
                   <AlertTriangle class="w-3.5 h-3.5 text-amber-500" />
-                  Báo lỗi hoặc nội dung không chính xác
+                  {{ $t('contact.reason1_title') }}
                 </div>
                 <p class="text-zinc-500 dark:text-zinc-400">
-                  Nếu bạn phát hiện thông tin sai, link hỏng hoặc ứng dụng đã hết miễn phí mà chưa
-                  được cập nhật, hãy cho chúng tôi biết để xử lý ngay.
+                  {{ $t('contact.reason1_desc') }}
                 </p>
               </div>
 
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5 font-bold text-zinc-850 dark:text-zinc-200">
                   <Handshake class="w-3.5 h-3.5 text-blue-500" />
-                  Hợp tác & Quảng cáo
+                  {{ $t('contact.reason2_title') }}
                 </div>
                 <p class="text-zinc-500 dark:text-zinc-400">
-                  TechDeal chào đón các cơ hội hợp tác với thương hiệu công nghệ, nhà phát triển ứng
-                  dụng và đối tác truyền thông. Vui lòng gửi email với tiêu đề "Hợp tác thương mại"
-                  để được phản hồi ưu tiên.
+                  {{ $t('contact.reason2_desc') }}
                 </p>
               </div>
 
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5 font-bold text-zinc-850 dark:text-zinc-200">
                   <Send class="w-3.5 h-3.5 text-emerald-500" />
-                  Đóng góp nội dung
+                  {{ $t('contact.reason3_title') }}
                 </div>
                 <p class="text-zinc-500 dark:text-zinc-400">
-                  Bạn là người đam mê công nghệ và muốn đóng góp bài viết cho TechDeal? Chúng tôi
-                  luôn chào đón cộng tác viên có kiến thức thực tế và góc nhìn độc lập.
+                  {{ $t('contact.reason3_desc') }}
                 </p>
               </div>
             </div>
@@ -235,25 +240,26 @@ const handleSubmit = async () => {
         <!-- Right: Message Form (7 cols) -->
         <div class="lg:col-span-7">
           <div
-            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 md:p-8 shadow-xs space-y-6"
+            class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 md:p-8 shadow-xs space-y-6"
           >
             <h2
               class="text-sm font-black uppercase text-zinc-900 dark:text-white tracking-wide border-b border-gray-150 dark:border-zinc-800 pb-3"
             >
-              Gửi tin nhắn cho chúng tôi
+              {{ $t('contact.form_heading') }}
             </h2>
 
             <form @submit.prevent="handleSubmit" class="space-y-5">
               <!-- Name Field -->
               <div class="space-y-1.5">
                 <label for="name" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Họ và tên <span class="text-red-500">*</span>
+                  {{ $t('contact.name_label') }}
+                  <span class="text-red-500">{{ $t('contact.required') }}</span>
                 </label>
                 <input
                   id="name"
                   v-model="form.name"
                   type="text"
-                  placeholder="Nhập họ và tên của bạn..."
+                  :placeholder="$t('contact.name_placeholder')"
                   class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] transition-all"
                   required
                 />
@@ -262,7 +268,8 @@ const handleSubmit = async () => {
               <!-- Email Field -->
               <div class="space-y-1.5">
                 <label for="email" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Email của bạn <span class="text-red-500">*</span>
+                  {{ $t('contact.email_field_label') }}
+                  <span class="text-red-500">{{ $t('contact.required') }}</span>
                 </label>
                 <input
                   id="email"
@@ -280,17 +287,26 @@ const handleSubmit = async () => {
                   for="subject"
                   class="block text-xs font-bold text-zinc-700 dark:text-zinc-300"
                 >
-                  Chủ đề <span class="text-red-500">*</span>
+                  {{ $t('contact.subject_label') }}
+                  <span class="text-red-500">{{ $t('contact.required') }}</span>
                 </label>
                 <select
                   id="subject"
                   v-model="form.subject"
                   class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] transition-all cursor-pointer"
                 >
-                  <option value="Góp ý nội dung">Góp ý nội dung</option>
-                  <option value="Báo lỗi bài viết">Báo lỗi bài viết</option>
-                  <option value="Hợp tác & Quảng cáo">Hợp tác & Quảng cáo</option>
-                  <option value="Khác">Khác</option>
+                  <option :value="$t('contact.subject_feedback')">
+                    {{ $t('contact.subject_feedback') }}
+                  </option>
+                  <option :value="$t('contact.subject_bug')">
+                    {{ $t('contact.subject_bug') }}
+                  </option>
+                  <option :value="$t('contact.subject_collab')">
+                    {{ $t('contact.subject_collab') }}
+                  </option>
+                  <option :value="$t('contact.subject_other')">
+                    {{ $t('contact.subject_other') }}
+                  </option>
                 </select>
               </div>
 
@@ -300,12 +316,13 @@ const handleSubmit = async () => {
                   for="message"
                   class="block text-xs font-bold text-zinc-700 dark:text-zinc-300"
                 >
-                  Nội dung <span class="text-red-500">*</span>
+                  {{ $t('contact.message_label') }}
+                  <span class="text-red-500">{{ $t('contact.required') }}</span>
                 </label>
                 <textarea
                   id="message"
                   v-model="form.message"
-                  placeholder="Nhập nội dung bạn muốn gửi..."
+                  :placeholder="$t('contact.message_placeholder')"
                   rows="6"
                   class="w-full text-xs px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] transition-all resize-none"
                   required
@@ -319,11 +336,8 @@ const handleSubmit = async () => {
               >
                 <CheckCircle2 class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                 <div>
-                  <h4 class="font-bold">Gửi thành công!</h4>
-                  <p class="mt-0.5 leading-normal">
-                    Cảm ơn bạn đã liên hệ. Chúng tôi đã nhận được thông điệp và sẽ phản hồi sớm nhất
-                    có thể.
-                  </p>
+                  <h4 class="font-bold">{{ $t('contact.success_title') }}</h4>
+                  <p class="mt-0.5 leading-normal">{{ $t('contact.success_desc') }}</p>
                 </div>
               </div>
 
@@ -333,7 +347,7 @@ const handleSubmit = async () => {
               >
                 <AlertCircle class="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                 <div>
-                  <h4 class="font-bold">Lỗi gửi tin nhắn</h4>
+                  <h4 class="font-bold">{{ $t('contact.error_title') }}</h4>
                   <p class="mt-0.5 leading-normal">{{ submitError }}</p>
                 </div>
               </div>
@@ -345,7 +359,9 @@ const handleSubmit = async () => {
                 class="w-full px-5 py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Send class="w-4 h-4" />
-                <span>{{ isSubmitting ? 'Đang gửi...' : 'Gửi tin nhắn' }}</span>
+                <span>{{
+                  isSubmitting ? $t('contact.submitting') : $t('contact.submit_btn')
+                }}</span>
               </button>
             </form>
           </div>
