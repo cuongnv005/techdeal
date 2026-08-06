@@ -26,18 +26,22 @@ import { useUserStore } from '@stores/user'
 const route = useRoute()
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+const localePath = useLocalePath()
 
 useSeoMeta({
-  title: 'iOS - Tin tức iOS',
-  description:
-    'Chuyên mục iOS: Cập nhật tin tức iPhone, iPad, các bản cập nhật iOS mới nhất, thủ thuật sử dụng và đánh giá ứng dụng Apple.',
-  ogTitle: 'Chuyên mục iOS - TechDeal',
-  ogDescription: 'Cập nhật tin tức iOS mới nhất hàng ngày.',
+  title: () => isEn.value ? 'iOS - iOS News' : 'iOS - Tin tức iOS',
+  description: () => isEn.value
+    ? 'iOS Section: Update iPhone, iPad, latest iOS version updates, tips and Apple app reviews.'
+    : 'Chuyên mục iOS: Cập nhật tin tức iPhone, iPad, các bản cập nhật iOS mới nhất, thủ thuật sử dụng và đánh giá ứng dụng Apple.',
+  ogTitle: () => isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal',
+  ogDescription: () => isEn.value ? 'Daily updates on the latest iOS news.' : 'Cập nhật tin tức iOS mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Chuyên mục iOS - TechDeal',
-  twitterDescription: 'Cập nhật tin tức iOS mới ngày.'
+  twitterTitle: () => isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal',
+  twitterDescription: () => isEn.value ? 'Daily updates on the latest iOS news.' : 'Cập nhật tin tức iOS mới nhất hàng ngày.'
 })
 
 useHead(() => ({
@@ -53,15 +57,16 @@ const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch articles dynamically
 const { data: allCategoryPosts, pending } = await useAsyncData(
-  'posts-ios-all',
+  `posts-ios-all-${locale.value}`,
   () =>
     blogRepository.getPosts({
       category: 'ios',
       page: currentPage.value,
-      limit: 10
+      limit: 10,
+      lang: isEn.value ? 'en' : undefined
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -142,12 +147,11 @@ const userStore = useUserStore()
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
-              >Chuyên mục</span
+              >{{ $t('category.label') }}</span
             >
             <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">iOS</h1>
             <p class="text-sm text-zinc-100 mt-2 max-w-xl">
-              Tin tức mới nhất về iOS, hệ sinh thái Apple, các mẹo sử dụng iPhone, iPad hiệu quả và
-              đánh giá chi tiết ứng dụng trên App Store.
+              {{ $t('category.desc_ios') }}
             </p>
           </div>
           <div
@@ -156,10 +160,10 @@ const userStore = useUserStore()
             "
           >
             <NuxtLink
-              to="/blog/publish?category=ios"
+              :to="localePath('/blog/publish?category=ios')"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-zinc-800 hover:bg-zinc-100 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer"
             >
-              📝 Đăng bài mới
+              {{ $t('category.publish_new') }}
             </NuxtLink>
           </div>
         </div>
@@ -179,7 +183,7 @@ const userStore = useUserStore()
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('common.latest_updates') }}
             </h2>
           </div>
 
@@ -189,7 +193,7 @@ const userStore = useUserStore()
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết mới...
+              {{ $t('common.loading_posts') }}
             </p>
           </div>
 
@@ -206,9 +210,9 @@ const userStore = useUserStore()
             <button
               :disabled="currentPage <= 1"
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
-              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
+              class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -235,7 +239,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

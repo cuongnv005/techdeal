@@ -26,18 +26,22 @@ import { useUserStore } from '@stores/user'
 const route = useRoute()
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+const localePath = useLocalePath()
 
 useSeoMeta({
-  title: 'Công nghệ - Tin tức Công nghệ',
-  description:
-    'Chuyên mục Công nghệ: Cập nhật nhanh nhất các xu hướng công nghệ, tin tức AI, phần cứng và thế giới số.',
-  ogTitle: 'Chuyên mục Công nghệ - TechDeal',
-  ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
+  title: () => isEn.value ? 'Technology - Tech News' : 'Công nghệ - Tin tức Công nghệ',
+  description: () => isEn.value
+    ? 'Technology Section: Fast updates on tech trends, AI news, hardware and digital world.'
+    : 'Chuyên mục Công nghệ: Cập nhật nhanh nhất các xu hướng công nghệ, tin tức AI, phần cứng và thế giới số.',
+  ogTitle: () => isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal',
+  ogDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Chuyên mục Công nghệ - TechDeal',
-  twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
+  twitterTitle: () => isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal',
+  twitterDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
 })
 
 useHead(() => ({
@@ -53,15 +57,16 @@ const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch articles dynamically
 const { data: allCategoryPosts, pending } = await useAsyncData(
-  'posts-technology-all',
+  `posts-technology-all-${locale.value}`,
   () =>
     blogRepository.getPosts({
       category: 'technology',
       page: currentPage.value,
-      limit: 10
+      limit: 10,
+      lang: isEn.value ? 'en' : undefined
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -142,12 +147,11 @@ const userStore = useUserStore()
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
-              >Chuyên mục</span
+              >{{ $t('category.label') }}</span
             >
-            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Công nghệ</h1>
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">{{ $t('nav.technology') }}</h1>
             <p class="text-sm text-blue-50 mt-2 max-w-xl">
-              Cập nhật những tin tức công nghệ mới nhất, sản phẩm đột phá, các nghiên cứu và xu
-              hướng phát triển công nghệ trên toàn cầu.
+              {{ $t('category.desc_technology') }}
             </p>
           </div>
           <div
@@ -156,10 +160,10 @@ const userStore = useUserStore()
             "
           >
             <NuxtLink
-              to="/blog/publish?category=technology"
+              :to="localePath('/blog/publish?category=technology')"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-600 hover:bg-blue-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"
             >
-              📝 Đăng bài mới
+              {{ $t('category.publish_new') }}
             </NuxtLink>
           </div>
         </div>
@@ -179,7 +183,7 @@ const userStore = useUserStore()
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('common.latest_updates') }}
             </h2>
           </div>
 
@@ -189,7 +193,7 @@ const userStore = useUserStore()
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết mới...
+              {{ $t('common.loading_posts') }}
             </p>
           </div>
 
@@ -208,7 +212,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -235,7 +239,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

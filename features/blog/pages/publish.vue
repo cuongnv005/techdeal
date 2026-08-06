@@ -94,6 +94,7 @@ const fetchPostToEdit = async () => {
     const detail = await blogRepository.getPostBySlug(editId.value)
     if (detail && detail.post) {
       title.value = detail.post.title
+      titleEn.value = detail.post.titleEn || ''
       selectedTags.value = detail.tags || []
       if (detail.post.category) {
         const categoryMap: Record<string, string> = {
@@ -124,6 +125,15 @@ const fetchPostToEdit = async () => {
       if (editorInstance && typeof editorInstance.val === 'function') {
         editorInstance.val(content)
       }
+
+      const contentEn = detail.post.contentEn || ''
+      const textareaEn = document.getElementById('sceditor-textarea-en') as HTMLTextAreaElement
+      if (textareaEn) {
+        textareaEn.value = contentEn
+      }
+      if (editorInstanceEn && typeof editorInstanceEn.val === 'function') {
+        editorInstanceEn.val(contentEn)
+      }
     }
   } catch (err) {
     console.error('Error fetching post for editing:', err)
@@ -131,7 +141,9 @@ const fetchPostToEdit = async () => {
 }
 
 // Form fields state
+const activeTab = ref<'vi' | 'en'>('vi')
 const title = ref('')
+const titleEn = ref('')
 const selectedTags = ref<string[]>([])
 const newTagInput = ref('')
 const isScheduled = ref(false)
@@ -174,11 +186,13 @@ const systemTags = [
   'Mobile'
 ]
 
-// Editor instance reference
+// Editor instance references
 let editorInstance: any = null
+let editorInstanceEn: any = null
 
 const initEditor = () => {
   const textarea = document.getElementById('sceditor-textarea')
+  const textareaEn = document.getElementById('sceditor-textarea-en')
   if (!textarea) return
 
   try {
@@ -199,13 +213,36 @@ const initEditor = () => {
     if (editorInstance) {
       // Auto-update preview Html on key and blur
       const syncPreview = () => {
-        if (editorInstance && isPreviewing.value) {
+        if (editorInstance && isPreviewing.value && activeTab.value === 'vi') {
           previewHtml.value = parseBBCode(editorInstance.val())
         }
       }
       editorInstance.bind('keyup blur', syncPreview)
-    } else {
-      console.warn('Failed to retrieve SCEditor instance via window.sceditor.instance')
+    }
+
+    if (textareaEn) {
+      // @ts-ignore
+      window.sceditor.create(textareaEn, {
+        format: 'bbcode',
+        style: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/themes/content/default.min.css',
+        emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/',
+        width: '100%',
+        height: '380px',
+        toolbar:
+          'bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|table|code,quote|image,link|emoticon|youtube|date,time|maximize,source'
+      })
+
+      // @ts-ignore
+      editorInstanceEn = window.sceditor.instance(textareaEn)
+
+      if (editorInstanceEn) {
+        const syncPreviewEn = () => {
+          if (editorInstanceEn && isPreviewing.value && activeTab.value === 'en') {
+            previewHtml.value = parseBBCode(editorInstanceEn.val())
+          }
+        }
+        editorInstanceEn.bind('keyup blur', syncPreviewEn)
+      }
     }
   } catch (e) {
     console.error('SCEditor init error:', e)
@@ -498,16 +535,19 @@ const parseBBCode = (bbcode: string) => {
 const handlePreview = () => {
   try {
     let content = ''
-    if (editorInstance) {
-      if (typeof editorInstance.val === 'function') {
+    if (activeTab.value === 'vi') {
+      if (editorInstance && typeof editorInstance.val === 'function') {
         content = editorInstance.val()
       } else {
-        console.warn('editorInstance.val is not a function')
+        const textarea = document.getElementById('sceditor-textarea') as HTMLTextAreaElement
+        if (textarea) content = textarea.value
       }
     } else {
-      const textarea = document.getElementById('sceditor-textarea') as HTMLTextAreaElement
-      if (textarea) {
-        content = textarea.value
+      if (editorInstanceEn && typeof editorInstanceEn.val === 'function') {
+        content = editorInstanceEn.val()
+      } else {
+        const textareaEn = document.getElementById('sceditor-textarea-en') as HTMLTextAreaElement
+        if (textareaEn) content = textareaEn.value
       }
     }
     previewHtml.value = parseBBCode(content)
@@ -522,14 +562,25 @@ const handlePreview = () => {
 const isSubmitting = ref(false)
 const handlePublish = async () => {
   if (!title.value.trim()) {
-    alert('Vui lòng điền tiêu đề bài viết!')
+    alert('Vui lòng điền tiêu đề bài viết Tiếng Việt!')
     return
   }
 
   if (!editorInstance) return
   const content = editorInstance.val()
   if (!content.trim()) {
-    alert('Vui lòng nhập nội dung bài viết!')
+    alert('Vui lòng nhập nội dung bài viết Tiếng Việt!')
+    return
+  }
+
+  // English content is optional, but if title exists content must exist and vice-versa
+  const contentEn = editorInstanceEn ? editorInstanceEn.val() : ''
+  if (titleEn.value.trim() && !contentEn.trim()) {
+    alert('Vui lòng nhập nội dung bài viết Tiếng Anh nếu đã có tiêu đề Tiếng Anh!')
+    return
+  }
+  if (!titleEn.value.trim() && contentEn.trim()) {
+    alert('Vui lòng điền tiêu đề bài viết Tiếng Anh nếu đã nhập nội dung Tiếng Anh!')
     return
   }
 
@@ -540,6 +591,8 @@ const handlePublish = async () => {
     const postData = {
       title: title.value,
       content,
+      title_en: titleEn.value.trim() || null,
+      content_en: contentEn.trim() || null,
       category: categoryId.value,
       tags: selectedTags.value,
       scheduledAt:
@@ -624,48 +677,126 @@ const handlePublish = async () => {
       <div
         class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 p-6 md:p-8 shadow-xs space-y-6"
       >
-        <!-- Post Title -->
-        <div class="space-y-2">
-          <label
-            class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+        <!-- Language tab switcher -->
+        <div class="flex border-b border-gray-200 dark:border-zinc-800">
+          <button
+            type="button"
+            @click="activeTab = 'vi'"
+            class="px-5 py-2.5 text-xs font-extrabold uppercase tracking-wider border-b-2 transition-colors flex items-center gap-1.5"
+            :class="[
+              activeTab === 'vi'
+                ? 'border-[#3498db] text-[#3498db] dark:border-[#e74c3c] dark:text-[#e74c3c]'
+                : 'border-transparent text-zinc-400 hover:text-zinc-650'
+            ]"
           >
-            Tiêu đề bài viết <span class="text-red-500">*</span>
-          </label>
-          <input
-            v-model="title"
-            type="text"
-            placeholder="Nhập tiêu đề ấn tượng cho bài viết..."
-            class="w-full text-sm px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50/50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] font-semibold"
-            required
-          />
+            🇻🇳 Bản Tiếng Việt
+          </button>
+          <button
+            type="button"
+            @click="activeTab = 'en'"
+            class="px-5 py-2.5 text-xs font-extrabold uppercase tracking-wider border-b-2 transition-colors flex items-center gap-1.5"
+            :class="[
+              activeTab === 'en'
+                ? 'border-[#3498db] text-[#3498db] dark:border-[#e74c3c] dark:text-[#e74c3c]'
+                : 'border-transparent text-zinc-400 hover:text-zinc-650'
+            ]"
+          >
+            🇬🇧 Bản English (Optional)
+          </button>
         </div>
 
-        <!-- BBCode Editor -->
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
+        <!-- VI Edit Mode Fields -->
+        <div v-show="activeTab === 'vi'" class="space-y-6">
+          <!-- Post Title -->
+          <div class="space-y-2">
             <label
               class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
             >
-              Nội dung chi tiết <span class="text-red-500">*</span>
+              Tiêu đề bài viết (Tiếng Việt) <span class="text-red-500">*</span>
             </label>
-
-            <div
-              class="flex items-center gap-4 text-[10px] text-zinc-450 bg-gray-50 dark:bg-zinc-950 px-2.5 py-1 rounded-md border border-gray-200 dark:border-zinc-800 select-none"
-            >
-              <span class="font-bold flex items-center gap-1"
-                ><Info class="w-3 h-3 text-[#3498db]" /> Cú pháp đặc biệt:</span
-              >
-              <span><code>[prebreak]tóm tắt[/prebreak]</code></span>
-              <span><code>[similar]tag[/similar]</code></span>
-            </div>
+            <input
+              v-model="title"
+              type="text"
+              placeholder="Nhập tiêu đề ấn tượng cho bài viết..."
+              class="w-full text-sm px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50/50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] font-semibold"
+              required
+            />
           </div>
 
-          <div class="rounded-xl overflow-hidden border border-gray-250 dark:border-zinc-800">
-            <textarea
-              id="sceditor-textarea"
-              placeholder="Nhập nội dung bài viết bằng mã BBCode..."
-              class="w-full h-80 px-4 py-3 bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none"
-            ></textarea>
+          <!-- BBCode Editor -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label
+                class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+              >
+                Nội dung chi tiết (Tiếng Việt) <span class="text-red-500">*</span>
+              </label>
+
+              <div
+                class="flex items-center gap-4 text-[10px] text-zinc-450 bg-gray-50 dark:bg-zinc-950 px-2.5 py-1 rounded-md border border-gray-200 dark:border-zinc-800 select-none"
+              >
+                <span class="font-bold flex items-center gap-1"
+                  ><Info class="w-3 h-3 text-[#3498db]" /> Cú pháp đặc biệt:</span
+                >
+                <span><code>[prebreak]tóm tắt[/prebreak]</code></span>
+                <span><code>[similar]tag[/similar]</code></span>
+              </div>
+            </div>
+
+            <div class="rounded-xl overflow-hidden border border-gray-250 dark:border-zinc-800">
+              <textarea
+                id="sceditor-textarea"
+                placeholder="Nhập nội dung bài viết bằng mã BBCode..."
+                class="w-full h-80 px-4 py-3 bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- EN Edit Mode Fields -->
+        <div v-show="activeTab === 'en'" class="space-y-6">
+          <!-- Post Title (EN) -->
+          <div class="space-y-2">
+            <label
+              class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+            >
+              Tiêu đề bài viết (Tiếng Anh)
+            </label>
+            <input
+              v-model="titleEn"
+              type="text"
+              placeholder="Enter impressive English title..."
+              class="w-full text-sm px-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50/50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c] font-semibold"
+            />
+          </div>
+
+          <!-- BBCode Editor (EN) -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label
+                class="text-xs font-black uppercase tracking-wider text-zinc-650 dark:text-zinc-450 flex items-center gap-1"
+              >
+                Nội dung chi tiết (Tiếng Anh)
+              </label>
+
+              <div
+                class="flex items-center gap-4 text-[10px] text-zinc-450 bg-gray-50 dark:bg-zinc-950 px-2.5 py-1 rounded-md border border-gray-200 dark:border-zinc-800 select-none"
+              >
+                <span class="font-bold flex items-center gap-1"
+                  ><Info class="w-3 h-3 text-[#3498db]" /> Special Syntax:</span
+                >
+                <span><code>[prebreak]summary[/prebreak]</code></span>
+                <span><code>[similar]tag[/similar]</code></span>
+              </div>
+            </div>
+
+            <div class="rounded-xl overflow-hidden border border-gray-250 dark:border-zinc-800">
+              <textarea
+                id="sceditor-textarea-en"
+                placeholder="Enter English article content in BBCode..."
+                class="w-full h-80 px-4 py-3 bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none"
+              ></textarea>
+            </div>
           </div>
         </div>
 

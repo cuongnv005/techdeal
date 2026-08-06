@@ -19,12 +19,21 @@ import AdskeeperWidget from '../AdskeeperWidget.vue'
 
 import type { BlogPost } from '../../types/post.type'
 
+const localePath = useLocalePath()
+
 defineProps<{
   mostViewedPosts?: BlogPost[]
 }>()
 
-const { data: popularData } = await useAsyncData('sidebar-popular-posts', () =>
-  blogRepository.getPopularPosts(5)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+
+const { data: popularData } = await useAsyncData(
+  `sidebar-popular-posts-${locale.value}`,
+  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : undefined),
+  {
+    watch: [locale]
+  }
 )
 const popularPosts = computed(() => popularData.value || [])
 
@@ -34,10 +43,10 @@ const { data: categoriesData } = await useAsyncData('sidebar-categories', () =>
 const categories = computed(() => categoriesData.value || [])
 
 const getCategoryLink = (id: string) => {
-  if (id === 'gaming') return '/game'
-  if (id === 'technology') return '/cong-nghe'
-  if (id === 'deals') return '/deals/ios'
-  return `/${id}`
+  if (id === 'gaming') return localePath('/game')
+  if (id === 'technology') return localePath('/cong-nghe')
+  if (id === 'deals') return localePath('/deals/ios')
+  return localePath(`/${id}`)
 }
 
 // onMounted(() => {
@@ -120,12 +129,11 @@ const getCategoryLink = (id: string) => {
       <h3
         class="text-sm font-bold uppercase tracking-wider border-b-2 border-red-500 pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2"
       >
-        <Sparkles class="w-4 h-4 text-red-500" /> Bản tin TechDeal
+        <Sparkles class="w-4 h-4 text-red-500" /> {{ $t('sidebar.newsletter_title') }}
       </h3>
       <div class="space-y-3">
         <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          Đăng ký để cập nhật những bài viết công nghệ mới nhất và độc quyền trực tiếp từ Google
-          News.
+          {{ $t('sidebar.newsletter_desc') }}
         </p>
         <div
           class="swg-basic-subscription-button-placeholder w-full mt-2"
@@ -139,7 +147,7 @@ const getCategoryLink = (id: string) => {
       <h3
         class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white flex items-center gap-2"
       >
-        <TrendingUp class="w-4 h-4 text-[#3498db]" /> Xem nhiều nhất tháng
+        <TrendingUp class="w-4 h-4 text-[#3498db]" /> {{ $t('sidebar.most_viewed_month') }}
       </h3>
       <ul class="space-y-4">
         <li v-for="(p, index) in popularPosts" :key="p.id" class="flex gap-3 items-start group">
@@ -159,11 +167,11 @@ const getCategoryLink = (id: string) => {
             <h4
               class="text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#3498db] transition-colors"
             >
-              <NuxtLink :to="`/blog/${p.slug}.${p.id}`">{{ p.title }}</NuxtLink>
+              <NuxtLink :to="localePath(`/blog/${p.slug}.${p.id}`)">{{ p.title }}</NuxtLink>
             </h4>
             <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-400">
               <Eye class="w-3 h-3 text-red-400" :stroke-width="2.5" />
-              <span>{{ p.views.toLocaleString() }} lượt xem</span>
+              <span>{{ p.views.toLocaleString() }} {{ $t('common.views') }}</span>
             </div>
           </div>
         </li>
@@ -183,7 +191,7 @@ const getCategoryLink = (id: string) => {
       <h3
         class="text-sm font-bold uppercase tracking-wider border-b-2 border-[#3498db] pb-2 mb-4 text-zinc-900 dark:text-white"
       >
-        Chuyên mục nổi bật
+        {{ $t('sidebar.hot_categories') }}
       </h3>
       <ul class="space-y-2 text-xs">
         <li v-for="cat in categories" :key="cat.id">
@@ -192,7 +200,7 @@ const getCategoryLink = (id: string) => {
             class="flex justify-between items-center py-2 px-3 hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded text-zinc-700 dark:text-zinc-300 transition-colors"
           >
             <span class="flex items-center gap-2">
-              <Bookmark class="w-3.5 h-3.5 text-[#f39c12]" /> {{ cat.name }}
+              <Bookmark class="w-3.5 h-3.5 text-[#f39c12]" /> {{ $t('nav.' + cat.id) }}
             </span>
             <ChevronRight class="w-3.5 h-3.5 text-zinc-400" />
           </NuxtLink>

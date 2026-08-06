@@ -20,6 +20,8 @@ const emit = defineEmits<{
   count: [total: number]
 }>()
 const userStore = useUserStore()
+const localePath = useLocalePath()
+const { t } = useI18n()
 
 const rootComments = ref<ApiComment[]>([])
 const pagination = ref<ApiPagination | null>(null)
@@ -140,11 +142,11 @@ const submitRootComment = async (content: string) => {
         emit('count', pagination.value.total_items)
       }
     } else {
-      alert('Không thể gửi bình luận. Vui lòng kiểm tra lại trạng thái đăng nhập.')
+      alert(t('comments.post_failed'))
     }
   } catch (e) {
     console.error(e)
-    alert('Có lỗi xảy ra khi gửi bình luận!')
+    alert(t('comments.post_error'))
   } finally {
     postingRoot.value = false
   }
@@ -176,11 +178,11 @@ const submitReply = async (content: string) => {
       }
       replyTarget.value = null
     } else {
-      alert('Không thể gửi trả lời. Vui lòng kiểm tra lại trạng thái đăng nhập.')
+      alert(t('comments.reply_failed'))
     }
   } catch (e) {
     console.error(e)
-    alert('Có lỗi xảy ra khi gửi trả lời!')
+    alert(t('comments.reply_error'))
   } finally {
     postingReply.value = false
   }
@@ -193,7 +195,7 @@ const submitReply = async (content: string) => {
       class="text-lg font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-2"
     >
       <MessageSquare class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" />
-      Bình luận{{ pagination ? ` (${pagination.total_items})` : '' }}
+      {{ $t('comments.title') }}{{ pagination ? ` (${pagination.total_items})` : '' }}
     </h3>
 
     <CommentForm
@@ -206,13 +208,13 @@ const submitReply = async (content: string) => {
       class="bg-blue-50 dark:bg-zinc-900/60 p-6 rounded-2xl border border-dashed border-blue-200 dark:border-zinc-800 text-center space-y-3"
     >
       <p class="text-xs text-zinc-600 dark:text-zinc-400">
-        Bạn cần đăng nhập để gửi ý kiến phản hồi về bài viết này.
+        {{ $t('comments.login_required') }}
       </p>
       <NuxtLink
-        to="/login"
+        :to="localePath('/login')"
         class="inline-block px-5 py-2.5 bg-[#3498db] hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
       >
-        Đăng nhập ngay
+        {{ $t('comments.login_now') }}
       </NuxtLink>
     </div>
 
@@ -221,11 +223,11 @@ const submitReply = async (content: string) => {
       class="text-center py-8 text-xs text-zinc-400 flex items-center justify-center gap-2"
     >
       <Loader2 class="w-4 h-4 animate-spin" />
-      Đang tải bình luận...
+      {{ $t('comments.loading') }}
     </div>
 
     <div v-else-if="rootComments.length === 0" class="text-center py-8 text-xs text-zinc-400">
-      Chưa có bình luận nào. Hãy là người đầu tiên!
+      {{ $t('comments.empty') }}
     </div>
 
     <div v-else class="space-y-4">
@@ -257,7 +259,7 @@ const submitReply = async (content: string) => {
           :key="replyTarget.replyToId"
           :submitting="postingReply"
           show-cancel
-          placeholder="Viết trả lời của bạn..."
+          :placeholder="$t('comments.reply_placeholder')"
           :mention-username="
             replyTarget.replyToId !== replyTarget.rootId ? replyTarget.replyToUsername : null
           "
@@ -274,7 +276,7 @@ const submitReply = async (content: string) => {
       >
         <Loader2 v-if="loadingMore" class="w-3.5 h-3.5 animate-spin" />
         <ChevronDown v-else class="w-3.5 h-3.5" />
-        {{ loadingMore ? 'Đang tải...' : 'Xem thêm bình luận' }}
+        {{ loadingMore ? $t('comments.loading_short') : $t('comments.load_more') }}
       </button>
     </div>
   </div>

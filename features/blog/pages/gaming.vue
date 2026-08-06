@@ -22,19 +22,23 @@ const userStore = useUserStore()
 const route = useRoute()
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+const localePath = useLocalePath()
 
 // SEO optimization for Gaming Page
 useSeoMeta({
-  title: 'Thế giới Game - Tin tức Game & Esports mới nhất',
-  description:
-    'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
-  ogTitle: 'Thế giới Game - TechDeal Gaming',
-  ogDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
+  title: () => isEn.value ? 'Gaming World - Latest Game & Esports News' : 'Thế giới Game - Tin tức Game & Esports mới nhất',
+  description: () => isEn.value
+    ? 'Gaming page: reviews, esports, gaming hardware news.'
+    : 'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
+  ogTitle: () => isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
+  ogDescription: () => isEn.value ? 'Esports, gamers and world gaming trends updates.' : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Thế giới Game - TechDeal Gaming',
-  twitterDescription: 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
+  twitterTitle: () => isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
+  twitterDescription: () => isEn.value ? 'Esports, gamers and world gaming trends updates.' : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
 })
 
 useHead(() => ({
@@ -60,15 +64,16 @@ const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch gaming articles dynamically
 const { data: gamingPosts, pending } = await useAsyncData(
-  'posts-gaming',
+  `posts-gaming-${locale.value}`,
   () =>
     blogRepository.getPosts({
       category: 'gaming',
       page: currentPage.value,
-      limit: currentPage.value === 1 ? 15 : 10
+      limit: currentPage.value === 1 ? 15 : 10,
+      lang: isEn.value ? 'en' : undefined
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -164,7 +169,7 @@ watch(currentPage, () => {
 
     <!-- MAIN AREA -->
     <main>
-      <h1 class="sr-only">Thế giới Game - Tin tức Game & Esports mới nhất</h1>
+      <h1 class="sr-only">{{ $t('nav.gaming') }}</h1>
       <!-- Admin Action Bar -->
       <div
         v-if="userStore.isAuthenticated && (userStore.role === 'admin' || userStore.role === 'mod')"
@@ -175,10 +180,10 @@ watch(currentPage, () => {
             Quản trị viên / Moderator
           </span>
           <NuxtLink
-            to="/blog/publish?category=gaming"
+            :to="localePath('/blog/publish?category=gaming')"
             class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#e74c3c] text-white hover:bg-[#c0392b] transition-all font-bold text-xs rounded-lg shadow-sm cursor-pointer"
           >
-            📝 Đăng bài Game mới
+            {{ $t('category.publish_new') }}
           </NuxtLink>
         </div>
       </div>
@@ -213,7 +218,7 @@ watch(currentPage, () => {
                 <h2
                   class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
                 >
-                  <TrendingUp class="w-5 h-5 text-[#e74c3c]" /> Tin mới cập nhật
+                  <TrendingUp class="w-5 h-5 text-[#e74c3c]" /> {{ $t('common.latest_updates') }}
                 </h2>
               </div>
 
@@ -226,7 +231,7 @@ watch(currentPage, () => {
                   class="w-10 h-10 border-4 border-[#e74c3c] border-t-transparent rounded-full animate-spin"
                 ></div>
                 <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-                  Đang tải bài viết mới...
+                  {{ $t('common.loading_posts') }}
                 </p>
               </div>
 
@@ -245,7 +250,7 @@ watch(currentPage, () => {
                   @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
                   class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
                 >
-                  Trước
+                  {{ $t('common.prev') }}
                 </button>
                 <template v-for="page in visiblePages" :key="page">
                   <span
@@ -272,7 +277,7 @@ watch(currentPage, () => {
                   @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
                   class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
                 >
-                  Sau
+                  {{ $t('common.next') }}
                 </button>
               </div>
             </div>

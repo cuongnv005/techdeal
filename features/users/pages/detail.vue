@@ -17,6 +17,7 @@ import { useUserStore } from '@stores/user'
 const route = useRoute()
 const authorIdParam = route.params.id as string
 const userStore = useUserStore()
+const { t } = useI18n()
 
 // Composable setup
 const { profileData, isLoading, error, page, updateProfile } = useUser(authorIdParam)
@@ -48,32 +49,35 @@ const defaultAvatar =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'
 
 // SEO metadata config
+const usernameHandle = computed(() => `@${usernameVal.value || 'User'}`)
+
+const seoTitle = computed(() =>
+  profileData.value?.profile?.full_name
+    ? `${profileData.value.profile.full_name} (${usernameHandle.value})`
+    : t('user_profile.meta_title', { username: usernameHandle.value })
+)
+const seoDescription = computed(
+  () =>
+    profileData.value?.profile?.bio ||
+    t('user_profile.meta_description', { username: usernameHandle.value })
+)
+const seoSocialTitle = computed(() =>
+  profileData.value?.profile?.full_name
+    ? `${profileData.value.profile.full_name} (${usernameHandle.value})`
+    : usernameHandle.value
+)
+
 useSeoMeta({
-  title: () =>
-    profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
-      : `@${usernameVal.value || 'User'} - Trang cá nhân`,
-  description: () =>
-    profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
-  ogTitle: () =>
-    profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
-      : `@${usernameVal.value || 'User'}`,
-  ogDescription: () =>
-    profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+  ogTitle: () => seoSocialTitle.value,
+  ogDescription: () => seoDescription.value,
   ogImage: () => profileData.value?.profile?.avatar_url || defaultAvatar,
   ogUrl: () => requestUrl,
   ogType: 'profile',
   twitterCard: 'summary_large_image',
-  twitterTitle: () =>
-    profileData.value?.profile?.full_name
-      ? `${profileData.value.profile.full_name} (@${usernameVal.value})`
-      : `@${usernameVal.value || 'User'}`,
-  twitterDescription: () =>
-    profileData.value?.profile?.bio ||
-    `Xem hồ sơ cá nhân và các bài viết của @${usernameVal.value || 'User'} trên TechDeal.`,
+  twitterTitle: () => seoSocialTitle.value,
+  twitterDescription: () => seoDescription.value,
   twitterImage: () => profileData.value?.profile?.avatar_url || defaultAvatar,
   robots: 'index, follow'
 })
@@ -120,12 +124,12 @@ const handleAvatarUpdate = async (newUrl: string) => {
   try {
     const res = await updateProfile({ avatar_url: newUrl })
     if (res.success) {
-      alert('Cập nhật ảnh đại diện thành công!')
+      alert(t('user_profile.avatar_update_success'))
     } else {
-      alert(res.error || 'Cập nhật ảnh đại diện thất bại!')
+      alert(res.error || t('user_profile.avatar_update_fail'))
     }
   } catch (e) {
-    alert('Có lỗi xảy ra khi cập nhật ảnh đại diện!')
+    alert(t('user_profile.avatar_update_error'))
   } finally {
     isSaving.value = false
   }
@@ -136,12 +140,12 @@ const handleProfileUpdate = async (updatedFields: any) => {
   try {
     const res = await updateProfile(updatedFields)
     if (res.success) {
-      alert('Cập nhật thông tin cá nhân thành công!')
+      alert(t('user_profile.profile_update_success'))
     } else {
-      alert(res.error || 'Cập nhật thông tin thất bại!')
+      alert(res.error || t('user_profile.profile_update_fail'))
     }
   } catch (e) {
-    alert('Có lỗi xảy ra khi cập nhật thông tin!')
+    alert(t('user_profile.profile_update_error'))
   } finally {
     isSaving.value = false
   }
@@ -184,18 +188,20 @@ const getRoleName = (role?: string) => {
           class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
         ></div>
         <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-          Đang tải thông tin người dùng...
+          {{ $t('user_profile.loading') }}
         </p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-center py-20">
-        <p class="text-red-500 font-bold mb-2">Đã xảy ra lỗi: {{ error.message }}</p>
+        <p class="text-red-500 font-bold mb-2">
+          {{ $t('user_profile.error_prefix', { message: error.message }) }}
+        </p>
         <button
           @click="page = 1"
           class="px-4 py-2 bg-[#3498db] text-white rounded-lg hover:bg-sky-600 transition-colors cursor-pointer"
         >
-          Thử lại
+          {{ $t('user_profile.retry') }}
         </button>
       </div>
 
@@ -217,7 +223,7 @@ const getRoleName = (role?: string) => {
             <div>
               <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <h1 class="text-3xl font-black text-zinc-900 dark:text-white leading-tight">
-                  {{ profileWithEmail.full_name || 'Chưa cập nhật tên thật' }}
+                  {{ profileWithEmail.full_name || $t('user_profile.no_full_name') }}
                 </h1>
                 <!-- Role Tag -->
                 <span
@@ -236,7 +242,7 @@ const getRoleName = (role?: string) => {
             </div>
 
             <p class="text-xs text-zinc-600 dark:text-zinc-450 line-clamp-2 italic max-w-lg">
-              {{ profileWithEmail.bio || 'Chưa có thông tin giới thiệu bản thân.' }}
+              {{ profileWithEmail.bio || $t('user_profile.no_bio') }}
             </p>
           </div>
         </div>

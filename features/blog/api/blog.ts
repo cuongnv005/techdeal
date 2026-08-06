@@ -6,9 +6,14 @@ import { HttpService } from '@core/api/service'
 export interface ApiPost {
   id: string
   title: string
+  title_en?: string
   slug: string
+  slug_en?: string
+  slug_vi?: string
   content: string
+  content_en?: string
   summary: string
+  summary_en?: string
   category_id: string
   category_name: string
   author_name: string
@@ -81,6 +86,7 @@ export interface GetPostsParams {
   q?: string
   title?: string
   enrich?: boolean
+  lang?: string
 }
 
 export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
@@ -141,6 +147,7 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
   return {
     id: post.id,
     title: post.title,
+    titleEn: post.title_en,
     category: post.category_name || post.category_id || 'Technology',
     categoryId: post.category_id,
     author: post.author_name || 'Admin',
@@ -160,8 +167,12 @@ export function mapApiPostToBlogPost(post: ApiPost): BlogPost {
     comments: post.comment_count || 0,
     imageUrl: imageUrl,
     summary: summary,
+    summaryEn: post.summary_en,
     slug: post.slug,
+    slugEn: post.slug_en,
+    slugVi: post.slug_vi,
     content: post.content,
+    contentEn: post.content_en,
     authorId: post.author_id,
     authorAvatar: post.author_avatar,
     authorBio: post.author_bio,
@@ -315,7 +326,7 @@ export class BlogRepository {
     }
   }
 
-  async getPostBySlug(slug: string): Promise<{
+  async getPostBySlug(slug: string, lang?: string): Promise<{
     post: BlogPost
     tags: string[]
     relatedPosts: BlogPost[]
@@ -333,8 +344,9 @@ export class BlogRepository {
         }
       }
 
+      const path = lang === 'en' ? `/posts/en/${querySlug}` : `/posts/${querySlug}`
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
-        `/posts/${querySlug}`
+        path
       )
       if (response.data && response.data.success && response.data.data) {
         const detail = response.data.data
@@ -380,6 +392,8 @@ export class BlogRepository {
   async createPost(postData: {
     title: string
     content: string
+    title_en?: string | null
+    content_en?: string | null
     category: string
     tags: string[]
     scheduledAt: string | null
@@ -395,6 +409,8 @@ export class BlogRepository {
       >('/posts', {
         title: postData.title,
         content: postData.content,
+        title_en: postData.title_en,
+        content_en: postData.content_en,
         category_id: postData.category,
         tags: postData.tags,
         scheduled_at: postData.scheduledAt
@@ -421,6 +437,8 @@ export class BlogRepository {
     postData: {
       title: string
       content: string
+      title_en?: string | null
+      content_en?: string | null
       category: string
       tags: string[]
       scheduledAt: string | null
@@ -437,6 +455,8 @@ export class BlogRepository {
       >(`/posts/${id}`, {
         title: postData.title,
         content: postData.content,
+        title_en: postData.title_en,
+        content_en: postData.content_en,
         category_id: postData.category,
         tags: postData.tags,
         scheduled_at: postData.scheduledAt
@@ -474,11 +494,11 @@ export class BlogRepository {
     }
   }
 
-  async getPopularPosts(limit: number = 10): Promise<BlogPost[]> {
+  async getPopularPosts(limit: number = 10, lang?: string): Promise<BlogPost[]> {
     try {
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPost[]>>>(
         '/posts/popular',
-        { limit }
+        { limit, lang }
       )
 
       if (response.data && response.data.success && Array.isArray(response.data.data)) {

@@ -6,8 +6,22 @@ import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
 
 import { useRoute } from '#imports'
 import { useUserStore } from '@stores/user'
+import { useLocaleAlternateLink } from '@shared/composables/use-locale-alternate-link'
 
 const userStore = useUserStore()
+
+const { locale } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
+const localePath = useLocalePath()
+const localeAlternateLink = useLocaleAlternateLink()
+
+const switchLanguage = (lang: 'vi' | 'en') => {
+  if (localeAlternateLink.value) {
+    navigateTo(localeAlternateLink.value)
+  } else {
+    navigateTo(switchLocalePath(lang))
+  }
+}
 
 const isDark = useDark({
   selector: 'html',
@@ -85,8 +99,8 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
   >
     <div class="container mx-auto px-4 py-4 flex items-center justify-between">
       <!-- Logo -->
-      <NuxtLink to="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-        <span class="text-3xl font-black tracking-tighter" :class="textPrimaryClass">
+      <NuxtLink :to="localePath('/')" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <span class="text-3xl font-black tracking-tighter font-sans" :class="textPrimaryClass">
           TECHDEAL<span :class="dotColorClass">.</span>
         </span>
         <span
@@ -102,53 +116,53 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
         class="hidden lg:flex items-center gap-6 font-semibold text-sm text-zinc-700 dark:text-zinc-300"
       >
         <NuxtLink
-          to="/"
+          :to="localePath('/')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db] dark:!text-red-400"
-          >Trang chủ</NuxtLink
+          >{{ $t('nav.home') }}</NuxtLink
         >
         <NuxtLink
-          to="/cong-nghe"
+          :to="localePath('/cong-nghe')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
-          >Công nghệ</NuxtLink
+          >{{ $t('nav.technology') }}</NuxtLink
         >
         <NuxtLink
-          to="/windows"
+          :to="localePath('/windows')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
-          >Windows</NuxtLink
+          >{{ $t('nav.windows') }}</NuxtLink
         >
         <NuxtLink
-          to="/ios"
+          :to="localePath('/ios')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
-          >iOS</NuxtLink
+          >{{ $t('nav.ios') }}</NuxtLink
         >
         <NuxtLink
-          to="/android"
+          :to="localePath('/android')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
-          >Android</NuxtLink
+          >{{ $t('nav.android') }}</NuxtLink
         >
         <NuxtLink
-          to="/pc"
+          :to="localePath('/pc')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
-          >PC máy tính</NuxtLink
+          >{{ $t('nav.pc') }}</NuxtLink
         >
         <div class="relative group cursor-pointer py-2">
           <span
             class="inline-flex items-center gap-1 transition-colors duration-200"
             :class="textHoverClass"
           >
-            Ưu đãi
+            {{ $t('nav.deals') }}
             <ChevronDown
               class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
             />
@@ -157,13 +171,13 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             class="absolute left-0 top-full hidden group-hover:block w-36 bg-white dark:bg-zinc-900 shadow-xl rounded-xl border border-gray-150 dark:border-zinc-800 py-1.5 z-50 transition-all"
           >
             <NuxtLink
-              to="/deals/ios"
+              :to="localePath('/deals/ios')"
               class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-sky-500 transition-colors"
             >
               iOS
             </NuxtLink>
             <NuxtLink
-              to="/deals/android"
+              :to="localePath('/deals/android')"
               class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-sky-500 transition-colors"
             >
               Android
@@ -171,11 +185,11 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           </div>
         </div>
         <NuxtLink
-          to="/game"
+          :to="localePath('/game')"
           class="transition-colors duration-200"
           :class="textHoverClass"
           active-class="!text-[#e74c3c]"
-          >Thế giới Game</NuxtLink
+          >{{ $t('nav.gaming') }}</NuxtLink
         >
       </nav>
 
@@ -185,7 +199,7 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Tìm kiếm tin tức..."
+            :placeholder="$t('common.search_placeholder')"
             class="bg-gray-150 dark:bg-zinc-800 text-xs px-3 py-1.5 pr-8 rounded-full focus:outline-none focus:ring-1 w-48 dark:text-white"
             :class="focusRingClass"
           />
@@ -197,6 +211,33 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             <Search class="w-4 h-4" />
           </button>
         </form>
+
+        <!-- Language Switcher (Desktop) -->
+        <div class="relative group py-2 hidden sm:block">
+          <button
+            class="flex items-center gap-1 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-zinc-550 dark:text-zinc-400 transition-colors cursor-pointer text-xs font-bold"
+            aria-label="Switch Language"
+          >
+            🌐 {{ locale === 'en' ? 'EN' : 'VI' }}
+            <ChevronDown class="w-3 h-3 opacity-60" />
+          </button>
+          <div
+            class="absolute right-0 top-full hidden group-hover:block w-32 bg-white dark:bg-zinc-900 shadow-xl rounded-xl border border-gray-150 dark:border-zinc-800 py-1 z-50"
+          >
+            <button
+              @click="switchLanguage('vi')"
+              class="block w-full text-left px-4 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              🇻🇳 Tiếng Việt
+            </button>
+            <button
+              @click="switchLanguage('en')"
+              class="block w-full text-left px-4 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              🇬🇧 English
+            </button>
+          </div>
+        </div>
 
         <!-- Theme Toggle (Desktop) -->
         <ClientOnly>
@@ -217,9 +258,9 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           >
             <template v-if="userStore.isAuthenticated">
               <span class="text-xs font-semibold text-zinc-555 dark:text-zinc-400">
-                Chào,
+                {{ $t('common.welcome_user') }}
                 <NuxtLink
-                  :to="`/user/${userStore.id}`"
+                  :to="localePath('/user/' + userStore.id)"
                   class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
                 >
                   <strong class="font-bold">{{ userStore.username }}</strong>
@@ -227,30 +268,30 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
               </span>
               <NuxtLink
                 v-if="userStore.role === 'admin' || userStore.role === 'mod'"
-                to="/admin/dashboard"
+                :to="localePath('/admin/dashboard')"
                 class="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
               >
-                Dashboard
+                {{ $t('common.dashboard') }}
               </NuxtLink>
               <button
                 @click="handleLogout"
                 class="text-xs font-bold text-zinc-550 hover:text-red-500 transition-colors cursor-pointer"
               >
-                Đăng xuất
+                {{ $t('common.logout') }}
               </button>
             </template>
             <template v-else>
               <NuxtLink
-                to="/login"
+                :to="localePath('/login')"
                 class="text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-colors"
                 :class="textHoverClass"
-                >Đăng nhập</NuxtLink
+                >{{ $t('common.login') }}</NuxtLink
               >
               <NuxtLink
-                to="/register"
+                :to="localePath('/register')"
                 class="text-xs font-bold text-white px-3.5 py-1.5 rounded-full transition-colors"
                 :class="[bgPrimaryClass, bgHoverClass]"
-                >Đăng ký</NuxtLink
+                >{{ $t('common.register') }}</NuxtLink
               >
             </template>
           </div>
@@ -292,10 +333,19 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                 : 'border-gray-150 dark:border-zinc-800'
             "
           >
-            <span class="text-2xl font-black tracking-tighter" :class="textPrimaryClass">
+            <span class="text-2xl font-black tracking-tighter font-sans" :class="textPrimaryClass">
               TECHDEAL<span :class="dotColorClass">.</span>
             </span>
             <div class="flex items-center gap-1">
+              <!-- Language Switcher (Mobile Sidebar) -->
+              <button
+                @click="switchLanguage(locale === 'en' ? 'vi' : 'en')"
+                class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors text-xs font-bold text-zinc-600 dark:text-zinc-400"
+                aria-label="Switch Language"
+              >
+                🌐 {{ locale === 'en' ? 'EN' : 'VI' }}
+              </button>
+
               <!-- Theme Toggle (Mobile Sidebar) -->
               <ClientOnly>
                 <button
@@ -326,7 +376,7 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                 <input
                   v-model="searchQuery"
                   type="text"
-                  placeholder="Tìm kiếm tin tức..."
+                  :placeholder="$t('common.search_placeholder')"
                   class="w-full bg-gray-100 dark:bg-zinc-800 text-sm px-4 py-2.5 pr-10 rounded-xl focus:outline-none focus:ring-1 dark:text-white"
                   :class="focusRingClass"
                 />
@@ -342,93 +392,93 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
               <!-- Nav Links -->
               <nav class="flex flex-col gap-4 font-semibold text-base">
                 <NuxtLink
-                  to="/"
+                  :to="localePath('/')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] dark:!text-red-400 font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  Trang chủ
+                  {{ $t('nav.home') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/cong-nghe"
+                  :to="localePath('/cong-nghe')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  Công nghệ
+                  {{ $t('nav.technology') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/windows"
+                  :to="localePath('/windows')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  Windows
+                  {{ $t('nav.windows') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/ios"
+                  :to="localePath('/ios')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  iOS
+                  {{ $t('nav.ios') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/android"
+                  :to="localePath('/android')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  Android
+                  {{ $t('nav.android') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/pc"
+                  :to="localePath('/pc')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  PC máy tính
+                  {{ $t('nav.pc') }}
                 </NuxtLink>
                 <NuxtLink
-                  to="/deals/ios"
+                  :to="localePath('/deals/ios')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors flex items-center justify-between"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  <span>Ưu đãi iOS</span>
+                  <span>{{ $t('nav.deals') }} iOS</span>
                   <span
                     class="text-[10px] bg-sky-500/10 text-sky-500 font-bold px-2 py-0.5 rounded-md"
                     >FREE</span
                   >
                 </NuxtLink>
                 <NuxtLink
-                  to="/deals/android"
+                  :to="localePath('/deals/android')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors flex items-center justify-between"
                   :class="textHoverClass"
                   active-class="!text-[#3498db] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  <span>Ưu đãi Android</span>
+                  <span>{{ $t('nav.deals') }} Android</span>
                   <span
                     class="text-[10px] bg-emerald-500/10 text-emerald-500 font-bold px-2 py-0.5 rounded-md"
                     >FREE</span
                   >
                 </NuxtLink>
                 <NuxtLink
-                  to="/game"
+                  :to="localePath('/game')"
                   class="py-2 border-b border-gray-100 dark:border-zinc-850 transition-colors"
                   :class="textHoverClass"
                   active-class="!text-[#e74c3c] font-bold"
                   @click="isSidebarOpen = false"
                 >
-                  Thế giới Game
+                  {{ $t('nav.gaming') }}
                 </NuxtLink>
               </nav>
             </div>
@@ -446,9 +496,9 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                 <template v-if="userStore.isAuthenticated">
                   <div class="flex flex-col gap-4">
                     <div class="text-sm">
-                      Chào,
+                      {{ $t('common.welcome_user') }}
                       <NuxtLink
-                        :to="`/user/${userStore.id}`"
+                        :to="localePath('/user/' + userStore.id)"
                         class="hover:underline transition-colors text-zinc-850 dark:text-zinc-200 hover:text-[#3498db] dark:hover:text-[#e74c3c]"
                         @click="isSidebarOpen = false"
                       >
@@ -457,36 +507,36 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
                     </div>
                     <NuxtLink
                       v-if="userStore.role === 'admin' || userStore.role === 'mod'"
-                      to="/admin/dashboard"
+                      :to="localePath('/admin/dashboard')"
                       class="text-sm font-bold text-center px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors"
                       @click="isSidebarOpen = false"
                     >
-                      Dashboard
+                      {{ $t('common.dashboard') }}
                     </NuxtLink>
                     <button
                       @click="handleMobileLogout"
                       class="text-sm font-bold text-center px-4 py-2.5 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-550/10 transition-colors cursor-pointer"
                     >
-                      Đăng xuất
+                      {{ $t('common.logout') }}
                     </button>
                   </div>
                 </template>
                 <template v-else>
                   <div class="flex flex-col gap-3">
                     <NuxtLink
-                      to="/login"
+                      :to="localePath('/login')"
                       class="text-sm font-bold text-center py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors"
                       @click="isSidebarOpen = false"
                     >
-                      Đăng nhập
+                      {{ $t('common.login') }}
                     </NuxtLink>
                     <NuxtLink
-                      to="/register"
+                      :to="localePath('/register')"
                       class="text-sm font-bold text-center text-white py-2.5 rounded-xl transition-colors"
                       :class="[bgPrimaryClass, bgHoverClass]"
                       @click="isSidebarOpen = false"
                     >
-                      Đăng ký
+                      {{ $t('common.register') }}
                     </NuxtLink>
                   </div>
                 </template>

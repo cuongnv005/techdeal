@@ -10,6 +10,7 @@ import Header from '@features/blog/components/Header.vue'
 import { useTeam } from '@features/users/composables/use-team'
 
 const { team } = useTeam()
+const localePath = useLocalePath()
 
 const ROLE_META: Record<
   TeamMember['role'],
@@ -177,7 +178,7 @@ const handleSubscribe = () => {
             <NuxtLink
               v-for="member in team"
               :key="member.id"
-              :to="`/user/${member.id}`"
+              :to="localePath(`/user/${member.id}`)"
               class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-150 dark:border-zinc-850 hover:border-[#3498db]/40 dark:hover:border-[#3498db]/40 transition-colors"
             >
               <img

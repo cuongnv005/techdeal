@@ -27,19 +27,23 @@ const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+const localePath = useLocalePath()
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: 'PC máy tính - Tin tức PC',
-  description:
-    'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
-  ogTitle: 'Chuyên mục PC máy tính - TechDeal',
-  ogDescription: 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
+  title: () => isEn.value ? 'PC & Hardware - PC News' : 'PC máy tính - Tin tức PC',
+  description: () => isEn.value
+    ? 'PC & Hardware Section: Update computer hardware news and latest PC components.'
+    : 'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
+  ogTitle: () => isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
+  ogDescription: () => isEn.value ? 'Daily updates on computer hardware news and latest PC components.' : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Chuyên mục PC máy tính - TechDeal',
-  twitterDescription: 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.'
+  twitterTitle: () => isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
+  twitterDescription: () => isEn.value ? 'Daily updates on computer hardware news and latest PC components.' : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.'
 })
 
 useHead(() => ({
@@ -53,15 +57,16 @@ useHead(() => ({
 
 // Fetch articles dynamically
 const { data: allCategoryPosts, pending } = await useAsyncData(
-  'posts-pc-all',
+  `posts-pc-all-${locale.value}`,
   () =>
     blogRepository.getPosts({
       category: 'pc',
       page: currentPage.value,
-      limit: 10
+      limit: 10,
+      lang: isEn.value ? 'en' : undefined
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -142,14 +147,13 @@ const userStore = useUserStore()
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
-              >Chuyên mục</span
+              >{{ $t('category.label') }}</span
             >
             <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">
-              PC máy tính
+              {{ $t('nav.pc') }}
             </h1>
             <p class="text-sm text-indigo-50 mt-2 max-w-xl">
-              Tin tức mới nhất về phần cứng máy tính, linh kiện CPU, GPU, RAM, hướng dẫn tự ráp PC
-              chơi game và tối ưu hóa hệ thống.
+              {{ $t('category.desc_pc') }}
             </p>
           </div>
           <div
@@ -158,10 +162,10 @@ const userStore = useUserStore()
             "
           >
             <NuxtLink
-              to="/blog/publish?category=pc"
+              :to="localePath('/blog/publish?category=pc')"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-650 hover:bg-indigo-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer text-black"
             >
-              📝 Đăng bài mới
+              {{ $t('category.publish_new') }}
             </NuxtLink>
           </div>
         </div>
@@ -181,7 +185,7 @@ const userStore = useUserStore()
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('common.latest_updates') }}
             </h2>
           </div>
 
@@ -191,7 +195,7 @@ const userStore = useUserStore()
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết mới...
+              {{ $t('common.loading_posts') }}
             </p>
           </div>
 
@@ -210,7 +214,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -237,7 +241,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

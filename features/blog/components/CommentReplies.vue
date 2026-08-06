@@ -41,7 +41,11 @@ const emit = defineEmits<{
     >
       <Loader2 v-if="loading" class="w-3 h-3 animate-spin" />
       <ChevronDown v-else class="w-3 h-3" />
-      {{ loading ? 'Đang tải...' : `Xem thêm ${total - items.length} trả lời` }}
+      {{
+        loading
+          ? $t('comments.loading_short')
+          : $t('comments.load_more_replies', { count: total - items.length })
+      }}
     </button>
   </div>
 </template>

@@ -16,8 +16,10 @@ const emit = defineEmits<{
   (e: 'change-page', page: number): void
 }>()
 
+const { locale } = useI18n()
+
 const formattedDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('vi-VN', {
+  return new Date(dateStr).toLocaleDateString(locale.value === 'en' ? 'en-US' : 'vi-VN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -79,9 +81,12 @@ const visiblePages = computed(() => {
       <h3
         class="text-lg font-black text-muted-foreground dark:text-white uppercase tracking-tight flex items-center gap-2"
       >
-        <FileText class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" /> Danh sách bài viết
+        <FileText class="w-5 h-5 text-[#3498db] dark:text-[#e74c3c]" />
+        {{ $t('user_profile.post_list_title') }}
       </h3>
-      <span class="text-xs text-zinc-500 font-bold">Tổng số: {{ pagination.total_items }}</span>
+      <span class="text-xs text-zinc-500 font-bold">{{
+        $t('user_profile.total_posts', { count: pagination.total_items })
+      }}</span>
     </div>
 
     <!-- Empty State -->
@@ -90,7 +95,7 @@ const visiblePages = computed(() => {
       class="text-center py-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-border rounded-2xl"
     >
       <FileText class="w-12 h-12 text-zinc-300 dark:text-zinc-700 mx-auto mb-3" />
-      <p class="text-sm text-zinc-500 font-medium">Người dùng này chưa xuất bản bài viết nào.</p>
+      <p class="text-sm text-zinc-500 font-medium">{{ $t('user_profile.no_posts') }}</p>
     </div>
 
     <!-- Posts list -->

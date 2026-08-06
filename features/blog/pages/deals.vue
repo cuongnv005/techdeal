@@ -39,6 +39,8 @@ const props = defineProps<Props>()
 
 const route = useRoute()
 const userStore = useUserStore()
+const { locale } = useI18n()
+const localePath = useLocalePath()
 
 if (process.client) {
   userStore.initializeAuth()
@@ -262,7 +264,7 @@ const parsedContentHtml = computed(() => {
       class="bg-gray-100 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-850 py-3 text-xs"
     >
       <div class="container mx-auto px-4 flex items-center gap-2 text-zinc-500">
-        <NuxtLink to="/" class="hover:text-[#3498db] transition-colors">Trang chủ</NuxtLink>
+        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{ $t('detail.home') }}</NuxtLink>
         <span>/</span>
         <span class="text-zinc-400 capitalize">{{ post?.category || 'Deals Game & Apps' }}</span>
         <span>/</span>
@@ -281,11 +283,11 @@ const parsedContentHtml = computed(() => {
         <article class="lg:col-span-8 space-y-6">
           <!-- Back button -->
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-555 dark:text-zinc-400 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors group mb-2"
           >
             <ArrowLeft class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            Quay lại trang chủ
+            {{ $t('detail.back_to_home') }}
           </NuxtLink>
 
           <!-- Loading State -->
@@ -296,7 +298,7 @@ const parsedContentHtml = computed(() => {
             <div
               class="w-8 h-8 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
-            <p class="text-xs font-bold text-zinc-400 mt-4 animate-pulse">Đang tải bài viết...</p>
+            <p class="text-xs font-bold text-zinc-400 mt-4 animate-pulse">{{ $t('detail.loading_post') }}</p>
           </div>
 
           <!-- Empty or Error State (No Post Yet) -->
@@ -316,7 +318,7 @@ const parsedContentHtml = computed(() => {
             <!-- Admin / Mod action to create post if not existing -->
             <div v-if="isAdminOrMod" class="pt-2">
               <NuxtLink
-                :to="`/blog/publish?category=deals&tag=${platform}`"
+                :to="localePath(`/blog/publish?category=deals&tag=${platform}`)"
                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3498db] hover:bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
               >
                 <Plus class="w-4 h-4" /> Tạo bài viết Ưu đãi {{ platformTitle }} mới
@@ -355,10 +357,10 @@ const parsedContentHtml = computed(() => {
               >
                 <span class="flex items-center gap-1.5">
                   <User class="w-4 h-4" />
-                  Đăng bởi
+                  {{ $t('detail.posted_by') }}
                   <NuxtLink
                     v-if="post.authorId"
-                    :to="`/user/${post.authorId}`"
+                    :to="localePath(`/user/${post.authorId}`)"
                     class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
                   >
                     <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
@@ -375,11 +377,11 @@ const parsedContentHtml = computed(() => {
                 </span>
                 <span class="flex items-center gap-1.5">
                   <Eye class="w-4 h-4 text-zinc-450" />
-                  {{ post.views }} lượt xem
+                  {{ post.views }} {{ $t('detail.views') }}
                 </span>
                 <span class="flex items-center gap-1.5">
                   <MessageSquare class="w-4 h-4 text-zinc-450" />
-                  {{ commentCount }} bình luận
+                  {{ commentCount }} {{ $t('detail.comments') }}
                 </span>
               </div>
             </div>
@@ -393,7 +395,7 @@ const parsedContentHtml = computed(() => {
               <template #fallback>
                 <div
                   class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
-                  v-html="parseBBCode(post?.content)"
+                  v-html="parseBBCode(post?.content || '')"
                 ></div>
               </template>
             </ClientOnly>
@@ -416,7 +418,7 @@ const parsedContentHtml = computed(() => {
               <span
                 class="text-xs font-bold flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
               >
-                <Share2 class="w-4 h-4" /> Chia sẻ bài viết này:
+                <Share2 class="w-4 h-4" /> {{ $t('detail.share_post') }}
               </span>
               <div class="flex items-center gap-2">
                 <a
@@ -443,15 +445,15 @@ const parsedContentHtml = computed(() => {
                 >
                   <Check v-if="isCopied" class="w-4 h-4 text-green-500" />
                   <Link v-else class="w-4 h-4" />
-                  {{ isCopied ? 'Đã sao chép!' : 'Sao chép liên kết' }}
+                  {{ isCopied ? $t('detail.link_copied') : $t('detail.copy_link') }}
                 </button>
                 <NuxtLink
                   v-if="isAuthorOrAdmin"
-                  :to="`/blog/publish?edit=${post.id}`"
+                  :to="localePath(`/blog/publish?edit=${post.id}`)"
                   class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Pencil class="w-4 h-4" />
-                  Chỉnh sửa bài viết
+                  {{ $t('detail.edit_post') }}
                 </NuxtLink>
               </div>
             </div>
@@ -472,7 +474,7 @@ const parsedContentHtml = computed(() => {
               class="border-t border-gray-200 dark:border-zinc-850 mt-16 pt-12 space-y-6"
             >
               <h3 class="text-xl font-black uppercase text-zinc-900 dark:text-white tracking-tight">
-                📚 Bài viết liên quan
+                {{ $t('detail.related_posts') }}
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div
@@ -481,7 +483,7 @@ const parsedContentHtml = computed(() => {
                   class="flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group"
                 >
                   <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
-                    <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`" class="block w-full h-full">
+                    <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)" class="block w-full h-full">
                       <img
                         :src="rp.imageUrl"
                         :alt="rp.title"
@@ -499,7 +501,7 @@ const parsedContentHtml = computed(() => {
                       <h4
                         class="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
                       >
-                        <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
+                        <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)">{{ rp.title }}</NuxtLink>
                       </h4>
                     </div>
                     <div
@@ -537,7 +539,7 @@ const parsedContentHtml = computed(() => {
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              🔥 Xem nhiều nhất
+              🔥 {{ $t('detail.most_viewed') }}
             </h4>
             <div class="space-y-4">
               <div
@@ -557,7 +559,7 @@ const parsedContentHtml = computed(() => {
                   <h5
                     class="text-xs font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors line-clamp-2"
                   >
-                    <NuxtLink :to="`/blog/${p.slug}.${p.id}`">{{ p.title }}</NuxtLink>
+            <NuxtLink :to="localePath('/blog/' + p.slug + '.' + p.id)">{{ p.title }}</NuxtLink>
                   </h5>
                 </div>
               </div>
@@ -576,7 +578,7 @@ const parsedContentHtml = computed(() => {
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              Về tác giả
+              {{ $t('detail.about_author') }}
             </h4>
             <div class="flex flex-col items-center text-center gap-3">
               <!-- Avatar -->
@@ -599,7 +601,7 @@ const parsedContentHtml = computed(() => {
               </div>
               <!-- Name -->
               <NuxtLink
-                :to="`/user/${post.authorId}`"
+                :to="localePath(`/user/${post.authorId}`)"
                 class="text-sm font-extrabold text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors leading-tight"
               >
                 {{ post.author }}
@@ -613,10 +615,10 @@ const parsedContentHtml = computed(() => {
               </p>
               <!-- View profile link -->
               <NuxtLink
-                :to="`/user/${post.authorId}`"
+                :to="localePath(`/user/${post.authorId}`)"
                 class="inline-flex items-center gap-1 text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline transition-colors mt-1"
               >
-                Xem hồ sơ →
+                  {{ $t('detail.view_profile') }}
               </NuxtLink>
             </div>
           </div>
@@ -628,12 +630,11 @@ const parsedContentHtml = computed(() => {
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              <Sparkles class="w-4 h-4 text-red-500" /> Bản tin TechDeal
+              <Sparkles class="w-4 h-4 text-red-500" /> {{ $t('detail.newsletter_title') }}
             </h4>
             <div class="space-y-3">
               <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">
-                Đăng ký để nhận thông báo về những tin tức công nghệ mới và độc quyền trực tiếp qua
-                Google News.
+                {{ $t('detail.newsletter_desc') }}
               </p>
               <div
                 class="swg-basic-subscription-button-placeholder w-full mt-2"
