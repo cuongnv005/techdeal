@@ -211,9 +211,9 @@ onMounted(() => {
         <form @submit.prevent="handleRegister" class="space-y-4">
           <!-- Username Input -->
           <div class="space-y-1">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-              >{{ $t('auth.username_label') }}</label
-            >
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+              $t('auth.username_label')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-zinc-400">
                 <User class="w-4 h-4" />
@@ -230,7 +230,9 @@ onMounted(() => {
 
           <!-- Email Input -->
           <div class="space-y-1">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{ $t('auth.email_address_label') }}</label>
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+              $t('auth.email_address_label')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-zinc-400">
                 <Mail class="w-4 h-4" />
@@ -247,7 +249,9 @@ onMounted(() => {
 
           <!-- Password Input -->
           <div class="space-y-1">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{ $t('auth.password_label') }}</label>
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+              $t('auth.password_label')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-zinc-400">
                 <Lock class="w-4 h-4" />
@@ -302,7 +306,9 @@ onMounted(() => {
         <!-- Redirect back to login -->
         <p class="text-xs text-center text-zinc-555 dark:text-zinc-400">
           {{ $t('auth.has_account') }}
-          <NuxtLink :to="localePath('/login')" class="font-bold text-[#3498db] dark:text-red-400 hover:underline"
+          <NuxtLink
+            :to="localePath('/login')"
+            class="font-bold text-[#3498db] dark:text-red-400 hover:underline"
             >{{ $t('common.login') }}</NuxtLink
           >
         </p>

@@ -264,7 +264,9 @@ const parsedContentHtml = computed(() => {
       class="bg-gray-100 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-850 py-3 text-xs"
     >
       <div class="container mx-auto px-4 flex items-center gap-2 text-zinc-500">
-        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{ $t('detail.home') }}</NuxtLink>
+        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{
+          $t('detail.home')
+        }}</NuxtLink>
         <span>/</span>
         <span class="text-zinc-400 capitalize">{{ post?.category || 'Deals Game & Apps' }}</span>
         <span>/</span>
@@ -298,7 +300,9 @@ const parsedContentHtml = computed(() => {
             <div
               class="w-8 h-8 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
-            <p class="text-xs font-bold text-zinc-400 mt-4 animate-pulse">{{ $t('detail.loading_post') }}</p>
+            <p class="text-xs font-bold text-zinc-400 mt-4 animate-pulse">
+              {{ $t('detail.loading_post') }}
+            </p>
           </div>
 
           <!-- Empty or Error State (No Post Yet) -->
@@ -483,7 +487,10 @@ const parsedContentHtml = computed(() => {
                   class="flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group"
                 >
                   <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
-                    <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)" class="block w-full h-full">
+                    <NuxtLink
+                      :to="localePath(`/blog/${rp.slug}.${rp.id}`)"
+                      class="block w-full h-full"
+                    >
                       <img
                         :src="rp.imageUrl"
                         :alt="rp.title"
@@ -501,7 +508,9 @@ const parsedContentHtml = computed(() => {
                       <h4
                         class="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
                       >
-                        <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)">{{ rp.title }}</NuxtLink>
+                        <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)">{{
+                          rp.title
+                        }}</NuxtLink>
                       </h4>
                     </div>
                     <div
@@ -559,7 +568,9 @@ const parsedContentHtml = computed(() => {
                   <h5
                     class="text-xs font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors line-clamp-2"
                   >
-            <NuxtLink :to="localePath('/blog/' + p.slug + '.' + p.id)">{{ p.title }}</NuxtLink>
+                    <NuxtLink :to="localePath('/blog/' + p.slug + '.' + p.id)">{{
+                      p.title
+                    }}</NuxtLink>
                   </h5>
                 </div>
               </div>
@@ -618,7 +629,7 @@ const parsedContentHtml = computed(() => {
                 :to="localePath(`/user/${post.authorId}`)"
                 class="inline-flex items-center gap-1 text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline transition-colors mt-1"
               >
-                  {{ $t('detail.view_profile') }}
+                {{ $t('detail.view_profile') }}
               </NuxtLink>
             </div>
           </div>

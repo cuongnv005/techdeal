@@ -28,17 +28,29 @@ const localePath = useLocalePath()
 
 // SEO optimization for Gaming Page
 useSeoMeta({
-  title: () => isEn.value ? 'Gaming World - Latest Game & Esports News' : 'Thế giới Game - Tin tức Game & Esports mới nhất',
-  description: () => isEn.value
-    ? 'Gaming page: reviews, esports, gaming hardware news.'
-    : 'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
-  ogTitle: () => isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
-  ogDescription: () => isEn.value ? 'Esports, gamers and world gaming trends updates.' : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
+  title: () =>
+    isEn.value
+      ? 'Gaming World - Latest Game & Esports News'
+      : 'Thế giới Game - Tin tức Game & Esports mới nhất',
+  description: () =>
+    isEn.value
+      ? 'Gaming page: reviews, esports, gaming hardware news.'
+      : 'Trang tin tức game, đánh giá game, esports, tin công nghệ phần cứng chơi game hàng đầu.',
+  ogTitle: () =>
+    isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
+  ogDescription: () =>
+    isEn.value
+      ? 'Esports, gamers and world gaming trends updates.'
+      : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
-  twitterDescription: () => isEn.value ? 'Esports, gamers and world gaming trends updates.' : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
+  twitterTitle: () =>
+    isEn.value ? 'Gaming World - TechDeal Gaming' : 'Thế giới Game - TechDeal Gaming',
+  twitterDescription: () =>
+    isEn.value
+      ? 'Esports, gamers and world gaming trends updates.'
+      : 'Cập nhật tin tức esports, game thủ và xu hướng game thế giới.'
 })
 
 useHead(() => ({

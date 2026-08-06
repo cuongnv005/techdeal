@@ -25,17 +25,13 @@ const hoverTextClass = computed(() =>
 const textMutedClass = computed(() => (isBlue.value ? 'text-zinc-500' : 'text-zinc-400'))
 const titleText = computed(() => (isBlue.value ? 'TECHDEAL.' : 'TECHDEAL GAMING.'))
 const descriptionText = computed(() =>
-  isBlue.value
-    ? t('footer.desc_blue')
-    : t('footer.desc_red')
+  isBlue.value ? t('footer.desc_blue') : t('footer.desc_red')
 )
 const middleColTitle = computed(() => t('footer.links_title'))
 const supportEmail = computed(() => 'contact@techdeal.io.vn')
 const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822 344 589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
-  isBlue.value
-    ? t('footer.copyright_blue')
-    : t('footer.copyright_red')
+  isBlue.value ? t('footer.copyright_blue') : t('footer.copyright_red')
 )
 </script>
 
@@ -66,22 +62,24 @@ const copyrightText = computed(() =>
           <h4 class="text-white font-bold uppercase mb-4">{{ middleColTitle }}</h4>
           <ul class="space-y-2">
             <li>
-              <NuxtLink :to="localePath('/terms')" class="hover:text-white transition-colors"
-                >{{ $t('footer.terms') }}</NuxtLink
-              >
+              <NuxtLink :to="localePath('/terms')" class="hover:text-white transition-colors">{{
+                $t('footer.terms')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/privacy')" class="hover:text-white transition-colors"
-                >{{ $t('footer.privacy') }}</NuxtLink
-              >
+              <NuxtLink :to="localePath('/privacy')" class="hover:text-white transition-colors">{{
+                $t('footer.privacy')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/about')" class="hover:text-white transition-colors"
-                >{{ $t('footer.about') }}</NuxtLink
-              >
+              <NuxtLink :to="localePath('/about')" class="hover:text-white transition-colors">{{
+                $t('footer.about')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/contact')" class="hover:text-white transition-colors">{{ $t('footer.contact') }}</NuxtLink>
+              <NuxtLink :to="localePath('/contact')" class="hover:text-white transition-colors">{{
+                $t('footer.contact')
+              }}</NuxtLink>
             </li>
           </ul>
         </div>

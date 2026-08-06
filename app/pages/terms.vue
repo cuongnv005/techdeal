@@ -6,11 +6,12 @@ const { locale } = useI18n()
 const isEn = computed(() => locale.value === 'en')
 
 useSeoMeta({
-  title: () => isEn.value ? 'Terms of Service' : 'Điều khoản Dịch vụ',
-  description: () => isEn.value
-    ? 'Terms and conditions for using TechDeal, a technology news and electronics deals website.'
-    : 'Điều khoản và điều kiện sử dụng TechDeal, trang tin tức công nghệ, game và khuyến mãi thiết bị điện tử.',
-  ogTitle: () => isEn.value ? 'Terms of Service' : 'Điều khoản Dịch vụ',
+  title: () => (isEn.value ? 'Terms of Service' : 'Điều khoản Dịch vụ'),
+  description: () =>
+    isEn.value
+      ? 'Terms and conditions for using TechDeal, a technology news and electronics deals website.'
+      : 'Điều khoản và điều kiện sử dụng TechDeal, trang tin tức công nghệ, game và khuyến mãi thiết bị điện tử.',
+  ogTitle: () => (isEn.value ? 'Terms of Service' : 'Điều khoản Dịch vụ'),
   ogType: 'website',
   ogUrl: 'https://techdeal.io.vn/terms',
   robots: 'index, follow'
@@ -41,12 +42,14 @@ useHead({
           <p class="text-zinc-550 text-xs italic">Cập nhật lần cuối: 31 tháng 5, 2026</p>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">1. Đồng ý với Điều khoản</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              1. Đồng ý với Điều khoản
+            </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Chào mừng bạn đến với TechDeal (sau đây gọi là "chúng tôi", "TechDeal"). Bằng việc truy
-              cập hoặc sử dụng trang web của chúng tôi, bạn đồng ý tuân thủ và chịu sự ràng buộc bởi
-              các Điều khoản Dịch vụ này. Nếu bạn không đồng ý với các điều khoản này, vui lòng không
-              sử dụng trang web của chúng tôi.
+              Chào mừng bạn đến với TechDeal (sau đây gọi là "chúng tôi", "TechDeal"). Bằng việc
+              truy cập hoặc sử dụng trang web của chúng tôi, bạn đồng ý tuân thủ và chịu sự ràng
+              buộc bởi các Điều khoản Dịch vụ này. Nếu bạn không đồng ý với các điều khoản này, vui
+              lòng không sử dụng trang web của chúng tôi.
             </p>
           </section>
 
@@ -56,11 +59,11 @@ useHead({
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               TechDeal là một blog cá nhân và nền tảng tin tức chia sẻ thông tin, đánh giá và hướng
-              dẫn về công nghệ, thiết bị điện tử tiêu dùng và trò chơi điện tử (game). Tất cả nội dung
-              trên trang web này, bao gồm bài viết, hình ảnh và logo, thuộc sở hữu của TechDeal hoặc
-              các nhà sáng tạo nội dung của trang và được bảo vệ bởi luật bản quyền. Bạn không được
-              sao chép, tái bản hoặc phân phối nội dung của chúng tôi mà không có sự cho phép trước
-              bằng văn bản của chúng tôi.
+              dẫn về công nghệ, thiết bị điện tử tiêu dùng và trò chơi điện tử (game). Tất cả nội
+              dung trên trang web này, bao gồm bài viết, hình ảnh và logo, thuộc sở hữu của TechDeal
+              hoặc các nhà sáng tạo nội dung của trang và được bảo vệ bởi luật bản quyền. Bạn không
+              được sao chép, tái bản hoặc phân phối nội dung của chúng tôi mà không có sự cho phép
+              trước bằng văn bản của chúng tôi.
             </p>
           </section>
 
@@ -75,8 +78,8 @@ useHead({
               <li>Bạn đồng ý cung cấp thông tin trung thực, chính xác và đầy đủ.</li>
               <li>Bạn có trách nhiệm bảo mật thông tin đăng nhập của mình.</li>
               <li>
-                Bạn không được đăng tải các nội dung lăng mạ, xúc phạm, spam hoặc trái pháp luật trong
-                khu vực bình luận.
+                Bạn không được đăng tải các nội dung lăng mạ, xúc phạm, spam hoặc trái pháp luật
+                trong khu vực bình luận.
               </li>
             </ul>
           </section>
@@ -88,10 +91,12 @@ useHead({
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Các bài viết và ưu đãi trên TechDeal có thể chứa đường dẫn trực tiếp đến các ứng dụng,
               cửa hàng hoặc trang web của bên thứ ba (như Google Play, App Store, Steam, Epic Games
-              Store...). Các liên kết này được cung cấp thuần túy nhằm mục đích mang lại sự thuận tiện
-              và thông tin ưu đãi minh bạch cho người dùng.
-              <strong>TechDeal không thực hiện tiếp thị liên kết (affiliate marketing) và không nhận bất kỳ
-                khoản hoa hồng hay lợi ích tài chính nào</strong>
+              Store...). Các liên kết này được cung cấp thuần túy nhằm mục đích mang lại sự thuận
+              tiện và thông tin ưu đãi minh bạch cho người dùng.
+              <strong
+                >TechDeal không thực hiện tiếp thị liên kết (affiliate marketing) và không nhận bất
+                kỳ khoản hoa hồng hay lợi ích tài chính nào</strong
+              >
               từ các truy cập hoặc giao dịch của bạn trên các nền tảng này.
             </p>
           </section>
@@ -101,19 +106,21 @@ useHead({
               5. Tuyên bố từ chối trách nhiệm
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Tất cả thông tin trên TechDeal được cung cấp theo nguyên tắc "nguyên trạng" và "sẵn có"
-              chỉ nhằm mục đích thông tin và giải trí. Mặc dù chúng tôi cố gắng trình bày các hướng
-              dẫn và ưu đãi công nghệ chính xác, chúng tôi không cam kết hoặc bảo đảm dưới bất kỳ hình
-              thức nào về tính chính xác, đầy đủ hoặc độ tin cậy của nội dung trên trang web.
+              Tất cả thông tin trên TechDeal được cung cấp theo nguyên tắc "nguyên trạng" và "sẵn
+              có" chỉ nhằm mục đích thông tin và giải trí. Mặc dù chúng tôi cố gắng trình bày các
+              hướng dẫn và ưu đãi công nghệ chính xác, chúng tôi không cam kết hoặc bảo đảm dưới bất
+              kỳ hình thức nào về tính chính xác, đầy đủ hoặc độ tin cậy của nội dung trên trang
+              web.
             </p>
           </section>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Thay đổi Điều khoản</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Chúng tôi có quyền sửa đổi các điều khoản này bất kỳ lúc nào. Mọi thay đổi sẽ được đăng
-              trên trang này với ngày cập nhật mới nhất. Việc bạn tiếp tục sử dụng trang web sau khi
-              các thay đổi được đăng tải đồng nghĩa với việc bạn chấp nhận các Điều khoản Dịch vụ mới.
+              Chúng tôi có quyền sửa đổi các điều khoản này bất kỳ lúc nào. Mọi thay đổi sẽ được
+              đăng trên trang này với ngày cập nhật mới nhất. Việc bạn tiếp tục sử dụng trang web
+              sau khi các thay đổi được đăng tải đồng nghĩa với việc bạn chấp nhận các Điều khoản
+              Dịch vụ mới.
             </p>
           </section>
 
@@ -121,8 +128,8 @@ useHead({
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Luật áp dụng</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Các Điều khoản Dịch vụ này được điều chỉnh và giải thích theo pháp luật Việt Nam. Mọi
-              tranh chấp phát sinh liên quan đến việc sử dụng trang web sẽ được giải quyết tại tòa án
-              có thẩm quyền tại Hà Nội, Việt Nam.
+              tranh chấp phát sinh liên quan đến việc sử dụng trang web sẽ được giải quyết tại tòa
+              án có thẩm quyền tại Hà Nội, Việt Nam.
             </p>
           </section>
 
@@ -159,7 +166,9 @@ useHead({
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">1. Acceptance of Terms</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Welcome to TechDeal ("we", "TechDeal"). By accessing or using our website, you agree to comply with and be bound by these Terms of Service. If you do not agree with these terms, please do not use our website.
+              Welcome to TechDeal ("we", "TechDeal"). By accessing or using our website, you agree
+              to comply with and be bound by these Terms of Service. If you do not agree with these
+              terms, please do not use our website.
             </p>
           </section>
 
@@ -168,7 +177,11 @@ useHead({
               2. Content & Intellectual Property
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              TechDeal is a personal blog and news platform sharing information, reviews, and guides on technology, consumer electronics, and video games (gaming). All content on this website, including articles, images, and logos, is owned by TechDeal or its creators and protected by copyright laws. You may not copy, republish, or distribute our content without prior written permission.
+              TechDeal is a personal blog and news platform sharing information, reviews, and guides
+              on technology, consumer electronics, and video games (gaming). All content on this
+              website, including articles, images, and logos, is owned by TechDeal or its creators
+              and protected by copyright laws. You may not copy, republish, or distribute our
+              content without prior written permission.
             </p>
           </section>
 
@@ -181,40 +194,55 @@ useHead({
             </p>
             <ul class="list-disc pl-5 text-xs text-zinc-650 dark:text-zinc-400 space-y-1">
               <li>You agree to provide true, accurate, and complete information.</li>
-              <li>You are responsible for maintaining the confidentiality of your login credentials.</li>
-              <li>You must not post abusive, offensive, spam, or unlawful content in the comments section.</li>
+              <li>
+                You are responsible for maintaining the confidentiality of your login credentials.
+              </li>
+              <li>
+                You must not post abusive, offensive, spam, or unlawful content in the comments
+                section.
+              </li>
             </ul>
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              4. Third-Party Links
-            </h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">4. Third-Party Links</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Articles and deals on TechDeal may contain direct links to third-party applications, stores, or websites (such as Google Play, App Store, Steam, Epic Games Store...). These links are provided solely for convenience and transparent offer details. <strong>TechDeal does not participate in affiliate marketing and does not receive any commissions or financial benefits</strong> from your accesses or transactions on these platforms.
+              Articles and deals on TechDeal may contain direct links to third-party applications,
+              stores, or websites (such as Google Play, App Store, Steam, Epic Games Store...).
+              These links are provided solely for convenience and transparent offer details.
+              <strong
+                >TechDeal does not participate in affiliate marketing and does not receive any
+                commissions or financial benefits</strong
+              >
+              from your accesses or transactions on these platforms.
             </p>
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              5. Disclaimer
-            </h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">5. Disclaimer</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              All information on TechDeal is provided on an "as is" and "as available" basis for general informational and entertainment purposes only. While we strive to present accurate technology guides and deals, we make no representations or warranties of any kind about the accuracy, completeness, or reliability of the website content.
+              All information on TechDeal is provided on an "as is" and "as available" basis for
+              general informational and entertainment purposes only. While we strive to present
+              accurate technology guides and deals, we make no representations or warranties of any
+              kind about the accuracy, completeness, or reliability of the website content.
             </p>
           </section>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Changes to Terms</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              We reserve the right to modify these terms at any time. Any changes will be posted on this page with the latest updated date. Your continued use of the website after changes are posted constitutes acceptance of the new Terms of Service.
+              We reserve the right to modify these terms at any time. Any changes will be posted on
+              this page with the latest updated date. Your continued use of the website after
+              changes are posted constitutes acceptance of the new Terms of Service.
             </p>
           </section>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Governing Law</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              These Terms of Service are governed by and construed in accordance with the laws of Vietnam. Any disputes arising in connection with the use of the website shall be resolved by competent courts in Hanoi, Vietnam.
+              These Terms of Service are governed by and construed in accordance with the laws of
+              Vietnam. Any disputes arising in connection with the use of the website shall be
+              resolved by competent courts in Hanoi, Vietnam.
             </p>
           </section>
 

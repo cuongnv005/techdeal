@@ -23,17 +23,25 @@ const isEn = computed(() => locale.value === 'en')
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: () => isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ',
-  description: () => isEn.value
-    ? 'Leading technology news site, updating the fastest tech trends, mobile devices, AI, and digital world.'
-    : 'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
-  ogTitle: () => isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ',
-  ogDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ'),
+  description: () =>
+    isEn.value
+      ? 'Leading technology news site, updating the fastest tech trends, mobile devices, AI, and digital world.'
+      : 'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
+  ogTitle: () => (isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ',
-  twitterDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng daily.'
+  twitterTitle: () =>
+    isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ',
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng daily.'
 })
 
 useHead(() => ({

@@ -31,17 +31,24 @@ const isEn = computed(() => locale.value === 'en')
 const localePath = useLocalePath()
 
 useSeoMeta({
-  title: () => isEn.value ? 'Windows - Windows News' : 'Windows - Tin tức Windows',
-  description: () => isEn.value
-    ? 'Windows Section: Update Windows 11 tips, Microsoft OS news, PC apps and hardware performance.'
-    : 'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
-  ogTitle: () => isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal',
-  ogDescription: () => isEn.value ? 'Daily updates on the latest Windows news.' : 'Cập nhật tin tức Windows mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'Windows - Windows News' : 'Windows - Tin tức Windows'),
+  description: () =>
+    isEn.value
+      ? 'Windows Section: Update Windows 11 tips, Microsoft OS news, PC apps and hardware performance.'
+      : 'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
+  ogTitle: () => (isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Windows news.'
+      : 'Cập nhật tin tức Windows mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal',
-  twitterDescription: () => isEn.value ? 'Daily updates on the latest Windows news.' : 'Cập nhật tin tức Windows mới nhất hàng ngày.'
+  twitterTitle: () => (isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal'),
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Windows news.'
+      : 'Cập nhật tin tức Windows mới nhất hàng ngày.'
 })
 
 useHead(() => ({
@@ -149,7 +156,9 @@ const userStore = useUserStore()
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
               >{{ $t('category.label') }}</span
             >
-            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">{{ $t('nav.windows') }}</h1>
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">
+              {{ $t('nav.windows') }}
+            </h1>
             <p class="text-sm text-blue-50 mt-2 max-w-xl">
               {{ $t('category.desc_windows') }}
             </p>

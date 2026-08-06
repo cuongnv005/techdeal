@@ -99,7 +99,10 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
   >
     <div class="container mx-auto px-4 py-4 flex items-center justify-between">
       <!-- Logo -->
-      <NuxtLink :to="localePath('/')" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+      <NuxtLink
+        :to="localePath('/')"
+        class="flex items-center gap-2 hover:opacity-90 transition-opacity"
+      >
         <span class="text-3xl font-black tracking-tighter font-sans" :class="textPrimaryClass">
           TECHDEAL<span :class="dotColorClass">.</span>
         </span>

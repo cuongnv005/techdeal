@@ -31,17 +31,25 @@ const isEn = computed(() => locale.value === 'en')
 const localePath = useLocalePath()
 
 useSeoMeta({
-  title: () => isEn.value ? 'Technology - Tech News' : 'Công nghệ - Tin tức Công nghệ',
-  description: () => isEn.value
-    ? 'Technology Section: Fast updates on tech trends, AI news, hardware and digital world.'
-    : 'Chuyên mục Công nghệ: Cập nhật nhanh nhất các xu hướng công nghệ, tin tức AI, phần cứng và thế giới số.',
-  ogTitle: () => isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal',
-  ogDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'Technology - Tech News' : 'Công nghệ - Tin tức Công nghệ'),
+  description: () =>
+    isEn.value
+      ? 'Technology Section: Fast updates on tech trends, AI news, hardware and digital world.'
+      : 'Chuyên mục Công nghệ: Cập nhật nhanh nhất các xu hướng công nghệ, tin tức AI, phần cứng và thế giới số.',
+  ogTitle: () => (isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal',
-  twitterDescription: () => isEn.value ? 'Daily updates on the latest technology news.' : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
+  twitterTitle: () =>
+    isEn.value ? 'Technology Section - TechDeal' : 'Chuyên mục Công nghệ - TechDeal',
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
 })
 
 useHead(() => ({
@@ -149,7 +157,9 @@ const userStore = useUserStore()
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
               >{{ $t('category.label') }}</span
             >
-            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">{{ $t('nav.technology') }}</h1>
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">
+              {{ $t('nav.technology') }}
+            </h1>
             <p class="text-sm text-blue-50 mt-2 max-w-xl">
               {{ $t('category.desc_technology') }}
             </p>

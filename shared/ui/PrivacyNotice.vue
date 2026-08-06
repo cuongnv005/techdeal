@@ -25,7 +25,12 @@ const localePath = useLocalePath()
       >
         <Cookie class="w-6 h-6 text-[#3498db] dark:text-[#e74c3c] shrink-0" />
         <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed flex-grow">
-          {{ $t('cookie.notice') }} <NuxtLink :to="localePath('/privacy')" class="underline text-[#3498db] dark:text-[#e74c3c] whitespace-nowrap">{{ $t('cookie.policy') }}</NuxtLink>.
+          {{ $t('cookie.notice') }}
+          <NuxtLink
+            :to="localePath('/privacy')"
+            class="underline text-[#3498db] dark:text-[#e74c3c] whitespace-nowrap"
+            >{{ $t('cookie.policy') }}</NuxtLink
+          >.
         </p>
         <div class="w-full sm:w-auto flex gap-2 shrink-0">
           <button

@@ -31,17 +31,24 @@ const isEn = computed(() => locale.value === 'en')
 const localePath = useLocalePath()
 
 useSeoMeta({
-  title: () => isEn.value ? 'iOS - iOS News' : 'iOS - Tin tức iOS',
-  description: () => isEn.value
-    ? 'iOS Section: Update iPhone, iPad, latest iOS version updates, tips and Apple app reviews.'
-    : 'Chuyên mục iOS: Cập nhật tin tức iPhone, iPad, các bản cập nhật iOS mới nhất, thủ thuật sử dụng và đánh giá ứng dụng Apple.',
-  ogTitle: () => isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal',
-  ogDescription: () => isEn.value ? 'Daily updates on the latest iOS news.' : 'Cập nhật tin tức iOS mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'iOS - iOS News' : 'iOS - Tin tức iOS'),
+  description: () =>
+    isEn.value
+      ? 'iOS Section: Update iPhone, iPad, latest iOS version updates, tips and Apple app reviews.'
+      : 'Chuyên mục iOS: Cập nhật tin tức iPhone, iPad, các bản cập nhật iOS mới nhất, thủ thuật sử dụng và đánh giá ứng dụng Apple.',
+  ogTitle: () => (isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest iOS news.'
+      : 'Cập nhật tin tức iOS mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal',
-  twitterDescription: () => isEn.value ? 'Daily updates on the latest iOS news.' : 'Cập nhật tin tức iOS mới nhất hàng ngày.'
+  twitterTitle: () => (isEn.value ? 'iOS Section - TechDeal' : 'Chuyên mục iOS - TechDeal'),
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest iOS news.'
+      : 'Cập nhật tin tức iOS mới nhất hàng ngày.'
 })
 
 useHead(() => ({

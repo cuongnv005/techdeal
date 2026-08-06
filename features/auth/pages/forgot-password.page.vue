@@ -68,7 +68,9 @@ const handleResetRequest = async () => {
 
       <!-- Mid text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">{{ $t('auth.forgot_brand_headline') }}</h2>
+        <h2 class="text-4xl font-extrabold leading-tight">
+          {{ $t('auth.forgot_brand_headline') }}
+        </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
           {{ $t('auth.forgot_brand_desc') }}
         </p>
@@ -106,9 +108,9 @@ const handleResetRequest = async () => {
           <form @submit.prevent="handleResetRequest" class="space-y-5">
             <!-- Email Input -->
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-                >{{ $t('auth.email_address_label') }}</label
-              >
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+                $t('auth.email_address_label')
+              }}</label>
               <div class="relative">
                 <span class="absolute left-3 top-3 text-zinc-400">
                   <Mail class="w-4 h-4" />

@@ -68,76 +68,79 @@ const slugText = computed<string>(() => {
 })
 
 // Fetch post by slug using useAsyncData
-const { data: postDetail } = await useAsyncData(`post-${slugText.value}-${locale.value}`, async () => {
-  const detail = await blogRepository.getPostBySlug(slugText.value, isEn.value ? 'en' : undefined)
-  if (detail && detail.post) {
-    let finalRelated: BlogPost[] = []
+const { data: postDetail } = await useAsyncData(
+  `post-${slugText.value}-${locale.value}`,
+  async () => {
+    const detail = await blogRepository.getPostBySlug(slugText.value, isEn.value ? 'en' : undefined)
+    if (detail && detail.post) {
+      let finalRelated: BlogPost[] = []
 
-    // 1. Try finding related posts by similar tag if [similar] is in content
-    if (detail.post.content) {
-      const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
-      if (similarMatch && similarMatch[1]) {
-        const tag = similarMatch[1].trim().normalize('NFC')
-        try {
-          const candidates = Array.from(
-            new Set([
-              tag,
-              tag.toLowerCase(),
-              tag.toUpperCase(),
-              tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
-            ])
-          )
-          let tagPosts: BlogPost[] = []
-          for (const cand of candidates) {
-            const tagPostsRes = await blogRepository.getPosts({
-              tag: cand,
-              limit: 6,
-              enrich: false,
-              lang: isEn.value ? 'en' : undefined
-            })
-            tagPosts = tagPostsRes.items
-            if (tagPosts && tagPosts.length > 0) {
-              break
+      // 1. Try finding related posts by similar tag if [similar] is in content
+      if (detail.post.content) {
+        const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
+        if (similarMatch && similarMatch[1]) {
+          const tag = similarMatch[1].trim().normalize('NFC')
+          try {
+            const candidates = Array.from(
+              new Set([
+                tag,
+                tag.toLowerCase(),
+                tag.toUpperCase(),
+                tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+              ])
+            )
+            let tagPosts: BlogPost[] = []
+            for (const cand of candidates) {
+              const tagPostsRes = await blogRepository.getPosts({
+                tag: cand,
+                limit: 6,
+                enrich: false,
+                lang: isEn.value ? 'en' : undefined
+              })
+              tagPosts = tagPostsRes.items
+              if (tagPosts && tagPosts.length > 0) {
+                break
+              }
             }
+            finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+          } catch (err) {
+            console.error('Error fetching similar tag posts:', err)
           }
-          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+        }
+      }
+
+      // 2. Fallback: If no related posts found by tag, get posts from the same category
+      if (finalRelated.length === 0 && detail.post.category) {
+        try {
+          const categoryMap: Record<string, string> = {
+            'thế giới game': 'gaming',
+            'gaming world': 'gaming',
+            android: 'android',
+            ios: 'ios',
+            'công nghệ': 'technology',
+            technology: 'technology',
+            windows: 'windows',
+            pc: 'pc'
+          }
+          const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
+          const catPostsRes = await blogRepository.getPosts({
+            category: categoryId,
+            limit: 6,
+            enrich: false,
+            lang: isEn.value ? 'en' : undefined
+          })
+          const catPosts = catPostsRes.items
+          finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
         } catch (err) {
-          console.error('Error fetching similar tag posts:', err)
+          console.error('Error fetching fallback category posts:', err)
         }
       }
-    }
 
-    // 2. Fallback: If no related posts found by tag, get posts from the same category
-    if (finalRelated.length === 0 && detail.post.category) {
-      try {
-        const categoryMap: Record<string, string> = {
-          'thế giới game': 'gaming',
-          'gaming world': 'gaming',
-          android: 'android',
-          ios: 'ios',
-          'công nghệ': 'technology',
-          technology: 'technology',
-          windows: 'windows',
-          pc: 'pc'
-        }
-        const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
-        const catPostsRes = await blogRepository.getPosts({
-          category: categoryId,
-          limit: 6,
-          enrich: false,
-          lang: isEn.value ? 'en' : undefined
-        })
-        const catPosts = catPostsRes.items
-        finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
-      } catch (err) {
-        console.error('Error fetching fallback category posts:', err)
-      }
+      detail.relatedPosts = finalRelated
     }
-
-    detail.relatedPosts = finalRelated
+    return detail
   }
-  return detail
-})
+)
 
 // Set alternate link for Header switcher
 watch(
@@ -346,7 +349,7 @@ useHead(() => {
     {
       rel: 'alternate',
       hreflang: 'vi',
-      href: `${siteUrl}/blog/${isEn.value ? (post.value.slugVi || post.value.slug) : post.value.slug}.${post.value.id}`
+      href: `${siteUrl}/blog/${isEn.value ? post.value.slugVi || post.value.slug : post.value.slug}.${post.value.id}`
     }
   ]
 
@@ -437,7 +440,9 @@ useHead(() => {
       class="bg-gray-100 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-850 py-3 text-xs"
     >
       <div class="container mx-auto px-4 flex items-center gap-2 text-zinc-500">
-        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{ $t('detail.home') }}</NuxtLink>
+        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{
+          $t('detail.home')
+        }}</NuxtLink>
         <span>/</span>
         <span class="text-zinc-400 capitalize">{{ post.category }}</span>
         <span>/</span>
@@ -484,12 +489,23 @@ useHead(() => {
             </h1>
 
             <!-- Bilingual cross link banner -->
-            <div v-if="(isEn && post.slugVi) || (!isEn && post.slugEn)" class="py-2.5 px-4 bg-gray-100 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs flex items-center justify-between">
+            <div
+              v-if="(isEn && post.slugVi) || (!isEn && post.slugEn)"
+              class="py-2.5 px-4 bg-gray-100 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs flex items-center justify-between"
+            >
               <span class="text-zinc-500">
-                {{ isEn ? 'This article is also available in Vietnamese' : 'Bài viết này cũng có phiên bản tiếng Anh' }}
+                {{
+                  isEn
+                    ? 'This article is also available in Vietnamese'
+                    : 'Bài viết này cũng có phiên bản tiếng Anh'
+                }}
               </span>
               <NuxtLink
-                :to="isEn ? `/blog/${post.slugVi || post.slug}.${post.id}` : `/en/blog/${post.slugEn}.${post.id}`"
+                :to="
+                  isEn
+                    ? `/blog/${post.slugVi || post.slug}.${post.id}`
+                    : `/en/blog/${post.slugEn}.${post.id}`
+                "
                 class="font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline"
               >
                 {{ isEn ? '🇻🇳 Đọc bản tiếng Việt' : '🇬🇧 Read in English' }}

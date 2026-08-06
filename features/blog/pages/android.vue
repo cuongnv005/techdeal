@@ -31,17 +31,24 @@ const isEn = computed(() => locale.value === 'en')
 const localePath = useLocalePath()
 
 useSeoMeta({
-  title: () => isEn.value ? 'Android - Android News' : 'Android - Tin tức Android',
-  description: () => isEn.value
-    ? 'Android Section: Update Android mobile news, latest Android 16 updates, device reviews and tips.'
-    : 'Chuyên mục Android: Cập nhật tin tức điện thoại Android, các bản cập nhật Android 16 mới nhất, đánh giá thiết bị và thủ thuật.',
-  ogTitle: () => isEn.value ? 'Android Section - TechDeal' : 'Chuyên mục Android - TechDeal',
-  ogDescription: () => isEn.value ? 'Daily updates on the latest Android news.' : 'Cập nhật tin tức Android mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'Android - Android News' : 'Android - Tin tức Android'),
+  description: () =>
+    isEn.value
+      ? 'Android Section: Update Android mobile news, latest Android 16 updates, device reviews and tips.'
+      : 'Chuyên mục Android: Cập nhật tin tức điện thoại Android, các bản cập nhật Android 16 mới nhất, đánh giá thiết bị và thủ thuật.',
+  ogTitle: () => (isEn.value ? 'Android Section - TechDeal' : 'Chuyên mục Android - TechDeal'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Android news.'
+      : 'Cập nhật tin tức Android mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'Android Section - TechDeal' : 'Chuyên mục Android - TechDeal',
-  twitterDescription: () => isEn.value ? 'Daily updates on the latest Android news.' : 'Cập nhật tin tức Android mới nhất hàng ngày.'
+  twitterTitle: () => (isEn.value ? 'Android Section - TechDeal' : 'Chuyên mục Android - TechDeal'),
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Android news.'
+      : 'Cập nhật tin tức Android mới nhất hàng ngày.'
 })
 
 useHead(() => ({

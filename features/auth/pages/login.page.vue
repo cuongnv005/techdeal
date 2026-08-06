@@ -219,9 +219,9 @@ onMounted(() => {
         <form @submit.prevent="handleLogin" class="space-y-5">
           <!-- Username / Email Input -->
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-              >{{ $t('auth.email_label') }}</label
-            >
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+              $t('auth.email_label')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3 top-3 text-zinc-400">
                 <User class="w-4 h-4" />
@@ -239,7 +239,9 @@ onMounted(() => {
           <!-- Password Input -->
           <div class="space-y-1.5">
             <div class="flex justify-between items-center">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">{{ $t('auth.password_label') }}</label>
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">{{
+                $t('auth.password_label')
+              }}</label>
               <NuxtLink
                 :to="localePath('/forgot-password')"
                 class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline"

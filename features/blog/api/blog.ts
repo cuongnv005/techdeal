@@ -326,7 +326,10 @@ export class BlogRepository {
     }
   }
 
-  async getPostBySlug(slug: string, lang?: string): Promise<{
+  async getPostBySlug(
+    slug: string,
+    lang?: string
+  ): Promise<{
     post: BlogPost
     tags: string[]
     relatedPosts: BlogPost[]

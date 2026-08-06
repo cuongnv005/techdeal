@@ -33,17 +33,26 @@ const localePath = useLocalePath()
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: () => isEn.value ? 'PC & Hardware - PC News' : 'PC máy tính - Tin tức PC',
-  description: () => isEn.value
-    ? 'PC & Hardware Section: Update computer hardware news and latest PC components.'
-    : 'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
-  ogTitle: () => isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
-  ogDescription: () => isEn.value ? 'Daily updates on computer hardware news and latest PC components.' : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
+  title: () => (isEn.value ? 'PC & Hardware - PC News' : 'PC máy tính - Tin tức PC'),
+  description: () =>
+    isEn.value
+      ? 'PC & Hardware Section: Update computer hardware news and latest PC components.'
+      : 'Chuyên mục PC máy tính: Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
+  ogTitle: () =>
+    isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on computer hardware news and latest PC components.'
+      : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
-  twitterDescription: () => isEn.value ? 'Daily updates on computer hardware news and latest PC components.' : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.'
+  twitterTitle: () =>
+    isEn.value ? 'PC & Hardware Section - TechDeal' : 'Chuyên mục PC máy tính - TechDeal',
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on computer hardware news and latest PC components.'
+      : 'Cập nhật tin tức phần cứng máy tính và linh kiện PC mới nhất.'
 })
 
 useHead(() => ({
