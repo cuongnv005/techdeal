@@ -7,9 +7,12 @@ const email = ref('')
 const isLoading = ref(false)
 const isSubmitted = ref(false)
 
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 const handleResetRequest = async () => {
   if (!email.value) {
-    alert('Vui lòng nhập địa chỉ email!')
+    alert(t('auth.err_fill_email'))
     return
   }
   isLoading.value = true
@@ -26,11 +29,11 @@ const handleResetRequest = async () => {
     )
     const data = await res.json()
     if (!res.ok || !data.success) {
-      throw new Error(data.message || 'Gửi yêu cầu khôi phục thất bại!')
+      throw new Error(data.message || t('auth.err_reset_failed'))
     }
     isSubmitted.value = true
   } catch (error: any) {
-    alert(error.message || 'Có lỗi xảy ra, vui lòng thử lại sau!')
+    alert(error.message || t('auth.err_generic'))
   } finally {
     isLoading.value = false
   }
@@ -54,7 +57,7 @@ const handleResetRequest = async () => {
 
       <!-- Top logo -->
       <NuxtLink
-        to="/"
+        :to="localePath('/')"
         class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity"
       >
         <span class="text-3xl font-black tracking-tighter">
@@ -65,10 +68,11 @@ const handleResetRequest = async () => {
 
       <!-- Mid text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
-        <h2 class="text-4xl font-extrabold leading-tight">Khôi phục tài khoản của bạn</h2>
+        <h2 class="text-4xl font-extrabold leading-tight">
+          {{ $t('auth.forgot_brand_headline') }}
+        </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đừng lo lắng! Chỉ cần điền địa chỉ email đã đăng ký, chúng tôi sẽ gửi liên kết để bạn
-          thiết lập lại mật khẩu mới.
+          {{ $t('auth.forgot_brand_desc') }}
         </p>
       </div>
 
@@ -81,32 +85,32 @@ const handleResetRequest = async () => {
     <!-- Right side: Forgot Password Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
       <div
-        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300"
+        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-md transition-all duration-300"
       >
         <!-- Back to login link -->
         <NuxtLink
-          to="/login"
+          :to="localePath('/login')"
           class="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors"
         >
-          <ArrowLeft class="w-4 h-4" /> Quay lại đăng nhập
+          <ArrowLeft class="w-4 h-4" /> {{ $t('auth.back_to_login') }}
         </NuxtLink>
 
         <div v-if="!isSubmitted" class="space-y-6">
           <div>
             <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
-              Quên mật khẩu?
+              {{ $t('auth.forgot_title') }}
             </h1>
             <p class="text-xs text-zinc-550 dark:text-zinc-400 mt-2">
-              Nhập email để khôi phục mật khẩu.
+              {{ $t('auth.forgot_desc') }}
             </p>
           </div>
 
           <form @submit.prevent="handleResetRequest" class="space-y-5">
             <!-- Email Input -->
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-                >Địa chỉ Email</label
-              >
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+                $t('auth.email_address_label')
+              }}</label>
               <div class="relative">
                 <span class="absolute left-3 top-3 text-zinc-400">
                   <Mail class="w-4 h-4" />
@@ -115,7 +119,7 @@ const handleResetRequest = async () => {
                   v-model="email"
                   type="email"
                   placeholder="name@example.com"
-                  class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                  class="w-full text-xs pl-10 pr-4 py-3 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                   required
                 />
               </div>
@@ -127,9 +131,9 @@ const handleResetRequest = async () => {
               :disabled="isLoading"
               class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              <span v-if="isLoading">Đang xử lý...</span>
+              <span v-if="isLoading">{{ $t('auth.sending') }}</span>
               <span v-else class="flex items-center gap-1.5"
-                >Gửi liên kết khôi phục <ArrowRight class="w-4 h-4"
+                >{{ $t('auth.send_reset_link') }} <ArrowRight class="w-4 h-4"
               /></span>
             </button>
           </form>
@@ -144,19 +148,19 @@ const handleResetRequest = async () => {
           </div>
           <div class="space-y-2">
             <h2 class="text-xl font-bold text-zinc-900 dark:text-white">
-              Kiểm tra hộp thư của bạn
+              {{ $t('auth.check_inbox') }}
             </h2>
             <p class="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed">
-              Chúng tôi đã gửi một email khôi phục mật khẩu đến
+              {{ $t('auth.email_sent_desc') }}
               <strong class="text-zinc-800 dark:text-white font-semibold">{{ email }}</strong
-              >. Vui lòng làm theo hướng dẫn trong email để đặt lại mật khẩu.
+              >{{ $t('auth.email_sent_follow') }}
             </p>
           </div>
           <button
             @click="isSubmitted = false"
-            class="w-full py-3 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+            class="w-full py-3 border border-gray-250 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition-colors cursor-pointer"
           >
-            Gửi lại email khác
+            {{ $t('auth.resend_email') }}
           </button>
         </div>
       </div>

@@ -17,13 +17,18 @@ const emit = defineEmits<{
   like: [comment: ApiComment]
 }>()
 
+const localePath = useLocalePath()
+const { locale } = useI18n()
+
 const DEFAULT_AVATAR =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80'
 
 const avatar = computed(() => props.comment.author_avatar || DEFAULT_AVATAR)
 
 const formattedDate = computed(() =>
-  new Date(props.comment.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
+  new Date(props.comment.created_at).toLocaleString(locale.value === 'en' ? 'en-US' : 'vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh'
+  })
 )
 
 // Chỉ hiện "@username" khi trả lời 1 trả lời cấp 2 khác - không hiện khi trả lời thẳng vào gốc
@@ -37,7 +42,7 @@ const showMention = computed(
 
 <template>
   <div class="flex gap-3.5">
-    <NuxtLink :to="`/user/${comment.author_id}`" class="shrink-0 block">
+    <NuxtLink :to="localePath(`/user/${comment.author_id}`)" class="shrink-0 block">
       <img
         :src="avatar"
         :alt="comment.author_name"
@@ -47,7 +52,7 @@ const showMention = computed(
     <div class="flex-grow space-y-1 min-w-0">
       <div class="flex items-center justify-between gap-2">
         <NuxtLink
-          :to="`/user/${comment.author_id}`"
+          :to="localePath(`/user/${comment.author_id}`)"
           class="hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors"
         >
           <h5 class="text-xs font-bold text-zinc-900 dark:text-white">
@@ -70,13 +75,13 @@ const showMention = computed(
           :class="comment.liked_by_me ? 'text-red-500' : 'text-zinc-500 hover:text-red-500'"
         >
           <Heart class="w-3 h-3" :fill="comment.liked_by_me ? 'currentColor' : 'none'" />
-          Thích{{ comment.like_count > 0 ? ` (${comment.like_count})` : '' }}
+          {{ $t('comments.like') }}{{ comment.like_count > 0 ? ` (${comment.like_count})` : '' }}
         </button>
         <button
           @click="emit('reply', comment)"
           class="text-[10px] font-bold text-zinc-500 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors cursor-pointer"
         >
-          Trả lời
+          {{ $t('comments.reply') }}
         </button>
       </div>
     </div>

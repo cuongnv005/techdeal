@@ -48,6 +48,16 @@ if (process.client) {
   userStore.initializeAuth()
 }
 
+const { locale } = useI18n()
+const localePath = useLocalePath()
+// isEn must read directly from route.path (not locale.value) to avoid a race condition:
+// When the user clicks the "Read in Vietnamese" link from an English article, route.path
+// changes from /en/blog/... to /blog/... immediately, but locale.value is only updated
+// by the watcher in app.vue AFTER the path change. Using locale.value would cause the
+// API to be called with lang='en' even though the new URL is a Vietnamese article.
+const isEn = computed(() => route.path.startsWith('/en/') || route.path === '/en')
+const localeAlternateLink = useLocaleAlternateLink()
+
 // URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
 const rawParam = computed(() => (route.params.slug as string) || '')
 
@@ -62,71 +72,113 @@ const slugText = computed<string>(() => {
 })
 
 // Fetch post by slug using useAsyncData
-const { data: postDetail } = await useAsyncData(`post-${slugText.value}`, async () => {
-  const detail = await blogRepository.getPostBySlug(slugText.value)
-  if (detail && detail.post) {
-    let finalRelated: BlogPost[] = []
+const { data: postDetail } = await useAsyncData(
+  `post-${slugText.value}-${route.path}`,
+  async () => {
+    const detail = await blogRepository.getPostBySlug(slugText.value, isEn.value ? 'en' : 'vi')
+    if (detail && detail.post) {
+      let finalRelated: BlogPost[] = []
 
-    // 1. Try finding related posts by similar tag if [similar] is in content
-    if (detail.post.content) {
-      const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
-      if (similarMatch && similarMatch[1]) {
-        const tag = similarMatch[1].trim().normalize('NFC')
-        try {
-          const candidates = Array.from(
-            new Set([
-              tag,
-              tag.toLowerCase(),
-              tag.toUpperCase(),
-              tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
-            ])
-          )
-          let tagPosts: BlogPost[] = []
-          for (const cand of candidates) {
-            const tagPostsRes = await blogRepository.getPosts({
-              tag: cand,
-              limit: 6,
-              enrich: false
-            })
-            tagPosts = tagPostsRes.items
-            if (tagPosts && tagPosts.length > 0) {
-              break
+      // 1. Try finding related posts by similar tag if [similar] is in content
+      if (detail.post.content) {
+        const similarMatch = detail.post.content.match(/\[similar\]([\s\S]*?)\[\/similar\]/i)
+        if (similarMatch && similarMatch[1]) {
+          const tag = similarMatch[1].trim().normalize('NFC')
+          try {
+            const candidates = Array.from(
+              new Set([
+                tag,
+                tag.toLowerCase(),
+                tag.toUpperCase(),
+                tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+              ])
+            )
+            let tagPosts: BlogPost[] = []
+            for (const cand of candidates) {
+              const tagPostsRes = await blogRepository.getPosts({
+                tag: cand,
+                limit: 6,
+                enrich: false,
+                lang: isEn.value ? 'en' : 'vi'
+              })
+              tagPosts = tagPostsRes.items
+              if (tagPosts && tagPosts.length > 0) {
+                break
+              }
             }
+            finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+          } catch (err) {
+            console.error('Error fetching similar tag posts:', err)
           }
-          finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
+        }
+      }
+
+      // 2. Fallback: If no related posts found by tag, get posts from the same category
+      if (finalRelated.length === 0 && detail.post.category) {
+        try {
+          const categoryMap: Record<string, string> = {
+            'thế giới game': 'gaming',
+            'gaming world': 'gaming',
+            android: 'android',
+            ios: 'ios',
+            'công nghệ': 'technology',
+            technology: 'technology',
+            windows: 'windows',
+            pc: 'pc'
+          }
+          const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
+          const catPostsRes = await blogRepository.getPosts({
+            category: categoryId,
+            limit: 6,
+            enrich: false,
+            lang: isEn.value ? 'en' : 'vi'
+          })
+          const catPosts = catPostsRes.items
+          finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
         } catch (err) {
-          console.error('Error fetching similar tag posts:', err)
+          console.error('Error fetching fallback category posts:', err)
         }
       }
-    }
 
-    // 2. Fallback: If no related posts found by tag, get posts from the same category
-    if (finalRelated.length === 0 && detail.post.category) {
-      try {
-        const categoryMap: Record<string, string> = {
-          'thế giới game': 'gaming',
-          android: 'android',
-          ios: 'ios',
-          'công nghệ': 'technology',
-          windows: 'windows',
-          pc: 'pc'
-        }
-        const categoryId = categoryMap[detail.post.category.toLowerCase()] || 'technology'
-        const catPostsRes = await blogRepository.getPosts({
-          category: categoryId,
-          limit: 6,
-          enrich: false
-        })
-        const catPosts = catPostsRes.items
-        finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
-      } catch (err) {
-        console.error('Error fetching fallback category posts:', err)
-      }
+      detail.relatedPosts = finalRelated
     }
-
-    detail.relatedPosts = finalRelated
+    return detail
+  },
+  {
+    // Watch both slugText and route.path so we react immediately to language switches.
+    // route.path is used instead of locale because locale.value is updated asynchronously
+    // via a watcher in app.vue — it lags behind the actual URL change. route.path is
+    // synchronous and reflects the new URL the moment the router navigates.
+    watch: [slugText, computed(() => route.path)]
   }
-  return detail
+)
+
+// Set alternate link for Header switcher
+watch(
+  () => postDetail.value,
+  (detail) => {
+    if (detail && detail.post) {
+      const id = detail.post.id
+      const slugVi = detail.post.slugVi || detail.post.slug
+      const slugEn = detail.post.slugEn
+
+      if (isEn.value) {
+        // EN page -> alternate goes to VI URL
+        localeAlternateLink.value = `/blog/${slugVi}.${id}`
+      } else {
+        // VI page -> alternate goes to EN URL (if exists)
+        localeAlternateLink.value = slugEn ? `/en/blog/${slugEn}.${id}` : null
+      }
+    } else {
+      localeAlternateLink.value = null
+    }
+  },
+  { immediate: true }
+)
+
+// Clean up alternate link state on unmount
+onUnmounted(() => {
+  localeAlternateLink.value = null
 })
 
 if (
@@ -215,8 +267,12 @@ const parsedContentHtml = computed(() => {
 })
 
 // Popular posts for sidebar
-const { data: popularSidebarPostsData } = await useAsyncData('popular-sidebar-posts', () =>
-  blogRepository.getPopularPosts(5)
+const { data: popularSidebarPostsData } = await useAsyncData(
+  `popular-sidebar-posts-${route.path}`,
+  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : 'vi'),
+  {
+    watch: [computed(() => route.path)]
+  }
 )
 const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
@@ -302,41 +358,64 @@ useSeoMeta({
   twitterImage: () => post.value.imageUrl
 })
 
-useHead(() => ({
-  link: [
+useHead(() => {
+  const alternateLinks = [
     {
-      rel: 'canonical',
-      href: requestUrl.value
-    }
-  ],
-  script: [
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
-        headline: post.value.title,
-        description: truncatedSummary.value,
-        image: [post.value.imageUrl],
-        datePublished: post.value.createdAt || post.value.scheduledAt,
-        dateModified: post.value.updatedAt || post.value.createdAt || post.value.scheduledAt,
-        author: {
-          '@type': 'Person',
-          name: post.value.author || 'Nguyễn Văn Cương'
-        },
-        publisher: {
-          '@type': 'Organization',
-          name: 'TechDeal'
-        },
-        url: requestUrl.value,
-        mainEntityOfPage: {
-          '@type': 'WebPage',
-          '@id': requestUrl.value
-        }
-      })
+      rel: 'alternate',
+      hreflang: 'vi',
+      href: `${siteUrl}/blog/${isEn.value ? post.value.slugVi || post.value.slug : post.value.slug}.${post.value.id}`
     }
   ]
-}))
+
+  if (post.value.slugEn || (isEn.value && post.value.slug)) {
+    const enSlug = isEn.value ? post.value.slug : post.value.slugEn
+    alternateLinks.push({
+      rel: 'alternate',
+      hreflang: 'en',
+      href: `${siteUrl}/en/blog/${enSlug}.${post.value.id}`
+    })
+  }
+
+  return {
+    htmlAttrs: {
+      lang: isEn.value ? 'en' : 'vi'
+    },
+    link: [
+      {
+        rel: 'canonical',
+        href: requestUrl.value
+      },
+      ...alternateLinks
+    ],
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: post.value.title,
+          description: truncatedSummary.value,
+          image: [post.value.imageUrl],
+          datePublished: post.value.createdAt || post.value.scheduledAt,
+          dateModified: post.value.updatedAt || post.value.createdAt || post.value.scheduledAt,
+          author: {
+            '@type': 'Person',
+            name: post.value.author || 'Nguyễn Văn Cương'
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'TechDeal'
+          },
+          url: requestUrl.value,
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': requestUrl.value
+          }
+        })
+      }
+    ]
+  }
+})
 
 // onMounted(() => {
 //   // Load Google SwG Basic SDK dynamically
@@ -375,7 +454,9 @@ useHead(() => ({
       class="bg-gray-100 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-850 py-3 text-xs"
     >
       <div class="container mx-auto px-4 flex items-center gap-2 text-zinc-500">
-        <NuxtLink to="/" class="hover:text-[#3498db] transition-colors">Trang chủ</NuxtLink>
+        <NuxtLink :to="localePath('/')" class="hover:text-[#3498db] transition-colors">{{
+          $t('detail.home')
+        }}</NuxtLink>
         <span>/</span>
         <span class="text-zinc-400 capitalize">{{ post.category }}</span>
         <span>/</span>
@@ -394,11 +475,11 @@ useHead(() => ({
         <article class="lg:col-span-8 space-y-6">
           <!-- Back button -->
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-555 dark:text-zinc-400 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors group mb-2"
           >
             <ArrowLeft class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            Quay lại trang chủ
+            {{ $t('detail.back_to_home') }}
           </NuxtLink>
 
           <!-- MGID Header Ad Widget -->
@@ -421,15 +502,43 @@ useHead(() => ({
               {{ post.title }}
             </h1>
 
+            <!-- Bilingual cross link banner -->
+            <div
+              v-if="(isEn && post.slugVi) || (!isEn && post.slugEn)"
+              class="py-2.5 px-4 bg-gray-100 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs flex items-center justify-between"
+            >
+              <span class="text-zinc-500">
+                {{
+                  isEn
+                    ? 'This article is also available in Vietnamese'
+                    : 'Bài viết này cũng có phiên bản tiếng Anh'
+                }}
+              </span>
+              <!-- Use plain <a> instead of NuxtLink to force a full page load.
+                   Switching between /en/blog/... and /blog/... is a full locale context change:
+                   i18n state, useAsyncData cache, and SSR all need to reset together.
+                   SPA navigation (NuxtLink) cannot reliably orchestrate all of this at once. -->
+              <a
+                :href="
+                  isEn
+                    ? `/blog/${post.slugVi || post.slug}.${post.id}`
+                    : `/en/blog/${post.slugEn}.${post.id}`
+                "
+                class="font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline"
+              >
+                {{ isEn ? '🇻🇳 Đọc bản tiếng Việt' : '🇬🇧 Read in English' }}
+              </a>
+            </div>
+
             <!-- Meta statistics -->
             <div
               class="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-zinc-500 border-b border-gray-200 dark:border-zinc-850 pb-4"
             >
               <span class="flex items-center gap-1.5">
                 <User class="w-4 h-4" />
-                Đăng bởi
+                {{ $t('detail.posted_by') }}
                 <NuxtLink
-                  :to="`/user/${post.authorId}`"
+                  :to="localePath(`/user/${post.authorId}`)"
                   class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
                 >
                   <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
@@ -443,11 +552,11 @@ useHead(() => ({
               </span>
               <span class="flex items-center gap-1.5">
                 <Eye class="w-4 h-4 text-zinc-450" />
-                {{ post.views }} lượt xem
+                {{ post.views }} {{ $t('detail.views') }}
               </span>
               <span class="flex items-center gap-1.5">
                 <MessageSquare class="w-4 h-4 text-zinc-450" />
-                {{ commentCount }} bình luận
+                {{ commentCount }} {{ $t('detail.comments') }}
               </span>
             </div>
           </div>
@@ -461,7 +570,7 @@ useHead(() => ({
             <template #fallback>
               <div
                 class="prose prose-zinc dark:prose-invert max-w-none text-zinc-650 dark:text-zinc-350 text-sm leading-relaxed space-y-6 pt-2"
-                v-html="parseBBCode(post?.content)"
+                v-html="parseBBCode(post?.content || '')"
               ></div>
             </template>
           </ClientOnly>
@@ -471,7 +580,7 @@ useHead(() => ({
             <NuxtLink
               v-for="tag in tags"
               :key="tag"
-              :to="`/search?tag=${encodeURIComponent(tag)}`"
+              :to="localePath(`/search?tag=${encodeURIComponent(tag)}`)"
               class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#3498db]/5 text-[#3498db] dark:bg-[#e74c3c]/5 dark:text-[#e74c3c] border border-[#3498db]/10 dark:border-[#e74c3c]/10 hover:bg-[#3498db] hover:text-white dark:hover:bg-[#e74c3c] dark:hover:text-white transition-all cursor-pointer"
             >
               #{{ tag }}
@@ -485,7 +594,7 @@ useHead(() => ({
             <span
               class="text-xs font-bold flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
             >
-              <Share2 class="w-4 h-4" /> Chia sẻ bài viết này:
+              <Share2 class="w-4 h-4" /> {{ $t('detail.share_post') }}
             </span>
             <div class="flex items-center gap-2">
               <a
@@ -512,16 +621,16 @@ useHead(() => ({
               >
                 <Check v-if="isCopied" class="w-4 h-4 text-green-500" />
                 <Link v-else class="w-4 h-4" />
-                {{ isCopied ? 'Đã sao chép!' : 'Sao chép liên kết' }}
+                {{ isCopied ? $t('detail.link_copied') : $t('detail.copy_link') }}
               </button>
 
               <NuxtLink
                 v-if="isAuthor"
-                :to="`/blog/publish?edit=${post.id}`"
+                :to="localePath(`/blog/publish?edit=${post.id}`)"
                 class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Pencil class="w-4 h-4" />
-                Chỉnh sửa bài viết
+                {{ $t('detail.edit_post') }}
               </NuxtLink>
             </div>
           </div>
@@ -547,7 +656,7 @@ useHead(() => ({
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              🔥 Xem nhiều nhất
+              🔥 {{ $t('detail.most_viewed') }}
             </h4>
             <div class="space-y-4">
               <div
@@ -567,7 +676,7 @@ useHead(() => ({
                   <h5
                     class="text-xs font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors line-clamp-2"
                   >
-                    <NuxtLink :to="`/blog/${p.slug}.${p.id}`">{{ p.title }}</NuxtLink>
+                    <NuxtLink :to="localePath(`/blog/${p.slug}.${p.id}`)">{{ p.title }}</NuxtLink>
                   </h5>
                 </div>
               </div>
@@ -585,7 +694,7 @@ useHead(() => ({
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              Về tác giả
+              {{ $t('detail.about_author') }}
             </h4>
             <div class="flex flex-col items-center text-center gap-3">
               <!-- Avatar -->
@@ -608,7 +717,7 @@ useHead(() => ({
               </div>
               <!-- Name -->
               <NuxtLink
-                :to="`/user/${post.authorId}`"
+                :to="localePath(`/user/${post.authorId}`)"
                 class="text-sm font-extrabold text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors leading-tight"
               >
                 {{ post.author }}
@@ -622,10 +731,10 @@ useHead(() => ({
               </p>
               <!-- View profile link -->
               <NuxtLink
-                :to="`/user/${post.authorId}`"
+                :to="localePath(`/user/${post.authorId}`)"
                 class="inline-flex items-center gap-1 text-[11px] font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline transition-colors mt-1"
               >
-                Xem hồ sơ →
+                {{ $t('detail.view_profile') }}
               </NuxtLink>
             </div>
           </div>
@@ -636,12 +745,11 @@ useHead(() => ({
             <h4
               class="text-sm font-black uppercase text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-850 pb-3 mb-4 tracking-tight flex items-center gap-2"
             >
-              <Sparkles class="w-4 h-4 text-red-500" /> Bản tin TechDeal
+              <Sparkles class="w-4 h-4 text-red-500" /> {{ $t('detail.newsletter_title') }}
             </h4>
             <div class="space-y-3">
               <p class="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed">
-                Đăng ký để nhận thông báo về những tin tức công nghệ mới và độc quyền trực tiếp qua
-                Google News.
+                {{ $t('detail.newsletter_desc') }}
               </p>
               <div
                 class="swg-basic-subscription-button-placeholder w-full mt-2"
@@ -655,7 +763,7 @@ useHead(() => ({
       <!-- Related Articles Section (Bottom) -->
       <div class="border-t border-gray-200 dark:border-zinc-850 mt-16 pt-12 space-y-6">
         <h3 class="text-xl font-black uppercase text-zinc-900 dark:text-white tracking-tight">
-          📚 Bài viết liên quan
+          {{ $t('detail.related_posts') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div
@@ -664,7 +772,7 @@ useHead(() => ({
             class="flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-850 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group"
           >
             <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
-              <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`" class="block w-full h-full">
+              <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)" class="block w-full h-full">
                 <img
                   :src="rp.imageUrl"
                   :alt="rp.title"
@@ -682,7 +790,7 @@ useHead(() => ({
                 <h4
                   class="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-[#3498db] dark:group-hover:text-[#e74c3c] transition-colors leading-snug line-clamp-2"
                 >
-                  <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
+                  <NuxtLink :to="localePath(`/blog/${rp.slug}.${rp.id}`)">{{ rp.title }}</NuxtLink>
                 </h4>
               </div>
               <div

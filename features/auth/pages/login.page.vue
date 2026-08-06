@@ -15,18 +15,20 @@ const isLoading = ref(false)
 const userStore = useUserStore()
 const authRepo = new AuthRepository()
 const config = useRuntimeConfig()
+const { t } = useI18n()
+const localePath = useLocalePath()
 
 const handleLogin = async () => {
   if (!loginIdentifier.value || !password.value) {
-    alert('Vui lòng điền đầy đủ thông tin!')
+    alert(t('auth.err_fill_info'))
     return
   }
   isLoading.value = true
   try {
     const data = await authRepo.login(loginIdentifier.value, password.value)
     userStore.setAuth(data.token, data.user)
-    alert(`Đăng nhập thành công! Chào mừng ${data.user.username}`)
-    let redirectUrl = '/'
+    alert(t('auth.success_welcome', { name: data.user.username }))
+    let redirectUrl = localePath('/')
     if (process.client) {
       const savedRedirect = localStorage.getItem('google_login_redirect_url')
       if (savedRedirect) {
@@ -37,7 +39,7 @@ const handleLogin = async () => {
     navigateTo(redirectUrl)
   } catch (e: any) {
     console.error(e)
-    alert(e?.response?.data?.error || 'Đăng nhập thất bại!')
+    alert(e?.response?.data?.error || t('auth.err_failed'))
   } finally {
     isLoading.value = false
   }
@@ -67,8 +69,8 @@ const handleCredentialResponse = async (response: any) => {
 
     if (authData && authData.token && authData.user) {
       userStore.setAuth(authData.token, authData.user)
-      alert(`Đăng nhập thành công! Chào mừng ${authData.user.username || authData.user.email}`)
-      let redirectUrl = '/'
+      alert(t('auth.success_welcome', { name: authData.user.username || authData.user.email }))
+      let redirectUrl = localePath('/')
       if (process.client) {
         const savedRedirect = localStorage.getItem('google_login_redirect_url')
         if (savedRedirect) {
@@ -82,7 +84,7 @@ const handleCredentialResponse = async (response: any) => {
     }
   } catch (e: any) {
     console.error(e)
-    alert(e?.message || 'Đăng nhập bằng Google thất bại!')
+    alert(e?.message || t('auth.err_google_failed'))
   } finally {
     isLoading.value = false
   }
@@ -175,7 +177,7 @@ onMounted(() => {
 
       <!-- Top logo -->
       <NuxtLink
-        to="/"
+        :to="localePath('/')"
         class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity"
       >
         <span class="text-3xl font-black tracking-tighter">
@@ -187,11 +189,10 @@ onMounted(() => {
       <!-- Mid quote/text -->
       <div class="my-auto relative z-10 max-w-md space-y-4">
         <h2 class="text-4xl font-extrabold leading-tight">
-          Kết nối & Cập nhật thế giới Công nghệ - Game hàng đầu
+          {{ $t('auth.branding_headline') }}
         </h2>
         <p class="text-zinc-300 text-sm leading-relaxed">
-          Đăng nhập ngay để cá nhân hóa nguồn cấp tin tức của bạn, thảo luận cùng cộng đồng TechDeal
-          và nhận thông tin nóng hổi nhất.
+          {{ $t('auth.branding_desc') }}
         </p>
       </div>
 
@@ -204,23 +205,23 @@ onMounted(() => {
     <!-- Right side: Authentication Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
       <div
-        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-md transition-all duration-300"
+        class="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 sm:p-10 rounded-2xl border border-gray-250 dark:border-zinc-850 shadow-md transition-all duration-300"
       >
         <div class="text-center lg:text-left">
           <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
-            Đăng nhập tài khoản
+            {{ $t('auth.login_title') }}
           </h1>
           <p class="text-xs text-zinc-550 dark:text-zinc-400 mt-2">
-            Chào mừng bạn quay lại với TechDeal.
+            {{ $t('auth.login_welcome') }}
           </p>
         </div>
 
         <form @submit.prevent="handleLogin" class="space-y-5">
           <!-- Username / Email Input -->
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block"
-              >Email đăng nhập</label
-            >
+            <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">{{
+              $t('auth.email_label')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3 top-3 text-zinc-400">
                 <User class="w-4 h-4" />
@@ -228,8 +229,8 @@ onMounted(() => {
               <input
                 v-model="loginIdentifier"
                 type="email"
-                placeholder="Nhập địa chỉ email đăng nhập..."
-                class="w-full text-xs pl-10 pr-4 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                :placeholder="$t('auth.email_placeholder')"
+                class="w-full text-xs pl-10 pr-4 py-3 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
             </div>
@@ -238,11 +239,13 @@ onMounted(() => {
           <!-- Password Input -->
           <div class="space-y-1.5">
             <div class="flex justify-between items-center">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Mật khẩu</label>
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">{{
+                $t('auth.password_label')
+              }}</label>
               <NuxtLink
-                to="/forgot-password"
+                :to="localePath('/forgot-password')"
                 class="text-[11px] text-[#3498db] dark:text-red-400 hover:underline"
-                >Quên mật khẩu?</NuxtLink
+                >{{ $t('auth.forgot_password_link') }}</NuxtLink
               >
             </div>
             <div class="relative">
@@ -252,8 +255,8 @@ onMounted(() => {
               <input
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="Nhập mật khẩu của bạn..."
-                class="w-full text-xs pl-10 pr-10 py-3 border border-gray-200 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
+                :placeholder="$t('auth.password_placeholder')"
+                class="w-full text-xs pl-10 pr-10 py-3 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3498db] dark:focus:ring-[#e74c3c]"
                 required
               />
               <button
@@ -273,21 +276,21 @@ onMounted(() => {
             :disabled="isLoading"
             class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <span v-if="isLoading">Đang đăng nhập...</span>
+            <span v-if="isLoading">{{ $t('auth.logging_in') }}</span>
             <span v-else class="flex items-center gap-1.5"
-              >Đăng nhập <ArrowRight class="w-4 h-4"
+              >{{ $t('common.login') }} <ArrowRight class="w-4 h-4"
             /></span>
           </button>
         </form>
 
         <!-- Divider -->
         <div class="relative flex py-2 items-center">
-          <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+          <div class="flex-grow border-t border-gray-250 dark:border-zinc-800"></div>
           <span
             class="flex-shrink mx-4 text-[10px] text-zinc-400 dark:text-zinc-550 uppercase font-semibold"
-            >Hoặc đăng nhập với</span
+            >{{ $t('auth.or_login_with') }}</span
           >
-          <div class="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+          <div class="flex-grow border-t border-gray-250 dark:border-zinc-800"></div>
         </div>
 
         <!-- Social login: Google Button -->
@@ -297,11 +300,11 @@ onMounted(() => {
 
         <!-- Redirect path -->
         <p class="text-xs text-center text-zinc-500 dark:text-zinc-400">
-          Chưa có tài khoản?
+          {{ $t('auth.no_account') }}
           <NuxtLink
-            to="/register"
+            :to="localePath('/register')"
             class="font-bold text-[#3498db] dark:text-red-400 hover:underline"
-            >Đăng ký ngay</NuxtLink
+            >{{ $t('auth.register_now') }}</NuxtLink
           >
         </p>
       </div>

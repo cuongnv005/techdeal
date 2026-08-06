@@ -7,6 +7,8 @@ defineProps<{
   post: BlogPost
 }>()
 
+const localePath = useLocalePath()
+
 // Dynamic category color mapping for a premium, clean look
 const getCategoryColors = (category: string) => {
   const cat = category.toLowerCase()
@@ -26,7 +28,7 @@ const getCategoryColors = (category: string) => {
   >
     <!-- Image aspect-[16/10] -->
     <div class="relative overflow-hidden aspect-[16/10] bg-zinc-950">
-      <NuxtLink :to="`/blog/${post.slug}.${post.id}`" class="block w-full h-full">
+      <NuxtLink :to="localePath('/blog/' + post.slug + '.' + post.id)" class="block w-full h-full">
         <img
           :src="post.imageUrl"
           :alt="post.title"
@@ -44,14 +46,14 @@ const getCategoryColors = (category: string) => {
           class="text-[10px] font-bold px-2.5 py-1 rounded mb-3 inline-block uppercase tracking-wider"
           :class="getCategoryColors(post.category)"
         >
-          {{ post.category }}
+          {{ post.categoryId ? $t('nav.' + post.categoryId) : post.category }}
         </span>
 
         <!-- Title -->
         <h4
           class="text-base font-bold leading-snug text-zinc-900 dark:text-white hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors mb-3 line-clamp-2"
         >
-          <NuxtLink :to="`/blog/${post.slug}.${post.id}`">
+          <NuxtLink :to="localePath('/blog/' + post.slug + '.' + post.id)">
             {{ post.title }}
           </NuxtLink>
         </h4>

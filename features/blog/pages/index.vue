@@ -18,19 +18,30 @@ const route = useRoute()
 const currentPage = computed(() => Number(route.query.page) || 1)
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
 
 // Set page meta for SEO optimization
 useSeoMeta({
-  title: 'Trang chủ - Tin tức Công nghệ',
-  description:
-    'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
-  ogTitle: 'Trang chủ - Tin tức Công nghệ',
-  ogDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ'),
+  description: () =>
+    isEn.value
+      ? 'Leading technology news site, updating the fastest tech trends, mobile devices, AI, and digital world.'
+      : 'Trang tin tức công nghệ hàng đầu, cập nhật nhanh nhất các xu hướng công nghệ, điện thoại di động, tai nghe, AI và thế giới số.',
+  ogTitle: () => (isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Trang chủ - Tin tức Công nghệ',
-  twitterDescription: 'Cập nhật tin tức công nghệ mới nhất hàng ngày.'
+  twitterTitle: () =>
+    isEn.value ? 'TechDeal - Tech News & Deals' : 'Trang chủ - Tin tức Công nghệ',
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest technology news.'
+      : 'Cập nhật tin tức công nghệ mới nhất hàng daily.'
 })
 
 useHead(() => ({
@@ -42,13 +53,17 @@ useHead(() => ({
   ]
 }))
 
-// Fetch posts from API using useAsyncData, watching the current page for server-side pagination
+// Fetch posts from API using useAsyncData, watching the current page and locale for server-side pagination
 const { data: allPosts, pending } = await useAsyncData(
-  'public-posts-all',
+  `public-posts-all-${locale.value}`,
   () =>
-    blogRepository.getPosts({ page: currentPage.value, limit: currentPage.value === 1 ? 11 : 10 }),
+    blogRepository.getPosts({
+      page: currentPage.value,
+      limit: currentPage.value === 1 ? 11 : 10,
+      lang: isEn.value ? 'en' : 'vi'
+    }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -171,7 +186,7 @@ const { isMobileAd } = useAdBreakpoint()
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('common.latest_updates') }}
             </h2>
           </div>
 
@@ -181,7 +196,7 @@ const { isMobileAd } = useAdBreakpoint()
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết mới...
+              {{ $t('common.loading_posts') }}
             </p>
           </div>
 
@@ -200,7 +215,7 @@ const { isMobileAd } = useAdBreakpoint()
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -227,7 +242,7 @@ const { isMobileAd } = useAdBreakpoint()
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-850 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

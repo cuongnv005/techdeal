@@ -8,6 +8,8 @@ import type { BlogPost } from '../../types/post.type'
 defineProps<{
   recentSidebarPosts: BlogPost[]
 }>()
+
+const localePath = useLocalePath()
 </script>
 
 <template>
@@ -52,39 +54,39 @@ defineProps<{
 
     <!-- Daily Newsletter -->
     <div
-      class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-5 rounded-xl shadow-xs"
+      class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-5 rounded-xl shadow-xs"
     >
       <h4
         class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-2 mb-4"
       >
-        Nhận tin game mới nhất
+        {{ $t('gaming.newsletter_title') }}
       </h4>
       <p class="text-xs text-gray-500 dark:text-zinc-400 mb-4">
-        Đăng ký email để không bỏ lỡ tin tức game hấp dẫn nhất mỗi ngày.
+        {{ $t('gaming.subscribe_desc') }}
       </p>
       <form @submit.prevent class="space-y-2">
         <input
           type="email"
-          placeholder="Nhập email của bạn..."
+          :placeholder="$t('common.email_placeholder')"
           class="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-800 rounded bg-gray-55 dark:bg-[#0d0f12] text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#e74c3c]"
         />
         <button
           type="submit"
           class="w-full bg-[#e74c3c] hover:bg-[#c0392b] text-white text-xs font-bold py-2 rounded transition-colors flex items-center justify-center gap-1"
         >
-          Đăng ký <ArrowRight class="w-3.5 h-3.5" />
+          {{ $t('common.register') }} <ArrowRight class="w-3.5 h-3.5" />
         </button>
       </form>
     </div>
 
     <!-- Recent Sidebar Posts -->
     <div
-      class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-5 rounded-xl shadow-xs"
+      class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-855 p-5 rounded-xl shadow-xs"
     >
       <h4
         class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white border-b border-gray-200 dark:border-zinc-800 pb-2 mb-4"
       >
-        Bài viết gần đây
+        {{ $t('gaming.recent_posts') }}
       </h4>
       <ul class="space-y-4">
         <li
@@ -93,12 +95,12 @@ defineProps<{
           class="group border-b border-gray-100 dark:border-zinc-850 last:border-0 pb-3 last:pb-0"
         >
           <span class="text-[9px] font-bold text-[#e74c3c] uppercase block mb-1">
-            {{ rp.category }}
+            {{ rp.categoryId ? $t('nav.' + rp.categoryId) : rp.category }}
           </span>
           <h5
             class="text-xs font-bold text-zinc-700 dark:text-zinc-300 leading-snug group-hover:text-[#e74c3c] transition-colors"
           >
-            <NuxtLink :to="`/blog/${rp.slug}.${rp.id}`">{{ rp.title }}</NuxtLink>
+            <NuxtLink :to="localePath('/blog/' + rp.slug + '.' + rp.id)">{{ rp.title }}</NuxtLink>
           </h5>
           <span class="text-[10px] text-zinc-550 mt-1 block">{{ rp.publishDate }}</span>
         </li>
@@ -108,7 +110,7 @@ defineProps<{
     <!-- Ad Slot Sidebar -->
     <div
       v-if="false"
-      class="bg-white dark:bg-[#13161c] border border-gray-200 dark:border-zinc-850 p-3 rounded-xl flex items-center justify-center shadow-xs"
+      class="bg-white dark:bg-[#13161c] border border-gray-250 dark:border-zinc-850 p-3 rounded-xl flex items-center justify-center shadow-xs"
     >
       <AdBanner width="300px" height="250px" :is-google-ad="true" />
     </div>

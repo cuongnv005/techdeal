@@ -145,12 +145,24 @@ export default defineNuxtConfig({
     '@nuxtjs/robots',
     '@nuxt/image',
     '@sentry/nuxt/module',
-    'shadcn-nuxt'
+    'shadcn-nuxt',
+    '@nuxtjs/i18n'
   ],
+
+  i18n: {
+    locales: [
+      { code: 'vi', language: 'vi-VN', file: 'vi.json' },
+      { code: 'en', language: 'en-US', file: 'en.json' }
+    ],
+    defaultLocale: 'vi',
+    strategy: 'prefix_except_default',
+    detectBrowserLanguage: false,
+    langDir: 'locales'
+  },
 
   shadcn: {
     prefix: '',
-    componentDir: '~/shared/ui'
+    componentDir: '@@/shared/ui'
   },
 
   site: {
@@ -224,9 +236,7 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
-    '/contact': { prerender: true },
-    '/en': { redirect: '/' },
-    '/en/**': { redirect: '/' }
+    '/contact': { prerender: true }
   },
 
   nitro: {
@@ -242,5 +252,5 @@ export default defineNuxtConfig({
   sourcemap: {
     client: 'hidden'
   },
-  components: [{ path: '@shared/ui', prefix: 'Ui' }, '~/components']
+  components: [{ path: '@@/shared/ui', prefix: 'Ui', extensions: ['vue'] }, '~/components']
 })

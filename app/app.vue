@@ -59,6 +59,21 @@ watch(cookieConsent, pushConsentUpdate, { immediate: true })
 const MONETAG_ALLOWED_PREFIXES = ['/go']
 
 const route = useRoute()
+const { locale } = useI18n()
+watch(
+  () => route.path,
+  (newPath) => {
+    const expectedLocale = newPath === '/en' || newPath.startsWith('/en/') ? 'en' : 'vi'
+    console.log(
+      `[i18n Sync] Path: ${newPath} | Current: ${locale.value} | Expected: ${expectedLocale}`
+    )
+    if (locale.value !== expectedLocale) {
+      locale.value = expectedLocale
+      console.log(`[i18n Sync] Updated locale to: ${locale.value}`)
+    }
+  },
+  { immediate: true }
+)
 const monetagAllowed = computed(() => {
   const path = route.path
   return MONETAG_ALLOWED_PREFIXES.some((p) => path === p || path.startsWith(p + '/'))

@@ -26,18 +26,29 @@ import { useUserStore } from '@stores/user'
 const route = useRoute()
 const siteUrl = 'https://techdeal.io.vn'
 const requestUrl = computed(() => `${siteUrl}${route.path}`)
+const { locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
+const localePath = useLocalePath()
 
 useSeoMeta({
-  title: 'Windows - Tin tức Windows',
-  description:
-    'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
-  ogTitle: 'Chuyên mục Windows - TechDeal',
-  ogDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.',
+  title: () => (isEn.value ? 'Windows - Windows News' : 'Windows - Tin tức Windows'),
+  description: () =>
+    isEn.value
+      ? 'Windows Section: Update Windows 11 tips, Microsoft OS news, PC apps and hardware performance.'
+      : 'Chuyên mục Windows: Cập nhật thủ thuật Windows 11, tin tức hệ điều hành Microsoft, ứng dụng PC và hiệu năng phần cứng.',
+  ogTitle: () => (isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal'),
+  ogDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Windows news.'
+      : 'Cập nhật tin tức Windows mới nhất hàng ngày.',
   ogUrl: () => requestUrl.value,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Chuyên mục Windows - TechDeal',
-  twitterDescription: 'Cập nhật tin tức Windows mới nhất hàng ngày.'
+  twitterTitle: () => (isEn.value ? 'Windows Section - TechDeal' : 'Chuyên mục Windows - TechDeal'),
+  twitterDescription: () =>
+    isEn.value
+      ? 'Daily updates on the latest Windows news.'
+      : 'Cập nhật tin tức Windows mới nhất hàng ngày.'
 })
 
 useHead(() => ({
@@ -53,15 +64,16 @@ const currentPage = computed(() => Number(route.query.page) || 1)
 
 // Fetch articles dynamically
 const { data: allCategoryPosts, pending } = await useAsyncData(
-  'posts-windows-all',
+  `posts-windows-all-${locale.value}`,
   () =>
     blogRepository.getPosts({
       category: 'windows',
       page: currentPage.value,
-      limit: 10
+      limit: 10,
+      lang: isEn.value ? 'en' : 'vi'
     }),
   {
-    watch: [currentPage]
+    watch: [currentPage, locale]
   }
 )
 
@@ -142,12 +154,13 @@ const userStore = useUserStore()
           <div>
             <span
               class="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full"
-              >Chuyên mục</span
+              >{{ $t('category.label') }}</span
             >
-            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">Windows</h1>
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight mt-3">
+              {{ $t('nav.windows') }}
+            </h1>
             <p class="text-sm text-blue-50 mt-2 max-w-xl">
-              Cập nhật tin tức mới nhất về hệ điều hành Windows, các thủ thuật sử dụng máy tính hiệu
-              quả và ứng dụng hàng đầu dành cho PC.
+              {{ $t('category.desc_windows') }}
             </p>
           </div>
           <div
@@ -156,10 +169,10 @@ const userStore = useUserStore()
             "
           >
             <NuxtLink
-              to="/blog/publish?category=windows"
+              :to="localePath('/blog/publish?category=windows')"
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-600 hover:bg-indigo-50 transition-all font-bold text-xs rounded-xl shadow-md cursor-pointer shrink-0"
             >
-              📝 Đăng bài mới
+              {{ $t('category.publish_new') }}
             </NuxtLink>
           </div>
         </div>
@@ -179,7 +192,7 @@ const userStore = useUserStore()
             <h2
               class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight flex items-center gap-2"
             >
-              <TrendingUp class="w-5 h-5 text-[#3498db]" /> Tin mới cập nhật
+              <TrendingUp class="w-5 h-5 text-[#3498db]" /> {{ $t('common.latest_updates') }}
             </h2>
           </div>
 
@@ -189,7 +202,7 @@ const userStore = useUserStore()
               class="w-10 h-10 border-4 border-[#3498db] border-t-transparent rounded-full animate-spin"
             ></div>
             <p class="text-xs font-bold text-zinc-500 mt-4 tracking-wider animate-pulse">
-              Đang tải bài viết mới...
+              {{ $t('common.loading_posts') }}
             </p>
           </div>
 
@@ -208,7 +221,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage - 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Trước
+              {{ $t('common.prev') }}
             </button>
             <template v-for="page in visiblePages" :key="page">
               <span
@@ -235,7 +248,7 @@ const userStore = useUserStore()
               @click="navigateTo({ query: { ...route.query, page: currentPage + 1 } })"
               class="px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-855 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors"
             >
-              Sau
+              {{ $t('common.next') }}
             </button>
           </div>
 

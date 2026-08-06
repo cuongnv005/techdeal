@@ -10,6 +10,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const isBlue = computed(() => props.theme === 'blue')
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
 
 // Compute classes/content based on theme
 const footerBgClass = computed(() =>
@@ -23,17 +25,13 @@ const hoverTextClass = computed(() =>
 const textMutedClass = computed(() => (isBlue.value ? 'text-zinc-500' : 'text-zinc-400'))
 const titleText = computed(() => (isBlue.value ? 'TECHDEAL.' : 'TECHDEAL GAMING.'))
 const descriptionText = computed(() =>
-  isBlue.value
-    ? 'Trang blog cập nhật tin công nghệ và khoa học máy tính nhanh chóng, chuẩn xác.'
-    : 'Kênh thông tin game và phần cứng chơi game chuyên nghiệp hàng đầu Việt Nam.'
+  isBlue.value ? t('footer.desc_blue') : t('footer.desc_red')
 )
-const middleColTitle = computed(() => 'Liên kết hữu ích')
+const middleColTitle = computed(() => t('footer.links_title'))
 const supportEmail = computed(() => 'contact@techdeal.io.vn')
 const supportPhone = computed(() => (isBlue.value ? '+84 (0) 822 344 589' : '+84 (0) 874557944'))
 const copyrightText = computed(() =>
-  isBlue.value
-    ? '© 2026 TECHDEAL News Magazine. Mọi quyền được bảo lưu.'
-    : '© 2026 TECHDEAL Gaming Hub. All rights reserved.'
+  isBlue.value ? t('footer.copyright_blue') : t('footer.copyright_red')
 )
 </script>
 
@@ -64,22 +62,24 @@ const copyrightText = computed(() =>
           <h4 class="text-white font-bold uppercase mb-4">{{ middleColTitle }}</h4>
           <ul class="space-y-2">
             <li>
-              <NuxtLink to="/terms" class="hover:text-white transition-colors"
-                >Điều khoản Dịch vụ</NuxtLink
-              >
+              <NuxtLink :to="localePath('/terms')" class="hover:text-white transition-colors">{{
+                $t('footer.terms')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/privacy" class="hover:text-white transition-colors"
-                >Chính sách Bảo mật</NuxtLink
-              >
+              <NuxtLink :to="localePath('/privacy')" class="hover:text-white transition-colors">{{
+                $t('footer.privacy')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/about" class="hover:text-white transition-colors"
-                >Giới thiệu & Bản tin</NuxtLink
-              >
+              <NuxtLink :to="localePath('/about')" class="hover:text-white transition-colors">{{
+                $t('footer.about')
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/contact" class="hover:text-white transition-colors">Liên hệ</NuxtLink>
+              <NuxtLink :to="localePath('/contact')" class="hover:text-white transition-colors">{{
+                $t('footer.contact')
+              }}</NuxtLink>
             </li>
           </ul>
         </div>
@@ -87,7 +87,7 @@ const copyrightText = computed(() =>
         <!-- Contact Column -->
         <div>
           <!-- Đưa tiêu đề H4 ra ngoài thẻ address -->
-          <h4 class="text-white font-bold uppercase mb-4">Liên hệ hỗ trợ</h4>
+          <h4 class="text-white font-bold uppercase mb-4">{{ $t('footer.contact_title') }}</h4>
 
           <!-- Thẻ address chỉ bọc phần thông tin liên lạc -->
           <address class="not-italic space-y-2 text-zinc-500">
@@ -98,7 +98,7 @@ const copyrightText = computed(() =>
               }}</a>
             </p>
             <p>
-              Điện thoại:
+              {{ locale === 'en' ? 'Phone:' : 'Điện thoại:' }}
               <a
                 :href="`tel:${supportPhone.replace(/[^\d+]/g, '')}`"
                 class="hover:text-white transition-colors"

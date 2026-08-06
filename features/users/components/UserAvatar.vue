@@ -17,6 +17,8 @@ const emit = defineEmits<{
   (e: 'update:avatar', url: string): void
 }>()
 
+const { t } = useI18n()
+
 const isUploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -45,11 +47,11 @@ const handleFileChange = async (event: Event) => {
     if (result.success && result.data?.url) {
       emit('update:avatar', result.data.url)
     } else {
-      alert('Tải ảnh lên thất bại. Vui lòng thử lại!')
+      alert(t('user_profile.upload_fail'))
     }
   } catch (error) {
     console.error('Error uploading avatar:', error)
-    alert('Có lỗi xảy ra khi tải ảnh lên!')
+    alert(t('user_profile.upload_error'))
   } finally {
     isUploading.value = false
     if (fileInput.value) {
@@ -88,12 +90,12 @@ const handleFileChange = async (event: Event) => {
     >
       <div v-if="isUploading" class="flex flex-col items-center">
         <Loader2 class="w-6 h-6 animate-spin text-white" />
-        <span class="text-[10px] mt-1 font-semibold">Đang tải...</span>
+        <span class="text-[10px] mt-1 font-semibold">{{ $t('user_profile.uploading') }}</span>
       </div>
       <div v-else class="flex flex-col items-center">
         <Camera class="w-6 h-6 text-white mb-1" />
         <span class="text-[10px] font-bold uppercase tracking-wider text-center px-2">
-          {{ avatarUrl ? 'Đổi ảnh' : 'Thêm ảnh' }}
+          {{ avatarUrl ? $t('user_profile.change_photo') : $t('user_profile.add_photo') }}
         </span>
       </div>
     </div>

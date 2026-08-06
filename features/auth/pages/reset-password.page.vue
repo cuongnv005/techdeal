@@ -5,6 +5,7 @@ import { useRoute } from '#app'
 import { Lock, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-vue-next'
 
 const route = useRoute()
+const localePath = useLocalePath()
 const token = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
@@ -79,7 +80,7 @@ const handleResetPassword = async () => {
 
       <!-- Top logo -->
       <NuxtLink
-        to="/"
+        :to="localePath('/')"
         class="flex items-center gap-2 relative z-10 hover:opacity-90 transition-opacity"
       >
         <span class="text-3xl font-black tracking-tighter">
@@ -110,7 +111,7 @@ const handleResetPassword = async () => {
       >
         <!-- Back to login link -->
         <NuxtLink
-          to="/login"
+          :to="localePath('/login')"
           class="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors"
         >
           <ArrowLeft class="w-4 h-4" /> Quay lại đăng nhập
@@ -123,7 +124,7 @@ const handleResetPassword = async () => {
         >
           <p class="font-medium">{{ errorMsg }}</p>
           <NuxtLink
-            to="/forgot-password"
+            :to="localePath('/forgot-password')"
             class="inline-block text-xs font-bold underline hover:opacity-85"
           >
             Yêu cầu liên kết mới
@@ -208,7 +209,7 @@ const handleResetPassword = async () => {
             </p>
           </div>
           <NuxtLink
-            to="/login"
+            :to="localePath('/login')"
             class="w-full py-3 bg-[#3498db] dark:bg-[#e74c3c] hover:bg-sky-600 dark:hover:bg-[#c0392b] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             Đăng nhập ngay
