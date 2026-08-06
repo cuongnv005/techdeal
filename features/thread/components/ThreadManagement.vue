@@ -38,7 +38,9 @@ interface ThreadFormState {
   platform_type: ThreadPlatform
   image_url: string
   summary: string
+  summary_en: string
   content: string
+  content_en: string
   deal_link: string
   is_vip_only: boolean
   deal_ends_at: string
@@ -51,7 +53,9 @@ const emptyForm = (): ThreadFormState => ({
   platform_type: 'android',
   image_url: '',
   summary: '',
+  summary_en: '',
   content: '',
+  content_en: '',
   deal_link: '',
   is_vip_only: false,
   deal_ends_at: '',
@@ -132,7 +136,9 @@ const openEditModal = async (thread: Thread): Promise<void> => {
       platform_type: (full?.platform_type ?? thread.platform_type) as ThreadPlatform,
       image_url: full?.image_url ?? thread.image_url ?? '',
       summary: full?.summary ?? '',
+      summary_en: full?.summary_en ?? '',
       content: full?.content ?? '',
+      content_en: full?.content_en ?? '',
       deal_link: full?.deal_link ?? '',
       is_vip_only: !!(full?.is_vip_only ?? thread.is_vip_only),
       deal_ends_at: toLocalDateTimeValue(full?.deal_ends_at ?? thread.deal_ends_at),
@@ -155,7 +161,9 @@ const handleSubmitForm = async (): Promise<void> => {
   const payload: CreateThreadInput = {
     app_name: form.value.app_name,
     summary: form.value.summary,
+    summary_en: form.value.summary_en || null,
     content: form.value.content,
+    content_en: form.value.content_en || null,
     deal_link: form.value.deal_link,
     platform_type: form.value.platform_type,
     image_url: form.value.image_url || undefined,
@@ -475,26 +483,50 @@ const formatDate = (dateString: string | null) => {
 
           <div class="space-y-1">
             <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
-              >Tóm Tắt</label
+              >Tóm Tắt (Tiếng Việt)</label
             >
             <textarea
               v-model="form.summary"
               required
               rows="2"
-              placeholder="Mô tả ngắn hiển thị ở danh sách feed..."
+              placeholder="Mô tả ngắn hiển thị ở danh sách feed (tiếng Việt)..."
               class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db] resize-none"
             ></textarea>
           </div>
 
           <div class="space-y-1">
             <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
-              >Nội Dung Chi Tiết</label
+              >Tóm Tắt (Tiếng Anh)</label
+            >
+            <textarea
+              v-model="form.summary_en"
+              rows="2"
+              placeholder="Mô tả ngắn tiếng Anh (English short summary)..."
+              class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db] resize-none"
+            ></textarea>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+              >Nội Dung Chi Tiết (Tiếng Việt)</label
             >
             <textarea
               v-model="form.content"
               required
               rows="5"
-              placeholder="Nội dung chi tiết, hướng dẫn nhận deal..."
+              placeholder="Nội dung chi tiết, hướng dẫn nhận deal (tiếng Việt)..."
+              class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db] resize-none"
+            ></textarea>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+              >Nội Dung Chi Tiết (Tiếng Anh)</label
+            >
+            <textarea
+              v-model="form.content_en"
+              rows="5"
+              placeholder="Nội dung chi tiết tiếng Anh (English detailed content)..."
               class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db] resize-none"
             ></textarea>
           </div>
