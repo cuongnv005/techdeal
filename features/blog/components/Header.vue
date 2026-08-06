@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 import { useDark, useToggle } from '@vueuse/core'
 import { Search, Menu, X, Sun, Moon, ChevronDown } from 'lucide-vue-next'
@@ -93,6 +93,17 @@ const headerBgClass = computed(() =>
     : 'bg-white dark:bg-[#13161c] border-gray-200 dark:border-zinc-900'
 )
 const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
+
+// Overflow dropdown for nav items hidden at smaller desktop widths
+const isMoreOpen = ref(false)
+const moreDropdownRef = ref<HTMLElement | null>(null)
+const handleClickOutside = (e: MouseEvent) => {
+  if (moreDropdownRef.value && !moreDropdownRef.value.contains(e.target as Node)) {
+    isMoreOpen.value = false
+  }
+}
+onMounted(() => document.addEventListener('click', handleClickOutside))
+onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 </script>
 
 <template>
@@ -156,13 +167,15 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
           active-class="!text-[#3498db]"
           >{{ $t('nav.android') }}</NuxtLink
         >
+        <!-- PC: visible on 2xl+, hidden below → goes into ··· dropdown -->
         <NuxtLink
           :to="localePath('/pc')"
-          class="transition-colors duration-200"
+          class="2xl:inline transition-colors duration-200 hidden"
           :class="textHoverClass"
           active-class="!text-[#3498db]"
           >{{ $t('nav.pc') }}</NuxtLink
         >
+        <!-- Deals dropdown: always visible on desktop -->
         <div class="relative group cursor-pointer py-2">
           <span
             class="inline-flex items-center gap-1 transition-colors duration-200"
@@ -190,13 +203,46 @@ const shadowClass = computed(() => (isBlue.value ? 'shadow-sm' : 'shadow-md'))
             </NuxtLink>
           </div>
         </div>
+        <!-- Gaming: visible on 2xl+, hidden below → goes into ··· dropdown -->
         <NuxtLink
           :to="localePath('/game')"
-          class="transition-colors duration-200"
+          class="2xl:inline transition-colors duration-200 hidden"
           :class="textHoverClass"
           active-class="!text-[#e74c3c]"
           >{{ $t('nav.gaming') }}</NuxtLink
         >
+        <!-- ··· overflow dropdown: visible below 2xl, hides on 2xl+ -->
+        <div class="relative 2xl:hidden" ref="moreDropdownRef">
+          <button
+            @click="isMoreOpen = !isMoreOpen"
+            class="inline-flex items-center gap-0.5 px-2 py-1 rounded-lg transition-colors duration-200 text-zinc-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 text-base font-bold tracking-widest"
+            :class="{ 'bg-gray-100 dark:bg-zinc-800': isMoreOpen }"
+            aria-label="More navigation items"
+          >
+            ···
+          </button>
+          <div
+            v-if="isMoreOpen"
+            class="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-zinc-900 shadow-xl rounded-xl border border-gray-150 dark:border-zinc-800 py-1.5 z-50"
+          >
+            <NuxtLink
+              :to="localePath('/pc')"
+              class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+              :class="textHoverClass"
+              @click="isMoreOpen = false"
+            >
+              {{ $t('nav.pc') }}
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/game')"
+              class="block px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+              :class="textHoverClass"
+              @click="isMoreOpen = false"
+            >
+              {{ $t('nav.gaming') }}
+            </NuxtLink>
+          </div>
+        </div>
       </nav>
 
       <!-- Search & Auth -->
