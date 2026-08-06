@@ -30,7 +30,7 @@ const isEn = computed(() => locale.value === 'en')
 
 const { data: popularData } = await useAsyncData(
   `sidebar-popular-posts-${locale.value}`,
-  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : undefined),
+  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : 'vi'),
   {
     watch: [locale]
   }

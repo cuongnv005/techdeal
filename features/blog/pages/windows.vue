@@ -70,7 +70,7 @@ const { data: allCategoryPosts, pending } = await useAsyncData(
       category: 'windows',
       page: currentPage.value,
       limit: 10,
-      lang: isEn.value ? 'en' : undefined
+      lang: isEn.value ? 'en' : 'vi'
     }),
   {
     watch: [currentPage, locale]

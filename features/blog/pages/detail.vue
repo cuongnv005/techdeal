@@ -50,7 +50,12 @@ if (process.client) {
 
 const { locale } = useI18n()
 const localePath = useLocalePath()
-const isEn = computed(() => locale.value === 'en')
+// isEn must read directly from route.path (not locale.value) to avoid a race condition:
+// When the user clicks the "Read in Vietnamese" link from an English article, route.path
+// changes from /en/blog/... to /blog/... immediately, but locale.value is only updated
+// by the watcher in app.vue AFTER the path change. Using locale.value would cause the
+// API to be called with lang='en' even though the new URL is a Vietnamese article.
+const isEn = computed(() => route.path.startsWith('/en/') || route.path === '/en')
 const localeAlternateLink = useLocaleAlternateLink()
 
 // URL format: /blog/{slug}.{id}  e.g. cuoc-cach-mang-thuc-te-ao-tiep-theo.f1
@@ -68,9 +73,9 @@ const slugText = computed<string>(() => {
 
 // Fetch post by slug using useAsyncData
 const { data: postDetail } = await useAsyncData(
-  `post-${slugText.value}-${locale.value}`,
+  `post-${slugText.value}-${route.path}`,
   async () => {
-    const detail = await blogRepository.getPostBySlug(slugText.value, isEn.value ? 'en' : undefined)
+    const detail = await blogRepository.getPostBySlug(slugText.value, isEn.value ? 'en' : 'vi')
     if (detail && detail.post) {
       let finalRelated: BlogPost[] = []
 
@@ -94,7 +99,7 @@ const { data: postDetail } = await useAsyncData(
                 tag: cand,
                 limit: 6,
                 enrich: false,
-                lang: isEn.value ? 'en' : undefined
+                lang: isEn.value ? 'en' : 'vi'
               })
               tagPosts = tagPostsRes.items
               if (tagPosts && tagPosts.length > 0) {
@@ -126,7 +131,7 @@ const { data: postDetail } = await useAsyncData(
             category: categoryId,
             limit: 6,
             enrich: false,
-            lang: isEn.value ? 'en' : undefined
+            lang: isEn.value ? 'en' : 'vi'
           })
           const catPosts = catPostsRes.items
           finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
@@ -140,7 +145,11 @@ const { data: postDetail } = await useAsyncData(
     return detail
   },
   {
-    watch: [slugText, locale]
+    // Watch both slugText and route.path so we react immediately to language switches.
+    // route.path is used instead of locale because locale.value is updated asynchronously
+    // via a watcher in app.vue — it lags behind the actual URL change. route.path is
+    // synchronous and reflects the new URL the moment the router navigates.
+    watch: [slugText, computed(() => route.path)]
   }
 )
 
@@ -259,8 +268,11 @@ const parsedContentHtml = computed(() => {
 
 // Popular posts for sidebar
 const { data: popularSidebarPostsData } = await useAsyncData(
-  `popular-sidebar-posts-${locale.value}`,
-  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : undefined)
+  `popular-sidebar-posts-${route.path}`,
+  () => blogRepository.getPopularPosts(5, isEn.value ? 'en' : 'vi'),
+  {
+    watch: [computed(() => route.path)]
+  }
 )
 const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 
@@ -502,8 +514,12 @@ useHead(() => {
                     : 'Bài viết này cũng có phiên bản tiếng Anh'
                 }}
               </span>
-              <NuxtLink
-                :to="
+              <!-- Use plain <a> instead of NuxtLink to force a full page load.
+                   Switching between /en/blog/... and /blog/... is a full locale context change:
+                   i18n state, useAsyncData cache, and SSR all need to reset together.
+                   SPA navigation (NuxtLink) cannot reliably orchestrate all of this at once. -->
+              <a
+                :href="
                   isEn
                     ? `/blog/${post.slugVi || post.slug}.${post.id}`
                     : `/en/blog/${post.slugEn}.${post.id}`
@@ -511,7 +527,7 @@ useHead(() => {
                 class="font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline"
               >
                 {{ isEn ? '🇻🇳 Đọc bản tiếng Việt' : '🇬🇧 Read in English' }}
-              </NuxtLink>
+              </a>
             </div>
 
             <!-- Meta statistics -->

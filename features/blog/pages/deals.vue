@@ -77,7 +77,8 @@ const {
             const tagPostsRes = await blogRepository.getPosts({
               tag: cand,
               limit: 6,
-              enrich: false
+              enrich: false,
+              lang: locale.value === 'en' ? 'en' : 'vi'
             })
             tagPosts = tagPostsRes.items
             if (tagPosts && tagPosts.length > 0) {
@@ -106,7 +107,8 @@ const {
         const catPostsRes = await blogRepository.getPosts({
           category: categoryId,
           limit: 6,
-          enrich: false
+          enrich: false,
+          lang: locale.value === 'en' ? 'en' : 'vi'
         })
         const catPosts = catPostsRes.items
         finalRelated = catPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
@@ -220,8 +222,11 @@ watch(
 
 // Sidebar popular posts
 const { data: popularSidebarPostsData } = await useAsyncData(
-  `popular-posts-${props.platform}`,
-  () => blogRepository.getPopularPosts(5)
+  `popular-posts-${props.platform}-${locale.value}`,
+  () => blogRepository.getPopularPosts(5, locale.value === 'en' ? 'en' : 'vi'),
+  {
+    watch: [locale]
+  }
 )
 const popularSidebarPosts = computed(() => popularSidebarPostsData.value || [])
 

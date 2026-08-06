@@ -16,7 +16,11 @@ const localeAlternateLink = useLocaleAlternateLink()
 
 const switchLanguage = (lang: 'vi' | 'en') => {
   if (localeAlternateLink.value) {
-    navigateTo(localeAlternateLink.value)
+    // Use hard navigation when on an article page so that the full locale context
+    // (i18n state, useAsyncData cache, SSR) resets correctly for the target language.
+    if (process.client) {
+      window.location.href = localeAlternateLink.value
+    }
   } else {
     navigateTo(switchLocalePath(lang))
   }

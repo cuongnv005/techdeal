@@ -60,7 +60,7 @@ const { data: allPosts, pending } = await useAsyncData(
     blogRepository.getPosts({
       page: currentPage.value,
       limit: currentPage.value === 1 ? 11 : 10,
-      lang: isEn.value ? 'en' : undefined
+      lang: isEn.value ? 'en' : 'vi'
     }),
   {
     watch: [currentPage, locale]

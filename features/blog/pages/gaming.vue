@@ -82,7 +82,7 @@ const { data: gamingPosts, pending } = await useAsyncData(
       category: 'gaming',
       page: currentPage.value,
       limit: currentPage.value === 1 ? 15 : 10,
-      lang: isEn.value ? 'en' : undefined
+      lang: isEn.value ? 'en' : 'vi'
     }),
   {
     watch: [currentPage, locale]
