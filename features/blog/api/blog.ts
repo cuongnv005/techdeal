@@ -347,7 +347,7 @@ export class BlogRepository {
         }
       }
 
-      const path = lang === 'en' ? `/posts/en/${querySlug}` : `/posts/${querySlug}`
+      const path = lang === 'en' ? `/posts/en/${querySlug}` : `/posts/${querySlug}?lang=vi`
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
         path
       )
