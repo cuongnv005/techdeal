@@ -338,7 +338,7 @@ export class BlogRepository {
       let querySlug = slug
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
       if (isUuid) {
-        const postsRes = await this.getPosts({ limit: 1000 })
+        const postsRes = await this.getPosts({ limit: 1000, lang })
         const found = postsRes.items.find((p) => p.id === slug)
         if (found && found.slug) {
           querySlug = found.slug

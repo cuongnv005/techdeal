@@ -305,7 +305,8 @@ const fallbackCopyText = (text: string) => {
 
 const copyUrl = () => {
   if (process.client) {
-    const url = `${window.location.origin}/blog/.${post.value.id}`
+    const prefix = isEn.value ? '/en' : ''
+    const url = `${window.location.origin}${prefix}/blog/.${post.value.id}`
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(url)

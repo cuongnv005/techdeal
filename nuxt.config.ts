@@ -156,7 +156,16 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'vi',
     strategy: 'prefix_except_default',
-    detectBrowserLanguage: false,
+    // Chỉ tự redirect theo Accept-Language khi vào đúng trang gốc "/" (redirectOn: 'root'),
+    // KHÔNG áp dụng cho link sâu (vd 1 bài blog VI cụ thể) vì không phải bài nào cũng có
+    // bản dịch tiếng Anh — redirect ở đó có thể dẫn tới 404. Cookie lưu lại lựa chọn
+    // (auto-detect lẫn khi user tự bấm đổi ngôn ngữ) nên chỉ detect một lần duy nhất.
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      fallbackLocale: 'vi'
+    },
     langDir: 'locales'
   },
 
