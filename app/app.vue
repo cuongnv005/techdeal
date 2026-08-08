@@ -282,18 +282,17 @@ useHead(() => ({
             async: true
           }
         ]
-      : [])
-    // Monetag TẮT (xem lý do ở khối MONETAG_* phía trên).
+      : []),
+    // Monetag (chỉ bật Vignette Banner cho trang /go theo yêu cầu của user, IPP vẫn TẮT)
+    ...(monetagAllowed.value
+      ? [
+          { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
+        ]
+      : []),
     // Social Bar Adsterra TẮT (2026-07-24): user thấy trải nghiệm không ổn.
     // Giờ /go + /giveaway CHỈ chạy Adsterra banner (khối UiAdsterraBanner trong
     // template từng trang). Bỏ comment dòng dưới để bật lại Social Bar.
     /*
-    ...(monetagAllowed.value
-      ? [
-          { innerHTML: MONETAG_IPP_SCRIPT, type: 'text/javascript' },
-          { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
-        ]
-      : []),
     ...(socialBarAllowed.value ? [{ src: SOCIALBAR_SRC, async: true }] : [])
     */
     // Bỏ comment dòng dưới khi AdSense được duyệt lại (cần cả khối trên đã bật):
