@@ -282,13 +282,15 @@ useHead(() => ({
             async: true
           }
         ]
-      : []),
-    // Monetag (chỉ bật Vignette Banner cho trang /go theo yêu cầu của user, IPP vẫn TẮT)
+      : [])
+    // Monetag (chỉ bật Vignette Banner cho trang /go theo yêu cầu của user, IPP vẫn TẮT) - ĐANG TẮT
+    /*
     ...(monetagAllowed.value
       ? [
           { innerHTML: MONETAG_VIGNETTE_SCRIPT, type: 'text/javascript' }
         ]
       : []),
+    */
     // Social Bar Adsterra TẮT (2026-07-24): user thấy trải nghiệm không ổn.
     // Giờ /go + /giveaway CHỈ chạy Adsterra banner (khối UiAdsterraBanner trong
     // template từng trang). Bỏ comment dòng dưới để bật lại Social Bar.
