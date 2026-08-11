@@ -34,6 +34,30 @@ const route = useRoute()
 const userStore = useUserStore()
 const authRepo = new AuthRepository()
 const config = useRuntimeConfig()
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+const switchLocalePath = useSwitchLocalePath()
+
+if (process.client) {
+  const getCookie = (name: string): string | null => {
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+    return null
+  }
+
+  const savedLocale = getCookie('i18n_redirected')
+  const targetLocale =
+    savedLocale ||
+    ((navigator.language || (navigator as any).userLanguage || '').startsWith('en') ? 'en' : 'vi')
+
+  if (targetLocale !== locale.value) {
+    const newPath = switchLocalePath(targetLocale)
+    if (newPath) {
+      navigateTo(newPath, { replace: true })
+    }
+  }
+}
 
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }],
@@ -205,7 +229,7 @@ const handleAuthAction = async () => {
   isAuthLoading.value = false
   if (authTab.value === 'login') {
     if (!email.value || !password.value) {
-      alert('Vui lòng điền đầy đủ thông tin!')
+      alert(t('giveaway.err_fill_info'))
       return
     }
     isAuthLoading.value = true
@@ -215,17 +239,17 @@ const handleAuthAction = async () => {
       isAuthModalOpen.value = false
       await refresh()
     } catch (e: any) {
-      alert(e?.response?.data?.error || 'Đăng nhập thất bại!')
+      alert(e?.response?.data?.error || t('giveaway.err_login_failed'))
     } finally {
       isAuthLoading.value = false
     }
   } else {
     if (!username.value || !email.value || !password.value || !confirmPassword.value) {
-      alert('Vui lòng điền đầy đủ thông tin!')
+      alert(t('giveaway.err_fill_info'))
       return
     }
     if (password.value !== confirmPassword.value) {
-      alert('Mật khẩu xác nhận không khớp!')
+      alert(t('giveaway.err_password_mismatch'))
       return
     }
     isAuthLoading.value = true
@@ -236,7 +260,7 @@ const handleAuthAction = async () => {
       isAuthModalOpen.value = false
       await refresh()
     } catch (e: any) {
-      alert(e?.response?.data?.error || 'Đăng ký thất bại!')
+      alert(e?.response?.data?.error || t('giveaway.err_register_failed'))
     } finally {
       isAuthLoading.value = false
     }
@@ -314,7 +338,7 @@ const handleClaim = async () => {
 }
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString('vi-VN', {
+  return new Date(dateString).toLocaleString(locale.value === 'en' ? 'en-US' : 'vi-VN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -384,7 +408,7 @@ const formatPrice = (price: number) => {
         v-if="userStore.isAuthenticated"
         class="text-[10px] font-bold uppercase tracking-wider text-zinc-500"
       >
-        Hi, {{ userStore.username }}
+        {{ $t('giveaway.hi') }}, {{ userStore.username }}
       </div>
     </header>
 
@@ -397,7 +421,7 @@ const formatPrice = (price: number) => {
             class="w-14 h-14 border-[3px] border-[#7C3AED] border-t-transparent rounded-full animate-spin mx-auto"
           ></div>
           <p class="text-zinc-550 text-xs font-semibold uppercase tracking-wider">
-            Đang kết nối đến TechDeal Hub...
+            {{ $t('giveaway.connecting') }}
           </p>
         </div>
 
@@ -412,25 +436,21 @@ const formatPrice = (price: number) => {
             <AlertTriangle class="w-8 h-8" />
           </div>
           <h2 class="text-2xl font-black font-serif tracking-tight leading-none uppercase">
-            {{ isReferrerInvalid ? 'Truy cập không hợp lệ' : 'Không tìm thấy giveaway' }}
+            {{ isReferrerInvalid ? $t('giveaway.invalid_access') : $t('giveaway.not_found') }}
           </h2>
           <p class="text-zinc-600 text-sm leading-relaxed max-w-xs mx-auto">
             <template v-if="isReferrerInvalid">
-              Để nhận quà giveaway này, bạn vui lòng truy cập thông qua đường dẫn chính thức trong
-              các bài viết trên trang web
-              <a href="https://techdeal.io.vn" class="text-[#7C3AED] font-bold hover:underline"
-                >TechDeal</a
-              >. Chia sẻ hoặc dán trực tiếp link không được chấp nhận.
+              {{ $t('giveaway.invalid_access_desc') }}
             </template>
             <template v-else>
-              Chương trình giveaway không tồn tại, đã kết thúc hoặc đường dẫn không chính xác.
+              {{ $t('giveaway.not_found_desc') }}
             </template>
           </p>
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             class="inline-flex items-center gap-2 px-6 py-3 bg-black hover:bg-zinc-900 text-white text-xs font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(0,0,0,0.15)] uppercase tracking-wider"
           >
-            Về Trang Chủ <ArrowRight class="w-4 h-4" />
+            {{ $t('giveaway.back_home') }} <ArrowRight class="w-4 h-4" />
           </NuxtLink>
         </div>
 
@@ -449,7 +469,7 @@ const formatPrice = (price: number) => {
             <div
               class="inline-flex items-center gap-1.5 bg-[#fbf8ff] border-2 border-black text-[#7c3aed] text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full shadow-[2px_2px_0_rgba(0,0,0,1)]"
             >
-              <Sparkles class="w-3.5 h-3.5" /> CHƯƠNG TRÌNH ĐỘC QUYỀN
+              <Sparkles class="w-3.5 h-3.5" /> {{ $t('giveaway.exclusive_program') }}
             </div>
 
             <!-- Serif H1 Title -->
@@ -457,19 +477,20 @@ const formatPrice = (price: number) => {
               <h1
                 class="font-serif font-extrabold text-4xl sm:text-7xl tracking-tight leading-none text-black uppercase title-heading"
               >
-                BẢN QUYỀN <br />
+                {{ $t('giveaway.license_for') }} <br />
                 <span class="text-[#7C3AED]">{{ giveaway.app_name }}</span>
               </h1>
-              <p
+              <i18n-t
+                keypath="giveaway.hero_desc"
+                tag="p"
                 class="text-zinc-600 text-sm sm:text-base max-w-xl mx-auto font-medium leading-relaxed"
               >
-                Nhận khóa kích hoạt bản quyền chính hãng trị giá
-                <span class="font-bold text-black line-through">{{
-                  formatPrice(giveaway.original_price)
-                }}</span>
-                hoàn toàn miễn phí. Chương trình giới hạn số lượng dành riêng cho thành viên
-                TechDeal.
-              </p>
+                <template #price>
+                  <span class="font-bold text-black line-through">{{
+                    formatPrice(giveaway.original_price)
+                  }}</span>
+                </template>
+              </i18n-t>
             </div>
           </section>
 
@@ -509,7 +530,8 @@ const formatPrice = (price: number) => {
               <div
                 class="inline-flex items-center gap-1 bg-black text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-6 font-serif"
               >
-                <Zap class="w-3.5 h-3.5 fill-current text-yellow-400" /> THÔNG TIN CHI TIẾT
+                <Zap class="w-3.5 h-3.5 fill-current text-yellow-400" />
+                {{ $t('giveaway.details') }}
               </div>
 
               <div
@@ -521,15 +543,23 @@ const formatPrice = (price: number) => {
                   >
                     {{ giveaway.app_name }}
                   </h2>
-                  <p class="text-zinc-500 text-xs font-semibold">Bản quyền phần mềm chính hãng</p>
+                  <p class="text-zinc-500 text-xs font-semibold">
+                    {{ $t('giveaway.genuine_software_license') }}
+                  </p>
                 </div>
                 <div class="text-right">
-                  <span class="text-2xl font-black font-serif text-black leading-none block"
-                    >MIỄN PHÍ</span
+                  <span class="text-2xl font-black font-serif text-black leading-none block">{{
+                    $t('giveaway.free')
+                  }}</span>
+                  <i18n-t
+                    keypath="giveaway.original_price"
+                    tag="span"
+                    class="text-xs text-zinc-400 line-through tracking-wider block mt-1"
                   >
-                  <span class="text-xs text-zinc-400 line-through tracking-wider block mt-1"
-                    >Gốc: {{ formatPrice(giveaway.original_price) }}</span
-                  >
+                    <template #price>
+                      {{ formatPrice(giveaway.original_price) }}
+                    </template>
+                  </i18n-t>
                 </div>
               </div>
 
@@ -542,10 +572,35 @@ const formatPrice = (price: number) => {
                     <CheckCircle class="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
-                    <strong>Khóa kích hoạt bản quyền 100% chính hãng:</strong>
-                    <span class="text-zinc-650 block mt-0.5"
-                      >Nhận mã bản quyền hoặc liên kết kích hoạt sạch từ nhà sản xuất.</span
+                    <strong>{{ $t('giveaway.key_genuine') }}</strong>
+                    <span class="text-zinc-650 block mt-0.5">{{
+                      $t('giveaway.key_genuine_desc')
+                    }}</span>
+                  </div>
+                </li>
+
+                <li class="flex items-start gap-3 text-xs text-black">
+                  <div
+                    class="w-5 h-5 bg-black rounded flex items-center justify-center shrink-0 mt-0.5"
+                  >
+                    <CheckCircle class="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div>
+                    <strong>{{ $t('giveaway.limited_quantity') }}</strong>
+                    <i18n-t
+                      keypath="giveaway.keys_remaining"
+                      tag="span"
+                      class="text-zinc-650 block mt-0.5"
                     >
+                      <template #remaining>
+                        <span class="font-bold text-black">{{
+                          giveaway.key_quantity - giveaway.keys_claimed
+                        }}</span>
+                      </template>
+                      <template #total>
+                        {{ giveaway.key_quantity }}
+                      </template>
+                    </i18n-t>
                   </div>
                 </li>
 
@@ -556,28 +611,16 @@ const formatPrice = (price: number) => {
                     <CheckCircle class="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
-                    <strong>Số lượng giới hạn:</strong>
-                    <span class="text-zinc-650 block mt-0.5">
-                      Còn lại
-                      <span class="font-bold text-black">{{
-                        giveaway.key_quantity - giveaway.keys_claimed
-                      }}</span>
-                      / {{ giveaway.key_quantity }} key bản quyền.
-                    </span>
-                  </div>
-                </li>
-
-                <li class="flex items-start gap-3 text-xs text-black">
-                  <div
-                    class="w-5 h-5 bg-black rounded flex items-center justify-center shrink-0 mt-0.5"
-                  >
-                    <CheckCircle class="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <div>
-                    <strong>Thời hạn chương trình:</strong>
-                    <span class="text-[#9a3412] font-semibold block mt-0.5">
-                      Hết hạn vào: {{ formatDate(giveaway.expiry_date) }}
-                    </span>
+                    <strong>{{ $t('giveaway.program_duration') }}</strong>
+                    <i18n-t
+                      keypath="giveaway.expired_at"
+                      tag="span"
+                      class="text-[#9a3412] font-semibold block mt-0.5"
+                    >
+                      <template #date>
+                        {{ formatDate(giveaway.expiry_date) }}
+                      </template>
+                    </i18n-t>
                   </div>
                 </li>
               </ul>
@@ -588,8 +631,7 @@ const formatPrice = (price: number) => {
               >
                 <Flame class="w-5 h-5 text-amber-600 shrink-0 mt-0.5 animate-pulse" />
                 <div class="space-y-0.5 text-[11px] text-zinc-700 leading-relaxed font-sans">
-                  <strong>Chú ý:</strong> Số lượng có hạn nhanh lấy trước khi chương trình kết thúc
-                  và quay về giá gốc. Đừng bỏ lỡ!
+                  <strong>{{ $t('giveaway.notice') }}</strong> {{ $t('giveaway.notice_desc') }}
                 </div>
               </div>
             </div>
@@ -603,13 +645,13 @@ const formatPrice = (price: number) => {
               <div
                 class="inline-flex items-center gap-1 bg-black text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full font-serif"
               >
-                <Sparkles class="w-3.5 h-3.5 fill-current text-yellow-400" /> HƯỚNG DẪN CHI TIẾT
-                BẰNG HÌNH ẢNH
+                <Sparkles class="w-3.5 h-3.5 fill-current text-yellow-400" />
+                {{ $t('giveaway.image_guide') }}
               </div>
               <div
                 class="border-2 border-black rounded-2xl overflow-hidden bg-zinc-50 cursor-zoom-in"
                 @click="lightboxOpen = true"
-                title="Bấm để xem to"
+                :title="$t('giveaway.click_to_zoom')"
               >
                 <img
                   :src="giveaway.image_url"
@@ -617,7 +659,9 @@ const formatPrice = (price: number) => {
                   class="w-full h-auto object-contain mx-auto max-h-[500px] hover:opacity-90 transition-opacity"
                 />
               </div>
-              <p class="text-[10px] text-zinc-400 font-medium">🔍 Bấm vào ảnh để xem to hơn</p>
+              <p class="text-[10px] text-zinc-400 font-medium">
+                {{ $t('giveaway.click_image_to_zoom') }}
+              </p>
             </div>
           </section>
 
@@ -632,7 +676,7 @@ const formatPrice = (price: number) => {
                 <button
                   @click="lightboxOpen = false"
                   class="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full flex items-center justify-center text-white transition-all cursor-pointer"
-                  aria-label="Đóng"
+                  :aria-label="$t('giveaway.close')"
                 >
                   <X class="w-5 h-5" />
                 </button>
@@ -676,10 +720,10 @@ const formatPrice = (price: number) => {
               </div>
               <div class="space-y-1">
                 <h3 class="font-serif font-bold text-lg text-black">
-                  Bạn đã sở hữu khóa bản quyền!
+                  {{ $t('giveaway.already_claimed_title') }}
                 </h3>
                 <p class="text-xs text-zinc-650 font-medium">
-                  Khóa kích hoạt phần mềm đã được ghi nhận thành công.
+                  {{ $t('giveaway.already_claimed_desc') }}
                 </p>
               </div>
               <a
@@ -689,7 +733,7 @@ const formatPrice = (price: number) => {
                 rel="noopener noreferrer"
                 class="inline-flex items-center gap-2 px-6 py-3 bg-black hover:bg-zinc-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[4px_4px_0_rgba(0,0,0,0.15)] border-2 border-black"
               >
-                Đến trang kích hoạt ngay <ExternalLink class="w-4 h-4" />
+                {{ $t('giveaway.go_to_activation') }} <ExternalLink class="w-4 h-4" />
               </a>
             </div>
 
@@ -704,18 +748,17 @@ const formatPrice = (price: number) => {
                 <CheckCircle class="w-8 h-8" />
               </div>
               <h3 class="font-serif font-black text-xl text-black uppercase">
-                Đang chuyển hướng...
+                {{ $t('giveaway.redirecting') }}
               </h3>
               <p class="text-xs text-zinc-600 leading-relaxed font-sans max-w-xs mx-auto">
-                Vui lòng chờ trong giây lát, hệ thống đang chuyển bạn đến liên kết nhận bản quyền
-                phần mềm...
+                {{ $t('giveaway.redirecting_desc') }}
               </p>
               <div class="pt-2">
                 <a
                   :href="claimSuccessLink"
                   class="w-full py-4 bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
-                  Đến trang nhận quà ngay <ExternalLink class="w-4 h-4" />
+                  {{ $t('giveaway.go_to_gift_page') }} <ExternalLink class="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -727,9 +770,9 @@ const formatPrice = (price: number) => {
                 :disabled="isClaiming || giveaway.is_expired || giveaway.is_out_of_keys"
                 class="w-full py-4 bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span v-if="isClaiming">Đang xử lý kích hoạt...</span>
+                <span v-if="isClaiming">{{ $t('giveaway.processing_claim') }}</span>
                 <span v-else class="flex items-center gap-2">
-                  LẤY KEY BẢN QUYỀN MIỄN PHÍ <ArrowRight class="w-4 h-4" />
+                  {{ $t('giveaway.get_free_key') }} <ArrowRight class="w-4 h-4" />
                 </span>
               </button>
 
@@ -742,7 +785,7 @@ const formatPrice = (price: number) => {
             </div>
 
             <div class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-              Yêu cầu tài khoản TechDeal hoạt động
+              {{ $t('giveaway.require_account_active') }}
             </div>
             <div class="pt-2">
               <button
@@ -750,7 +793,7 @@ const formatPrice = (price: number) => {
                 @click="isHowItWorksOpen = true"
                 class="text-xs font-bold text-[#7C3AED] hover:underline cursor-pointer flex items-center justify-center gap-1 mx-auto"
               >
-                <Clock class="w-3.5 h-3.5" /> Quy trình & Hướng dẫn nhận key
+                <Clock class="w-3.5 h-3.5" /> {{ $t('giveaway.guide_title') }}
               </button>
             </div>
           </div>
@@ -763,13 +806,19 @@ const formatPrice = (price: number) => {
       class="w-full py-8 text-center border-t border-black/10 bg-white/50 relative z-20 space-y-4"
     >
       <div class="flex items-center justify-center gap-4 text-xs font-semibold text-zinc-550">
-        <NuxtLink to="/terms" class="hover:text-black transition-colors">Điều khoản</NuxtLink>
+        <NuxtLink :to="localePath('/terms')" class="hover:text-black transition-colors">{{
+          $t('giveaway.terms')
+        }}</NuxtLink>
         <span class="text-zinc-300 text-[10px]">•</span>
-        <NuxtLink to="/privacy" class="hover:text-black transition-colors">Bảo mật</NuxtLink>
+        <NuxtLink :to="localePath('/privacy')" class="hover:text-black transition-colors">{{
+          $t('giveaway.privacy')
+        }}</NuxtLink>
         <span class="text-zinc-300 text-[10px]">•</span>
-        <NuxtLink to="/" class="hover:text-black transition-colors">Trang chủ</NuxtLink>
+        <NuxtLink :to="localePath('/')" class="hover:text-black transition-colors">{{
+          $t('nav.home')
+        }}</NuxtLink>
       </div>
-      <div class="text-[10px] text-zinc-400">© 2026 TechDeal.io.vn. Đã được bảo lưu mọi quyền.</div>
+      <div class="text-[10px] text-zinc-400">{{ $t('giveaway.copyright') }}</div>
     </footer>
 
     <!-- Adskeeper Passage Widget 2060574 — giống trang /go.
@@ -796,18 +845,17 @@ const formatPrice = (price: number) => {
         </div>
         <div class="space-y-2">
           <h3 class="text-xl font-serif font-black uppercase tracking-tight text-black">
-            Giveaway Đã Kết Thúc
+            {{ $t('giveaway.ended_title') }}
           </h3>
           <p class="text-xs text-zinc-650 leading-relaxed font-sans">
-            Chương trình nhận key miễn phí của ứng dụng này đã kết thúc do hết thời gian hoặc toàn
-            bộ key đã được phát hết. Hẹn gặp lại bạn ở các đợt giveaway tiếp theo!
+            {{ $t('giveaway.ended_desc') }}
           </p>
         </div>
         <button
           @click="isExpiredModalOpen = false"
           class="w-full py-3 bg-black hover:bg-zinc-900 text-white text-xs font-bold rounded-xl uppercase tracking-wider border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] cursor-pointer"
         >
-          Tôi đã hiểu
+          {{ $t('giveaway.got_it') }}
         </button>
       </div>
     </div>
@@ -829,7 +877,7 @@ const formatPrice = (price: number) => {
               authTab === 'login' ? 'text-[#7C3AED] bg-[#7C3AED]/5' : 'text-zinc-400 bg-white'
             "
           >
-            Đăng nhập
+            {{ $t('giveaway.login') }}
           </button>
           <button
             @click="authTab = 'register'"
@@ -838,7 +886,7 @@ const formatPrice = (price: number) => {
               authTab === 'register' ? 'text-[#7C3AED] bg-[#7C3AED]/5' : 'text-zinc-400 bg-white'
             "
           >
-            Đăng ký
+            {{ $t('giveaway.register') }}
           </button>
           <button
             @click="isAuthModalOpen = false"
@@ -851,18 +899,14 @@ const formatPrice = (price: number) => {
         <!-- Forms -->
         <form @submit.prevent="handleAuthAction" class="p-6 space-y-4">
           <p class="text-xs text-zinc-500 leading-relaxed text-center font-medium font-sans">
-            {{
-              authTab === 'login'
-                ? 'Vui lòng đăng nhập tài khoản TechDeal để nhận khóa kích hoạt.'
-                : 'Đăng ký tài khoản TechDeal miễn phí để tham gia nhận key bản quyền.'
-            }}
+            {{ authTab === 'login' ? $t('giveaway.login_desc') : $t('giveaway.register_desc') }}
           </p>
 
           <!-- Username Input (Register only) -->
           <div v-if="authTab === 'register'" class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-450 block"
-              >Tên hiển thị</label
-            >
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">{{
+              $t('giveaway.display_name')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3.5 top-3.5 text-zinc-400">
                 <UserIcon class="w-4 h-4" />
@@ -870,7 +914,7 @@ const formatPrice = (price: number) => {
               <input
                 v-model="username"
                 type="text"
-                placeholder="Nhập tên của bạn..."
+                :placeholder="$t('giveaway.enter_display_name')"
                 class="w-full text-xs pl-10 pr-4 py-3 border-2 border-black rounded-xl bg-gray-50 focus:bg-white focus:outline-none"
                 required
               />
@@ -879,9 +923,9 @@ const formatPrice = (price: number) => {
 
           <!-- Email Input -->
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-450 block"
-              >Email đăng nhập</label
-            >
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">{{
+              $t('giveaway.login_email')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3.5 top-3.5 text-zinc-400">
                 <Mail class="w-4 h-4" />
@@ -889,7 +933,7 @@ const formatPrice = (price: number) => {
               <input
                 v-model="email"
                 type="email"
-                placeholder="Nhập địa chỉ email..."
+                :placeholder="$t('giveaway.enter_email')"
                 class="w-full text-xs pl-10 pr-4 py-3 border-2 border-black rounded-xl bg-gray-50 focus:bg-white focus:outline-none"
                 required
               />
@@ -898,9 +942,9 @@ const formatPrice = (price: number) => {
 
           <!-- Password Input -->
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-450 block"
-              >Mật khẩu</label
-            >
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">{{
+              $t('giveaway.password')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3.5 top-3.5 text-zinc-400">
                 <Lock class="w-4 h-4" />
@@ -908,7 +952,7 @@ const formatPrice = (price: number) => {
               <input
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="Nhập mật khẩu của bạn..."
+                :placeholder="$t('giveaway.enter_password')"
                 class="w-full text-xs pl-10 pr-10 py-3 border-2 border-black rounded-xl bg-gray-50 focus:bg-white focus:outline-none"
                 required
               />
@@ -925,9 +969,9 @@ const formatPrice = (price: number) => {
 
           <!-- Confirm Password (Register only) -->
           <div v-if="authTab === 'register'" class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-450 block"
-              >Xác nhận mật khẩu</label
-            >
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">{{
+              $t('giveaway.confirm_password')
+            }}</label>
             <div class="relative">
               <span class="absolute left-3.5 top-3.5 text-zinc-400">
                 <Lock class="w-4 h-4" />
@@ -935,7 +979,7 @@ const formatPrice = (price: number) => {
               <input
                 v-model="confirmPassword"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="Nhập lại mật khẩu..."
+                :placeholder="$t('giveaway.enter_confirm_password')"
                 class="w-full text-xs pl-10 pr-10 py-3 border-2 border-black rounded-xl bg-gray-50 focus:bg-white focus:outline-none"
                 required
               />
@@ -949,9 +993,11 @@ const formatPrice = (price: number) => {
             class="w-full py-3.5 bg-black hover:bg-zinc-900 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-[4px_4px_0_rgba(0,0,0,1)] border-2 border-black cursor-pointer disabled:opacity-50"
           >
             <span v-if="isAuthLoading">{{
-              authTab === 'login' ? 'Đang xác thực...' : 'Đang khởi tạo...'
+              authTab === 'login' ? $t('giveaway.authenticating') : $t('giveaway.registering')
             }}</span>
-            <span v-else>{{ authTab === 'login' ? 'ĐĂNG NHẬP NGAY' : 'ĐĂNG KÝ NGAY' }}</span>
+            <span v-else>{{
+              authTab === 'login' ? $t('giveaway.login_now') : $t('giveaway.register_now')
+            }}</span>
           </button>
         </form>
 
@@ -962,7 +1008,7 @@ const formatPrice = (price: number) => {
             <span
               class="flex-shrink mx-4 text-[10px] text-zinc-450 uppercase font-bold tracking-wider"
             >
-              Hoặc tiếp tục với
+              {{ $t('giveaway.or_continue_with') }}
             </span>
             <div class="flex-grow border-t border-black/10"></div>
           </div>
@@ -989,10 +1035,12 @@ const formatPrice = (price: number) => {
         </button>
 
         <div class="text-center mb-6">
-          <span class="text-[10px] text-zinc-455 font-black uppercase tracking-widest block mb-1"
-            >QUY TRÌNH NHẬN</span
-          >
-          <h2 class="font-serif font-black text-xl text-black">Nhận Bản Quyền Chỉ Với 3 Bước</h2>
+          <span class="text-[10px] text-zinc-455 font-black uppercase tracking-widest block mb-1">{{
+            $t('giveaway.process_guide')
+          }}</span>
+          <h2 class="font-serif font-black text-xl text-black">
+            {{ $t('giveaway.guide_subtitle') }}
+          </h2>
         </div>
 
         <div
@@ -1005,16 +1053,18 @@ const formatPrice = (price: number) => {
             <div
               class="absolute -top-3.5 left-5 px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-full font-serif border border-white"
             >
-              Bước 1
+              {{ $t('giveaway.step1') }}
             </div>
             <div
               class="w-12 h-12 bg-white border border-black rounded-xl flex items-center justify-center mx-auto mb-4 mt-2"
             >
               <MousePointerClick class="w-6 h-6 text-black" />
             </div>
-            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">Nhấp nhận</h3>
+            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">
+              {{ $t('giveaway.step1_title') }}
+            </h3>
             <p class="text-[11px] text-zinc-550 leading-relaxed">
-              Nhấp vào nút "Lấy Key Bản Quyền" ở ngoài.
+              {{ $t('giveaway.step1_desc') }}
             </p>
           </div>
 
@@ -1030,16 +1080,18 @@ const formatPrice = (price: number) => {
             <div
               class="absolute -top-3.5 left-5 px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-full font-serif border border-white"
             >
-              Bước 2
+              {{ $t('giveaway.step2') }}
             </div>
             <div
               class="w-12 h-12 bg-white border border-black rounded-xl flex items-center justify-center mx-auto mb-4 mt-2"
             >
               <UserPlus class="w-6 h-6 text-black" />
             </div>
-            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">Xác thực</h3>
+            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">
+              {{ $t('giveaway.step2_title') }}
+            </h3>
             <p class="text-[11px] text-zinc-550 leading-relaxed">
-              Đăng nhập hoặc Đăng ký tài khoản nhanh.
+              {{ $t('giveaway.step2_desc') }}
             </p>
           </div>
 
@@ -1055,16 +1107,18 @@ const formatPrice = (price: number) => {
             <div
               class="absolute -top-3.5 left-5 px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-full font-serif border border-white"
             >
-              Bước 3
+              {{ $t('giveaway.step3') }}
             </div>
             <div
               class="w-12 h-12 bg-white border border-black rounded-xl flex items-center justify-center mx-auto mb-4 mt-2"
             >
               <Zap class="w-6 h-6 text-black" />
             </div>
-            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">Chuyển hướng</h3>
+            <h3 class="font-bold text-xs uppercase tracking-wide mb-1 text-black">
+              {{ $t('giveaway.step3_title') }}
+            </h3>
             <p class="text-[11px] text-zinc-550 leading-relaxed">
-              Nhận link kích hoạt bản quyền chính hãng.
+              {{ $t('giveaway.step3_desc') }}
             </p>
           </div>
         </div>
@@ -1074,7 +1128,7 @@ const formatPrice = (price: number) => {
             @click="isHowItWorksOpen = false"
             class="px-5 py-2.5 bg-black hover:bg-zinc-900 text-white text-xs font-bold rounded-xl uppercase tracking-wider border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] cursor-pointer"
           >
-            Đóng lại
+            {{ $t('giveaway.close') }}
           </button>
         </div>
       </div>

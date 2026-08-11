@@ -12,6 +12,30 @@ import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 
 const route = useRoute()
 const hash = computed(() => (route.params.hash as string) || '')
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+const switchLocalePath = useSwitchLocalePath()
+
+if (process.client) {
+  const getCookie = (name: string): string | null => {
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+    return null
+  }
+
+  const savedLocale = getCookie('i18n_redirected')
+  const targetLocale =
+    savedLocale ||
+    ((navigator.language || (navigator as any).userLanguage || '').startsWith('en') ? 'en' : 'vi')
+
+  if (targetLocale !== locale.value) {
+    const newPath = switchLocalePath(targetLocale)
+    if (newPath) {
+      navigateTo(newPath, { replace: true })
+    }
+  }
+}
 
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }],
@@ -29,7 +53,7 @@ const { shortlink, isLoading, error, recordClick } = usePublicShortlink(hash.val
 const { isDesktopAd, isMobileAd } = useAdBreakpoint()
 
 useSeoMeta({
-  title: () => shortlink.value?.name || 'Đang chuyển hướng'
+  title: () => shortlink.value?.name || t('go.redirecting_title')
 })
 
 const countdown = ref(5)
@@ -133,8 +157,8 @@ onMounted(() => {
           <div
             class="w-12 h-12 border-[3px] border-[#3498db] dark:border-[#e74c3c] border-t-transparent rounded-full animate-spin mx-auto"
           ></div>
-          <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest animate-pulse">
-            Đang giải mã liên kết an toàn...
+          <p class="text-xs font-bold text-zinc-550 uppercase tracking-widest animate-pulse">
+            {{ $t('go.decoding') }}
           </p>
         </div>
 
@@ -149,17 +173,16 @@ onMounted(() => {
             <ShieldAlert class="w-8 h-8" />
           </div>
           <h2 class="text-xl font-black uppercase text-zinc-900 dark:text-white">
-            Liên kết không tồn tại
+            {{ $t('go.not_found_title') }}
           </h2>
           <p class="text-xs text-zinc-500 leading-relaxed max-w-xs mx-auto">
-            Liên kết rút gọn này không hợp lệ, đã bị gỡ bỏ hoặc đã hết hạn truy cập. Vui lòng kiểm
-            tra lại đường dẫn.
+            {{ $t('go.not_found_desc') }}
           </p>
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-black dark:bg-zinc-800 hover:bg-zinc-900 text-white text-xs font-bold rounded-xl transition-all shadow-md"
           >
-            Về Trang Chủ
+            {{ $t('go.back_home') }}
           </NuxtLink>
         </div>
 
@@ -172,10 +195,10 @@ onMounted(() => {
             <span
               class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-[#3498db] dark:text-[#e74c3c] bg-[#3498db]/10 dark:bg-[#e74c3c]/10 px-3 py-1 rounded-full"
             >
-              <ShieldCheck class="w-3.5 h-3.5" /> Kiểm tra an toàn
+              <ShieldCheck class="w-3.5 h-3.5" /> {{ $t('go.safety_check') }}
             </span>
             <h2 class="text-base font-black text-zinc-900 dark:text-white leading-tight">
-              Hệ thống đang kiểm tra liên kết an toàn tới:<br />
+              {{ $t('go.safety_checking_to') }}<br />
               <span
                 class="text-[#3498db] dark:text-[#e74c3c] break-all block mt-2 font-serif text-lg"
               >
@@ -198,18 +221,18 @@ onMounted(() => {
               <span class="text-4xl font-serif font-black text-zinc-900 dark:text-white block">
                 {{ countdown }}
               </span>
-              <span class="text-[9px] font-extrabold uppercase tracking-wider text-zinc-400"
-                >giây</span
-              >
+              <span class="text-[9px] font-extrabold uppercase tracking-wider text-zinc-400">{{
+                $t('go.seconds')
+              }}</span>
             </div>
           </div>
 
           <div class="space-y-1">
             <p class="text-xs font-bold text-zinc-550 dark:text-zinc-350">
-              Vui lòng đợi trong giây lát
+              {{ $t('go.wait_moment') }}
             </p>
             <p class="text-[10px] text-zinc-400 max-w-sm mx-auto leading-relaxed">
-              Sau khi đếm ngược kết thúc, bấm nút bên dưới để tới trang đích.
+              {{ $t('go.wait_desc') }}
             </p>
           </div>
 
@@ -219,7 +242,7 @@ onMounted(() => {
           <div class="pt-4 border-t border-gray-100 dark:border-zinc-850">
             <Transition name="fade">
               <div v-if="isFinished" class="space-y-3">
-                <p class="text-[10px] text-zinc-400">Bấm nút bên dưới để tiếp tục:</p>
+                <p class="text-[10px] text-zinc-400">{{ $t('go.click_continue') }}</p>
                 <a
                   href="javascript:void(0)"
                   @click="triggerRedirect"
@@ -231,9 +254,9 @@ onMounted(() => {
                   "
                 >
                   <template v-if="!isRedirecting"
-                    >Tới trang đích <ArrowRight class="w-4 h-4"
+                    >{{ $t('go.go_to_destination') }} <ArrowRight class="w-4 h-4"
                   /></template>
-                  <template v-else>Đang chuyển hướng...</template>
+                  <template v-else>{{ $t('go.redirecting') }}</template>
                 </a>
               </div>
             </Transition>
@@ -255,10 +278,10 @@ onMounted(() => {
             <div>
               <span
                 class="text-[10px] font-black uppercase text-zinc-450 tracking-wider block mb-0.5"
-                >Mẹo hữu ích</span
+                >{{ $t('go.tip') }}</span
               >
               <p class="text-[11px] text-zinc-650 dark:text-zinc-350 leading-relaxed">
-                Hãy đảm bảo máy tính của bạn đủ cấu hình tối thiểu trước khi tải.
+                {{ $t('go.tip_desc') }}
               </p>
             </div>
           </div>

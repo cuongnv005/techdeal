@@ -60,6 +60,11 @@ const MONETAG_ALLOWED_PREFIXES = ['/go']
 
 const route = useRoute()
 const { locale } = useI18n()
+const i18nHead = useLocaleHead({
+  addDirAttribute: true,
+  addSeoAttributes: true
+})
+
 watch(
   () => route.path,
   (newPath) => {
@@ -259,6 +264,12 @@ if (process.client) {
 }
 
 useHead(() => ({
+  htmlAttrs: {
+    lang: i18nHead.value.htmlAttrs?.lang || locale.value,
+    dir: i18nHead.value.htmlAttrs?.dir || 'ltr'
+  },
+  link: i18nHead.value.link || [],
+  meta: i18nHead.value.meta || [],
   script: [
     { innerHTML: CONSENT_DEFAULT_SCRIPT, type: 'text/javascript' },
     // Adskeeper TẮT (thay bằng MGID bên dưới)
