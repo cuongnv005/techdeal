@@ -38,27 +38,6 @@ const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 
-if (process.client) {
-  const getCookie = (name: string): string | null => {
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${name}=`)
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
-    return null
-  }
-
-  const savedLocale = getCookie('i18n_redirected')
-  const targetLocale =
-    savedLocale ||
-    ((navigator.language || (navigator as any).userLanguage || '').startsWith('en') ? 'en' : 'vi')
-
-  if (targetLocale !== locale.value) {
-    const newPath = switchLocalePath(targetLocale)
-    if (newPath) {
-      navigateTo(newPath, { replace: true })
-    }
-  }
-}
-
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }],
   script: [
@@ -350,6 +329,27 @@ const formatDate = (dateString: string) => {
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price)
 }
+
+onMounted(() => {
+  const getCookie = (name: string): string | null => {
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+    return null
+  }
+
+  const savedLocale = getCookie('i18n_redirected')
+  const targetLocale =
+    savedLocale ||
+    ((navigator.language || (navigator as any).userLanguage || '').startsWith('en') ? 'en' : 'vi')
+
+  if (targetLocale !== locale.value) {
+    const newPath = switchLocalePath(targetLocale)
+    if (newPath) {
+      navigateTo(newPath, { replace: true })
+    }
+  }
+})
 </script>
 
 <template>
