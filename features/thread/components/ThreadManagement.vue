@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 import { Search, Plus, Clock, Trash2, X, AlertCircle, Pencil, Crown } from 'lucide-vue-next'
 
 import { useAdminThreads, useAdminThreadDetail } from '../composables/use-thread'
+import { AdminRepoImpl } from '@features/admin/api/dashboard'
+import type { BaseQuotaConfig } from '@features/admin/api/dashboard'
 
 import type { Thread, CreateThreadInput, ThreadPlatform } from '../types/thread.type'
 
@@ -212,10 +214,88 @@ const formatDate = (dateString: string | null) => {
     minute: '2-digit'
   })
 }
+
+// Cấu hình base quota free
+const adminRepo = new AdminRepoImpl()
+const quotaConfig = ref<BaseQuotaConfig | null>(null)
+const quotaConfigValue = ref<number>(5)
+const isSavingQuota = ref(false)
+
+const loadQuotaConfig = async () => {
+  try {
+    const config = await adminRepo.getBaseQuotaConfig()
+    quotaConfig.value = config
+    quotaConfigValue.value = parseInt(config.value, 10) || 5
+  } catch (err) {
+    console.error('Failed to load base quota config', err)
+  }
+}
+
+const saveQuotaConfig = async () => {
+  if (quotaConfigValue.value <= 0) {
+    alert('Số lượt free/ngày phải lớn hơn 0')
+    return
+  }
+  isSavingQuota.value = true
+  try {
+    const config = await adminRepo.updateBaseQuotaConfig(quotaConfigValue.value)
+    quotaConfig.value = config
+    alert('Cập nhật cấu hình thành công')
+  } catch (err: any) {
+    console.error('Failed to save base quota config', err)
+    alert(err?.response?.data?.error || 'Có lỗi xảy ra khi lưu cấu hình')
+  } finally {
+    isSavingQuota.value = false
+  }
+}
+
+const formatLastUpdated = (dateString: string | null) => {
+  if (!dateString) return 'Không rõ'
+  return new Date(dateString).toLocaleString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+}
+
+onMounted(() => {
+  loadQuotaConfig()
+})
 </script>
 
 <template>
   <div class="space-y-6 animate-fadeIn text-zinc-800 dark:text-zinc-200">
+    <!-- Free Quota Configuration Card -->
+    <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs space-y-4">
+      <h3 class="text-xs font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-1.5">
+        <span>⚙️</span> Cấu hình lượt nhận deal miễn phí
+      </h3>
+      <div class="flex flex-col sm:flex-row sm:items-end gap-4 max-w-xl">
+        <div class="space-y-1.5 flex-grow">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400">Số lượt free/ngày</label>
+          <input
+            v-model="quotaConfigValue"
+            type="number"
+            min="1"
+            class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+          />
+        </div>
+        <button
+          @click="saveQuotaConfig"
+          :disabled="isSavingQuota"
+          class="px-5 py-2.5 bg-[#3498db] dark:bg-[#e74c3c] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer shrink-0"
+        >
+          {{ isSavingQuota ? 'Đang lưu...' : 'Lưu cấu hình' }}
+        </button>
+      </div>
+      <div v-if="quotaConfig" class="text-[10px] text-zinc-450 italic">
+        Cập nhật lần cuối bởi <strong class="text-zinc-600 dark:text-zinc-350">{{ quotaConfig.updated_by }}</strong> lúc {{ formatLastUpdated(quotaConfig.updated_at) }}
+      </div>
+    </div>
+
     <!-- Action bar -->
     <div
       class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"

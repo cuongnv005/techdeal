@@ -37,6 +37,14 @@ export abstract class AdminRepository {
   ): Promise<PaginatedResult<UserItem>>
   abstract updateUserRole(id: string, role: 'admin' | 'mod' | 'user'): Promise<unknown>
   abstract toggleUserStatus(id: string): Promise<unknown>
+  abstract getBaseQuotaConfig(): Promise<BaseQuotaConfig>
+  abstract updateBaseQuotaConfig(value: number): Promise<BaseQuotaConfig>
+}
+
+export interface BaseQuotaConfig {
+  value: string
+  updated_by: string
+  updated_at: string | null
 }
 
 interface ApiResponse<T> {
@@ -413,5 +421,21 @@ export class AdminRepoImpl implements AdminRepository {
 
   async toggleUserStatus(id: string): Promise<unknown> {
     return await HttpService.patch(`/admin/users/${id}/toggle-status`, {})
+  }
+
+  async getBaseQuotaConfig(): Promise<BaseQuotaConfig> {
+    const response = await HttpService.get<
+      unknown,
+      AxiosResponse<ApiResponse<BaseQuotaConfig>>
+    >('/admin/config/base_quota')
+    return response.data.data
+  }
+
+  async updateBaseQuotaConfig(value: number): Promise<BaseQuotaConfig> {
+    const response = await HttpService.put<
+      unknown,
+      AxiosResponse<ApiResponse<BaseQuotaConfig>>
+    >('/admin/config/base_quota', { value })
+    return response.data.data
   }
 }
