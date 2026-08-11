@@ -39,7 +39,7 @@ useHead({
           >
             Điều khoản Dịch vụ
           </h1>
-          <p class="text-zinc-550 text-xs italic">Cập nhật lần cuối: 31 tháng 5, 2026</p>
+          <p class="text-zinc-550 text-xs italic">Cập nhật lần cuối: 10 tháng 8, 2026</p>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
@@ -133,6 +133,40 @@ useHead({
             </p>
           </section>
 
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              8. Gói Thành viên VIP (TechDeal VIP) &amp; Thanh toán trong ứng dụng
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Ứng dụng di động TechDeal cung cấp gói thành viên trả phí "TechDeal VIP" giúp loại bỏ
+              quảng cáo và mở khóa các ưu đãi dành riêng cho thành viên VIP. Gói VIP được bán và
+              thanh toán trực tiếp qua Apple App Store hoặc Google Play, dưới các hình thức:
+            </p>
+            <ul class="list-disc pl-5 text-xs text-zinc-650 dark:text-zinc-400 space-y-2">
+              <li>
+                <strong>Gói đăng ký hàng tháng hoặc hàng năm:</strong> tự động gia hạn theo chu kỳ
+                đã chọn với mức giá hiển thị tại thời điểm mua, cho đến khi bạn hủy.
+              </li>
+              <li>
+                <strong>Gói trọn đời:</strong> thanh toán một lần duy nhất, không tự động gia hạn.
+              </li>
+            </ul>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Đối với gói đăng ký: khoản thanh toán sẽ được trừ vào tài khoản Apple ID hoặc Google
+              Play của bạn khi xác nhận mua, và tự động gia hạn trừ khi bạn tắt tự động gia hạn ít
+              nhất 24 giờ trước khi kỳ hiện tại kết thúc. Bạn có thể xem, quản lý hoặc hủy gia hạn
+              bất kỳ lúc nào trong mục Cài đặt tài khoản Apple ID (đối với iOS) hoặc mục Đăng ký
+              trong Google Play (đối với Android). Khi hủy, quyền lợi VIP vẫn còn hiệu lực đến hết
+              chu kỳ đã thanh toán.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Toàn bộ giao dịch thanh toán trong ứng dụng được xử lý bởi Apple hoặc Google và tuân
+              theo chính sách thanh toán, hoàn tiền của các nền tảng này. TechDeal không trực tiếp
+              xử lý hoặc lưu trữ thông tin thẻ thanh toán của bạn và không có quyền hoàn tiền trực
+              tiếp — mọi yêu cầu hoàn tiền vui lòng liên hệ Apple Support hoặc Google Play Support.
+            </p>
+          </section>
+
           <section class="space-y-3 border-t border-gray-250 dark:border-zinc-800 pt-6">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Liên hệ</h2>
             <p class="text-xs text-zinc-650 dark:text-zinc-400">
@@ -161,7 +195,7 @@ useHead({
           >
             Terms of Service
           </h1>
-          <p class="text-zinc-550 text-xs italic">Last updated: May 31, 2026</p>
+          <p class="text-zinc-550 text-xs italic">Last updated: August 10, 2026</p>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">1. Acceptance of Terms</h2>
@@ -243,6 +277,41 @@ useHead({
               These Terms of Service are governed by and construed in accordance with the laws of
               Vietnam. Any disputes arising in connection with the use of the website shall be
               resolved by competent courts in Hanoi, Vietnam.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              8. VIP Membership (TechDeal VIP) &amp; In-App Payments
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              The TechDeal mobile app offers a paid "TechDeal VIP" membership that removes ads and
+              unlocks VIP-only deals. VIP membership is sold and paid for directly through the Apple
+              App Store or Google Play, in the following forms:
+            </p>
+            <ul class="list-disc pl-5 text-xs text-zinc-650 dark:text-zinc-400 space-y-2">
+              <li>
+                <strong>Monthly or yearly subscription:</strong> automatically renews for the
+                selected billing period at the price shown at the time of purchase, until cancelled.
+              </li>
+              <li>
+                <strong>Lifetime plan:</strong> a single one-time payment that does not renew
+                automatically.
+              </li>
+            </ul>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              For subscription plans: payment is charged to your Apple ID or Google Play account
+              upon confirmation of purchase, and automatically renews unless you turn off
+              auto-renewal at least 24 hours before the end of the current period. You can view,
+              manage, or cancel auto-renewal at any time in your Apple ID Account Settings (iOS) or
+              the Subscriptions section of Google Play (Android). If you cancel, VIP benefits remain
+              active until the end of the period already paid for.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              All in-app payment transactions are processed by Apple or Google and are subject to
+              their respective billing and refund policies. TechDeal does not directly process or
+              store your payment card information and cannot issue refunds directly — please contact
+              Apple Support or Google Play Support for any refund requests.
             </p>
           </section>
 
