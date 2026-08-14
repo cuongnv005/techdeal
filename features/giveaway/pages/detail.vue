@@ -494,6 +494,16 @@ onMounted(() => {
             </div>
           </section>
 
+          <!-- CTA mở/cài TechDeal app (Phase 9) — chỉ khi giveaway gắn deal_thread_id.
+               Độc lập với luồng đăng nhập/nhận key bên dưới, không đổi gì luồng đó. -->
+          <div v-if="giveaway.deal_thread_id" class="max-w-xl mx-auto px-4">
+            <UiTechdealAppCta
+              :thread-id="giveaway.deal_thread_id"
+              :app-name="giveaway.deal_app_name"
+              :referrer="`techdeal_giveaway=${giveawayId}`"
+            />
+          </div>
+
           <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
           <!-- <ClientOnly>
             <div v-if="isDesktopAd" class="flex justify-center max-w-xl mx-auto px-4">

@@ -1,6 +1,7 @@
 import type {
   Shortlink,
   CreateShortlinkInput,
+  UpdateShortlinkInput,
   ShortlinkPagination,
   ShortlinkStats
 } from '../types/shortlink.type'
@@ -57,6 +58,22 @@ export class ShortlinkRepository {
         success: false,
         error: e.response?.data?.error || e.message || 'Lỗi khi tạo shortlink',
         data: { id: '', hash: '' }
+      }
+    }
+  }
+
+  async adminUpdate(id: string, data: UpdateShortlinkInput): Promise<ApiResponse<any>> {
+    try {
+      const response = await HttpService.put<UpdateShortlinkInput, AxiosResponse<ApiResponse<any>>>(
+        `/admin/shortlinks/${id}`,
+        data
+      )
+      return response.data
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.response?.data?.error || e.message || 'Lỗi khi cập nhật shortlink',
+        data: null
       }
     }
   }

@@ -424,18 +424,17 @@ export class AdminRepoImpl implements AdminRepository {
   }
 
   async getBaseQuotaConfig(): Promise<BaseQuotaConfig> {
-    const response = await HttpService.get<
-      unknown,
-      AxiosResponse<ApiResponse<BaseQuotaConfig>>
-    >('/admin/config/base_quota')
+    const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<BaseQuotaConfig>>>(
+      '/admin/config/base_quota'
+    )
     return response.data.data
   }
 
   async updateBaseQuotaConfig(value: number): Promise<BaseQuotaConfig> {
-    const response = await HttpService.put<
-      unknown,
-      AxiosResponse<ApiResponse<BaseQuotaConfig>>
-    >('/admin/config/base_quota', { value })
+    const response = await HttpService.put<unknown, AxiosResponse<ApiResponse<BaseQuotaConfig>>>(
+      '/admin/config/base_quota',
+      { value }
+    )
     return response.data.data
   }
 }

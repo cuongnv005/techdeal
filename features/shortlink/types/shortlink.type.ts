@@ -6,6 +6,10 @@ export interface Shortlink {
   created_at: string
   updated_at: string
   clicks_count: number
+  deal_thread_id?: string | null
+  guide_image_url?: string | null
+  deal_app_name?: string | null
+  deal_image_url?: string | null
 }
 
 export interface ShortlinkPagination {
@@ -19,6 +23,15 @@ export interface CreateShortlinkInput {
   name: string
   target_url: string
   hash?: string
+  deal_thread_id?: string | null
+  guide_image_url?: string | null
+}
+
+export interface UpdateShortlinkInput {
+  name?: string
+  target_url?: string
+  deal_thread_id?: string | null
+  guide_image_url?: string | null
 }
 
 export interface ShortlinkReferrer {
