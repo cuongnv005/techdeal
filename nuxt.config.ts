@@ -129,11 +129,6 @@ export default defineNuxtConfig({
         {
           key: 'theme-init',
           innerHTML: `(function(){try{var s=localStorage.getItem('vueuse-color-scheme');var d=s==='dark'||((!s||s==='auto')&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})();`
-        },
-        {
-          id: '9683823448',
-          src: 'https://ads.maxvaluead.com/scripts/maxvalue_ads_9683823448.js',
-          defer: true
         }
       ]
     },
