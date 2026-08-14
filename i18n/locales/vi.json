@@ -395,6 +395,16 @@
     "go_to_destination": "Tới trang đích",
     "redirecting": "Đang chuyển hướng...",
     "tip": "Mẹo hữu ích",
-    "tip_desc": "Hãy đảm bảo máy tính của bạn đủ cấu hình tối thiểu trước khi tải."
+    "tip_desc": "Hãy đảm bảo máy tính của bạn đủ cấu hình tối thiểu trước khi tải.",
+    "app_cta_label": "Nhận deal nhanh hơn qua App",
+    "app_cta_desc": "Mở TechDeal App để xem deal này ngay lập tức, không cần đợi đếm ngược: ",
+    "open_or_install_app": "Mở deal trên App / Tải App",
+    "open_in_app": "Mở deal trên App",
+    "not_installed_ios": "Chưa cài đặt? Tải TechDeal trên App Store",
+    "install_app": "Cài đặt TechDeal App",
+    "image_guide": "HƯỚNG DẪN CHI TIẾT BẰNG HÌNH ẢNH",
+    "click_to_zoom": "Bấm để xem to",
+    "click_image_to_zoom": "🔍 Bấm vào ảnh để xem to hơn",
+    "close": "Đóng"
   }
 }

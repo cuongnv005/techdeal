@@ -269,13 +269,20 @@ onMounted(() => {
 <template>
   <div class="space-y-6 animate-fadeIn text-zinc-800 dark:text-zinc-200">
     <!-- Free Quota Configuration Card -->
-    <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs space-y-4">
-      <h3 class="text-xs font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-1.5">
+    <div
+      class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200 dark:border-zinc-850 shadow-xs space-y-4"
+    >
+      <h3
+        class="text-xs font-black uppercase text-zinc-900 dark:text-white tracking-tight flex items-center gap-1.5"
+      >
         <span>⚙️</span> Cấu hình lượt nhận deal miễn phí
       </h3>
       <div class="flex flex-col sm:flex-row sm:items-end gap-4 max-w-xl">
         <div class="space-y-1.5 flex-grow">
-          <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400">Số lượt free/ngày</label>
+          <label
+            class="text-[10px] font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400"
+            >Số lượt free/ngày</label
+          >
           <input
             v-model="quotaConfigValue"
             type="number"
@@ -292,7 +299,9 @@ onMounted(() => {
         </button>
       </div>
       <div v-if="quotaConfig" class="text-[10px] text-zinc-450 italic">
-        Cập nhật lần cuối bởi <strong class="text-zinc-600 dark:text-zinc-350">{{ quotaConfig.updated_by }}</strong> lúc {{ formatLastUpdated(quotaConfig.updated_at) }}
+        Cập nhật lần cuối bởi
+        <strong class="text-zinc-600 dark:text-zinc-350">{{ quotaConfig.updated_by }}</strong> lúc
+        {{ formatLastUpdated(quotaConfig.updated_at) }}
       </div>
     </div>
 

@@ -512,7 +512,7 @@ useHead(() => {
                 {{
                   isEn
                     ? 'This article is also available in Vietnamese'
-                    : 'Bài viết này cũng có phiên bản tiếng Anh'
+                    : 'Bài viết này cũng có bản tiếng Anh'
                 }}
               </span>
               <!-- Use plain <a> instead of NuxtLink to force a full page load.
@@ -527,7 +527,7 @@ useHead(() => {
                 "
                 class="font-bold text-[#3498db] dark:text-[#e74c3c] hover:underline"
               >
-                {{ isEn ? '🇻🇳 Đọc bản tiếng Việt' : '🇬🇧 Read in English' }}
+                {{ isEn ? 'Đọc bản tiếng Việt' : 'Read in English' }}
               </a>
             </div>
 

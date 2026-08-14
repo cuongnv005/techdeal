@@ -395,6 +395,16 @@
     "go_to_destination": "Go to Destination",
     "redirecting": "Redirecting...",
     "tip": "Helpful Tip",
-    "tip_desc": "Make sure your computer meets the minimum requirements before downloading."
+    "tip_desc": "Make sure your computer meets the minimum requirements before downloading.",
+    "app_cta_label": "Get this deal faster in the App",
+    "app_cta_desc": "Open the TechDeal App to view this deal instantly, no countdown needed: ",
+    "open_or_install_app": "Open deal in App / Install App",
+    "open_in_app": "Open deal in App",
+    "not_installed_ios": "Not installed? Get TechDeal on the App Store",
+    "install_app": "Install TechDeal App",
+    "image_guide": "STEP-BY-STEP IMAGE GUIDE",
+    "click_to_zoom": "Click to zoom",
+    "click_image_to_zoom": "🔍 Click the image to zoom in",
+    "close": "Close"
   }
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.techdeal.app",
+      "sha256_cert_fingerprints": [
+        "E6:45:0A:C6:45:EF:B7:4B:4B:4C:F6:7B:C7:00:72:E0:CC:A9:F6:C4:F5:B4:88:5B:94:67:AF:CA:33:1C:20:DF",
+        "65:23:81:49:67:44:6C:A9:1E:E2:6E:77:A0:9C:61:83:91:B8:8D:84:E1:42:B8:F3:04:E2:5A:B0:F2:7E:42:59"
+      ]
+    }
+  }
+]

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 
 import { shortlinkRepository } from '../api/shortlink'
 
-import type { CreateShortlinkInput } from '../types/shortlink.type'
+import type { CreateShortlinkInput, UpdateShortlinkInput } from '../types/shortlink.type'
 
 export function useAdminShortlinks() {
   const repo = shortlinkRepository
@@ -62,6 +62,26 @@ export function useAdminShortlinks() {
     }
   }
 
+  const updateShortlink = async (id: string, data: UpdateShortlinkInput) => {
+    isPending.value = true
+    actionError.value = null
+    try {
+      const resp = await repo.adminUpdate(id, data)
+      if (resp.success) {
+        await refresh()
+        return true
+      } else {
+        actionError.value = resp.error || 'Không thể cập nhật shortlink'
+        return false
+      }
+    } catch (e: any) {
+      actionError.value = e.message || 'Có lỗi xảy ra khi cập nhật'
+      return false
+    } finally {
+      isPending.value = false
+    }
+  }
+
   const deleteShortlink = async (id: string) => {
     isPending.value = true
     actionError.value = null
@@ -87,6 +107,7 @@ export function useAdminShortlinks() {
     isLoading,
     error,
     createShortlink,
+    updateShortlink,
     deleteShortlink,
     actionError,
     isPending,

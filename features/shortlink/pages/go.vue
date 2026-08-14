@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { ShieldAlert, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-vue-next'
+import { ShieldAlert, ArrowRight, ShieldCheck, HelpCircle, Sparkles, X } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
 import Header from '../../blog/components/Header.vue'
@@ -39,6 +39,12 @@ const countdown = ref(5)
 const isFinished = ref(false)
 const hasRedirected = ref(false)
 const isRedirecting = ref(false)
+
+// Ảnh hướng dẫn — độc lập với deal_thread_id, dùng cho mọi shortlink
+const guideLightboxOpen = ref(false)
+
+// referrer cho CTA mở/cài app (UiTechdealAppCta) — app đọc lại sau khi cài (deferred deep link)
+const appCtaReferrer = computed(() => `techdeal_hash=${hash.value}`)
 
 /**
  * Resolve the target URL, converting Apple App Store deep link schemes
@@ -148,6 +154,16 @@ onMounted(() => {
       </div>
 
       <div class="container mx-auto max-w-xl relative z-10">
+        <!-- CTA mở/cài TechDeal app (Phase 9) — chỉ khi shortlink gắn deal_thread_id.
+             Độc lập với nút "Tới trang đích" bên dưới (luôn dẫn deal_link gốc, không đổi). -->
+        <div v-if="!isLoading && shortlink && !error && shortlink.deal_thread_id" class="mb-6">
+          <UiTechdealAppCta
+            :thread-id="shortlink.deal_thread_id"
+            :app-name="shortlink.deal_app_name"
+            :referrer="appCtaReferrer"
+          />
+        </div>
+
         <!-- Loading state -->
         <div
           v-if="isLoading || (!shortlink && !error)"
@@ -285,6 +301,61 @@ onMounted(() => {
             </div>
           </div>
         </div>
+
+        <!-- Ảnh hướng dẫn (Phase 9) — độc lập với deal_thread_id, dùng cho mọi shortlink.
+             Copy nguyên pattern giveaway/pages/detail.vue (image_url + lightbox). -->
+        <section v-if="shortlink && shortlink.guide_image_url" class="mt-8">
+          <div
+            class="border-2 border-black rounded-[28px] p-6 bg-white dark:bg-zinc-900 shadow-[8px_8px_0_rgba(0,0,0,1)] text-center space-y-4"
+          >
+            <div
+              class="inline-flex items-center gap-1 bg-black text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full font-serif"
+            >
+              <Sparkles class="w-3.5 h-3.5 fill-current text-yellow-400" />
+              {{ $t('go.image_guide') }}
+            </div>
+            <div
+              class="border-2 border-black rounded-2xl overflow-hidden bg-zinc-50 cursor-zoom-in"
+              @click="guideLightboxOpen = true"
+              :title="$t('go.click_to_zoom')"
+            >
+              <img
+                :src="shortlink.guide_image_url"
+                alt="Hướng dẫn"
+                class="w-full h-auto object-contain mx-auto max-h-[500px] hover:opacity-90 transition-opacity"
+              />
+            </div>
+            <p class="text-[10px] text-zinc-400 font-medium">
+              {{ $t('go.click_image_to_zoom') }}
+            </p>
+          </div>
+        </section>
+
+        <!-- Lightbox: phóng to ảnh hướng dẫn -->
+        <Teleport to="body">
+          <Transition name="fade">
+            <div
+              v-if="guideLightboxOpen"
+              class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+              @click.self="guideLightboxOpen = false"
+            >
+              <button
+                @click="guideLightboxOpen = false"
+                class="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full flex items-center justify-center text-white transition-all cursor-pointer"
+                :aria-label="$t('go.close')"
+              >
+                <X class="w-5 h-5" />
+              </button>
+              <img
+                v-if="shortlink"
+                :src="shortlink.guide_image_url"
+                alt="Hướng dẫn"
+                class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+                @click.stop
+              />
+            </div>
+          </Transition>
+        </Teleport>
 
         <!-- Banner Adsterra giữa — 728x90 desktop, 300x250 mobile -->
         <!-- <ClientOnly>

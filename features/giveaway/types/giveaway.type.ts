@@ -11,6 +11,8 @@ export interface Giveaway {
   is_block?: boolean
   activation_link?: string
   image_url?: string
+  deal_thread_id?: string | null
+  deal_app_name?: string | null
   user?: {
     username: string
     role: string
@@ -35,4 +37,5 @@ export interface CreateGiveawayInput {
   expiry_date: string
   is_block?: boolean
   image_url?: string
+  deal_thread_id?: string | null
 }
