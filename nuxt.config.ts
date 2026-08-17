@@ -123,7 +123,7 @@ export default defineNuxtConfig({
       // theme trước khi JS kịp sửa. Script inline này chạy đồng bộ ngay khi trình duyệt
       // parse <head>, TRƯỚC khi Vue hydrate và trước khi <body> được vẽ, nên set đúng
       // class "dark" ngay từ đầu. Logic phải khớp CHÍNH XÁC config mặc định của
-      // useDark() trong shared/ui/ThemeToggle.vue (storageKey "vueuse-color-scheme",
+      // useDark() trong shared/components/ThemeToggle.vue (storageKey "vueuse-color-scheme",
       // giá trị "dark"/"light"/"auto", valueLight rỗng) — đổi 1 bên phải đổi bên kia.
       script: [
         {
@@ -261,6 +261,13 @@ export default defineNuxtConfig({
 
   sourcemap: {
     client: 'hidden'
-  },
-  components: [{ path: '@@/shared/ui', prefix: 'Ui', extensions: ['vue'] }, '~/components']
+  }
+  // shared/ui/ chỉ dành cho shadcn (componentDir bên trên) — component Vue thường (không
+  // phải shadcn) phải nằm ở app/components/, KHÔNG được đặt bất kỳ đâu trong shared/:
+  // Nuxt 4 coi toàn bộ shared/ là code isomorphic dùng chung server+client, Nitro bundle
+  // thẳng bằng Rollup không qua compiler Vue -> file .vue trong shared/ luôn crash build
+  // ("Expression expected", rollup-plugin-inject cố parse .vue như JS thuần), bất kể đặt
+  // ở subfolder tên gì. app/components/ui/*.vue tự động có prefix "Ui" theo đúng convention
+  // mặc định của Nuxt (đặt tên component theo đường dẫn subfolder) — không cần khai báo
+  // components: [] thủ công nữa.
 })
