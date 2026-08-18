@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, nextTick } from 'vue'
 
+import AccesstradeFloatingAd from '@features/blog/components/accesstrade-floating-ad.vue'
 import { useCookieConsent } from '@shared/composables/use-cookie-consent'
 import { useUserStore } from '@stores/user'
 
@@ -341,5 +342,10 @@ useHead(() => ({
   <!-- MGID Smart Notification Widget -->
   <ClientOnly>
     <div data-type="_mgwidget" data-widget-id="2064116"></div>
+  </ClientOnly>
+
+  <!-- AccessTrade Floating Ad Widget -->
+  <ClientOnly>
+    <AccesstradeFloatingAd v-if="isAdskeeperAllowed" />
   </ClientOnly>
 </template>

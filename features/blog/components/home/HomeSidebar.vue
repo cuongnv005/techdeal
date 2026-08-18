@@ -207,12 +207,5 @@ const getCategoryLink = (id: string) => {
         </li>
       </ul>
     </div>
-
-    <!-- MGID Home Sidebar Widget -->
-    <ClientOnly>
-      <div class="my-4">
-        <div data-type="_mgwidget" data-widget-id="2064159"></div>
-      </div>
-    </ClientOnly>
   </aside>
 </template>

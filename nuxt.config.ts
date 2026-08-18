@@ -156,7 +156,7 @@ export default defineNuxtConfig({
       { code: 'en', language: 'en-US', file: 'en.json' }
     ],
     defaultLocale: 'vi',
-    strategy: 'prefix_except_default',
+    strategy: 'prefix_and_default',
     // Chỉ tự redirect theo Accept-Language khi vào đúng trang gốc "/" (redirectOn: 'root'),
     // KHÔNG áp dụng cho link sâu (vd 1 bài blog VI cụ thể) vì không phải bài nào cũng có
     // bản dịch tiếng Anh — redirect ở đó có thể dẫn tới 404. Cookie lưu lại lựa chọn
