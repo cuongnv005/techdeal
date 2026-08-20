@@ -6,7 +6,7 @@ import { defineEventHandler, setHeader } from 'h3'
 //
 // TODO: thay REPLACE_WITH_REAL_APPLE_TEAM_ID bằng Apple Developer Team ID thật
 // (lấy trong Apple Developer > Membership, hoặc `eas credentials` với dự án techdeal_app).
-const APPLE_TEAM_ID = 'REPLACE_WITH_REAL_APPLE_TEAM_ID'
+const APPLE_TEAM_ID = 'ZJRE43TQH6'
 const IOS_BUNDLE_ID = 'io.techdeal.app'
 
 export default defineEventHandler((event) => {
