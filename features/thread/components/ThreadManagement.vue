@@ -39,6 +39,7 @@ interface ThreadFormState {
   app_name: string
   platform_type: ThreadPlatform
   image_url: string
+  original_price: string
   summary: string
   summary_en: string
   content: string
@@ -54,6 +55,7 @@ const emptyForm = (): ThreadFormState => ({
   app_name: '',
   platform_type: 'android',
   image_url: '',
+  original_price: '',
   summary: '',
   summary_en: '',
   content: '',
@@ -137,6 +139,7 @@ const openEditModal = async (thread: Thread): Promise<void> => {
       app_name: full?.app_name ?? thread.app_name,
       platform_type: (full?.platform_type ?? thread.platform_type) as ThreadPlatform,
       image_url: full?.image_url ?? thread.image_url ?? '',
+      original_price: full?.original_price ?? thread.original_price ?? '',
       summary: full?.summary ?? '',
       summary_en: full?.summary_en ?? '',
       content: full?.content ?? '',
@@ -169,6 +172,7 @@ const handleSubmitForm = async (): Promise<void> => {
     deal_link: form.value.deal_link,
     platform_type: form.value.platform_type,
     image_url: form.value.image_url || undefined,
+    original_price: form.value.original_price || undefined,
     is_vip_only: form.value.is_vip_only,
     deal_ends_at: form.value.deal_ends_at ? new Date(form.value.deal_ends_at).toISOString() : null,
     max_claims: form.value.max_claims === '' ? null : Number(form.value.max_claims),
@@ -365,7 +369,10 @@ onMounted(() => {
               class="hover:bg-gray-50/50 dark:hover:bg-zinc-950/30 transition-colors"
             >
               <td class="px-6 py-4 font-bold text-xs text-zinc-900 dark:text-white">
-                {{ thread.app_name }}
+                <div>{{ thread.app_name }}</div>
+                <div v-if="thread.original_price" class="text-[10px] font-medium text-zinc-400 line-through">
+                  {{ thread.original_price }}
+                </div>
               </td>
               <td
                 class="px-6 py-4 text-xs font-semibold uppercase text-zinc-550 dark:text-zinc-400"
@@ -433,7 +440,7 @@ onMounted(() => {
 
                   <button
                     @click="handleDelete(thread.id)"
-                    class="p-2 rounded-xl transition-all cursor-pointer text-zinc-400 hover:text-red-550 hover:bg-red-550/10"
+                    class="p-2 rounded-xl transition-all cursor-pointer text-zinc-400 hover:text-red-500 hover:bg-red-500/10"
                     title="Xóa thread"
                   >
                     <Trash2 class="w-4 h-4" />
@@ -443,8 +450,8 @@ onMounted(() => {
             </tr>
 
             <tr v-if="paginatedThreads.length === 0">
-              <td colspan="7" class="px-6 py-12 text-center text-xs text-zinc-400 italic">
-                Không tìm thấy thread nào...
+              <td colspan="7" class="p-12 text-center text-xs text-zinc-400">
+                Không tìm thấy thread nào.
               </td>
             </tr>
           </tbody>
@@ -558,16 +565,29 @@ onMounted(() => {
             />
           </div>
 
-          <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
-              >Ảnh Đại Diện (Tùy chọn)</label
-            >
-            <input
-              v-model="form.image_url"
-              type="url"
-              placeholder="https://..."
-              class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+                >Giá Gốc (Tùy chọn)</label
+              >
+              <input
+                v-model="form.original_price"
+                type="text"
+                placeholder="Ví dụ: $4.99 hoặc 120.000đ"
+                class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+              />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+                >Ảnh Đại Diện (Tùy chọn)</label
+              >
+              <input
+                v-model="form.image_url"
+                type="url"
+                placeholder="https://..."
+                class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+              />
+            </div>
           </div>
 
           <div class="space-y-1">

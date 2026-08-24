@@ -4,6 +4,7 @@ export interface Thread {
   id: string
   app_name: string
   image_url?: string | null
+  original_price?: string | null
   summary: string
   summary_en?: string | null
   content?: string
@@ -31,6 +32,7 @@ export interface CreateThreadInput {
   deal_link: string
   platform_type: ThreadPlatform
   image_url?: string
+  original_price?: string | null
   is_vip_only?: boolean
   deal_ends_at?: string | null
   max_claims?: number | null
