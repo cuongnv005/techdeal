@@ -10,23 +10,27 @@ onMounted(() => {
       const w = window as any
       if (typeof w.FloatingAd !== 'undefined') {
         try {
-          w.accesstradeAdInstance = w.FloatingAd.create({
-            publisher_id: '7033129334406990266',
-            utm_source: '',
-            utm_medium: '',
-            utm_campaign: '',
-            utm_content: '',
+          const config = {
+            imageUrl:
+              'https://content.accesstrade.vn/evidence_add_lost/2026/img/upload/1787815251_add_lost_add_lost_tmpbo5loshf.png',
+            linkUrl:
+              'https://go.isclix.com/deep_link/v6/7033129334406990266/5087153089503673507?sub3=floating_ads_icon&url_enc=aHR0cHM6Ly93d3cubGF6YWRhLnZuL3Byb2R1Y3RzL3BkcC1pMjc4OTg2NTEyNi1zMTQ2ODQ0NDkxMDEuaHRtbD9yZWZlcmVyPWF0LWtvbA%3D%3D',
             position: { top: '40%', right: '20px', bottom: null, left: null },
             width: '120px',
             height: '120px',
             showCloseButton: true,
             animation: 'zoom',
             autoCloseAfter: 0,
-            is_auto: true,
             isBaitClick: false,
             openModal: false,
             openDelay: 3000
-          })
+          }
+
+          if (typeof w.FloatingAd.init === 'function') {
+            w.accesstradeAdInstance = w.FloatingAd.init(config)
+          } else if (typeof w.FloatingAd.create === 'function') {
+            w.accesstradeAdInstance = w.FloatingAd.create(config)
+          }
         } catch (e) {
           console.error('Failed to initialize AccessTrade Floating Ad:', e)
         }

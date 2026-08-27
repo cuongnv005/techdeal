@@ -370,7 +370,10 @@ onMounted(() => {
             >
               <td class="px-6 py-4 font-bold text-xs text-zinc-900 dark:text-white">
                 <div>{{ thread.app_name }}</div>
-                <div v-if="thread.original_price" class="text-[10px] font-medium text-zinc-400 line-through">
+                <div
+                  v-if="thread.original_price"
+                  class="text-[10px] font-medium text-zinc-400 line-through"
+                >
                   {{ thread.original_price }}
                 </div>
               </td>
