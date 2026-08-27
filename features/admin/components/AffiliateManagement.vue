@@ -14,7 +14,9 @@ import {
   Pencil,
   Loader2,
   Sparkles,
-  UploadCloud
+  UploadCloud,
+  Move,
+  Clock
 } from 'lucide-vue-next'
 
 import { useAdminAffiliate } from '../composables/use-affiliate'
@@ -49,7 +51,7 @@ const form = reactive<AffiliateAdFormPayload>({
   image_delete_url: '',
   target_url: '',
   animation: 'zoom',
-  position_vertical: 'bottom',
+  position_vertical: 'middle',
   position_horizontal: 'right',
   offset_vertical: '20px',
   offset_horizontal: '20px',
@@ -68,7 +70,7 @@ const resetForm = () => {
   form.image_delete_url = ''
   form.target_url = ''
   form.animation = 'zoom'
-  form.position_vertical = 'bottom'
+  form.position_vertical = 'middle'
   form.position_horizontal = 'right'
   form.offset_vertical = '20px'
   form.offset_horizontal = '20px'
@@ -91,15 +93,15 @@ const openEditModal = (ad: AffiliateAdItem) => {
   form.image_thumb_url = ad.image_thumb_url || ''
   form.image_delete_url = ad.image_delete_url || ''
   form.target_url = ad.target_url
-  form.animation = ad.animation
-  form.position_vertical = ad.position_vertical
-  form.position_horizontal = ad.position_horizontal
-  form.offset_vertical = ad.offset_vertical
-  form.offset_horizontal = ad.offset_horizontal
-  form.open_delay_ms = ad.open_delay_ms
-  form.auto_close_seconds = ad.auto_close_seconds
+  form.animation = ad.animation || 'zoom'
+  form.position_vertical = ad.position_vertical || 'middle'
+  form.position_horizontal = ad.position_horizontal || 'right'
+  form.offset_vertical = ad.offset_vertical || '20px'
+  form.offset_horizontal = ad.offset_horizontal || '20px'
+  form.open_delay_ms = ad.open_delay_ms ?? 2000
+  form.auto_close_seconds = ad.auto_close_seconds ?? 0
   form.is_active = ad.is_active
-  form.priority = ad.priority
+  form.priority = ad.priority ?? 0
   isModalOpen.value = true
 }
 
@@ -277,6 +279,7 @@ const calculateCTR = (clicks: number, impressions: number) => {
             <tr>
               <th class="px-5 py-3.5">Banner / Tên sản phẩm</th>
               <th class="px-5 py-3.5">Nền tảng</th>
+              <th class="px-5 py-3.5">Vị trí</th>
               <th class="px-5 py-3.5">Hiệu ứng</th>
               <th class="px-5 py-3.5 text-center">Hiển thị / Click</th>
               <th class="px-5 py-3.5 text-center">CTR</th>
@@ -323,6 +326,23 @@ const calculateCTR = (clicks: number, impressions: number) => {
                   :class="getPlatformBadge(ad.platform).class"
                 >
                   {{ getPlatformBadge(ad.platform).label }}
+                </span>
+              </td>
+
+              <!-- Position -->
+              <td class="px-5 py-4">
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-md text-[11px] font-medium"
+                >
+                  <Move class="w-3 h-3 text-zinc-400" />
+                  {{
+                    ad.position_vertical === 'top'
+                      ? 'Trên'
+                      : ad.position_vertical === 'middle'
+                        ? 'Giữa'
+                        : 'Dưới'
+                  }}
+                  - {{ ad.position_horizontal === 'left' ? 'Trái' : 'Phải' }}
                 </span>
               </td>
 
@@ -557,12 +577,80 @@ const calculateCTR = (clicks: number, impressions: number) => {
             </div>
           </div>
 
-          <!-- Animation & Priority -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Section: Vị trí hiển thị (Position Settings) -->
+          <div
+            class="p-3.5 bg-gray-50 dark:bg-zinc-800/60 rounded-xl border border-gray-200 dark:border-zinc-700/60 space-y-3"
+          >
+            <div
+              class="flex items-center gap-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200"
+            >
+              <Move class="w-3.5 h-3.5 text-[#3498db] dark:text-[#e74c3c]" />
+              <span>Vị trí hiển thị trên màn hình</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Vị trí chiều dọc
+                </label>
+                <select
+                  v-model="form.position_vertical"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none cursor-pointer"
+                >
+                  <option value="middle">Ở giữa (Middle / 50%)</option>
+                  <option value="bottom">Dưới cùng (Bottom)</option>
+                  <option value="top">Trên cùng (Top)</option>
+                </select>
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Vị trí chiều ngang
+                </label>
+                <select
+                  v-model="form.position_horizontal"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none cursor-pointer"
+                >
+                  <option value="right">Mép bên phải (Right)</option>
+                  <option value="left">Mép bên trái (Left)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Khoảng cách dọc (Offset Vertical)
+                </label>
+                <input
+                  v-model="form.offset_vertical"
+                  type="text"
+                  placeholder="20px"
+                  :disabled="form.position_vertical === 'middle'"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Khoảng cách ngang (Offset Horizontal)
+                </label>
+                <input
+                  v-model="form.offset_horizontal"
+                  type="text"
+                  placeholder="20px"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Hiệu ứng & Thời gian -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="space-y-1">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300"
-                >Hiệu ứng Animation</label
-              >
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                Hiệu ứng Animation
+              </label>
               <select
                 v-model="form.animation"
                 class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none cursor-pointer"
@@ -574,27 +662,11 @@ const calculateCTR = (clicks: number, impressions: number) => {
                 <option value="none">Không có hiệu ứng (None)</option>
               </select>
             </div>
-            <div class="space-y-1">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300"
-                >Độ ưu tiên hiển thị (Priority)</label
-              >
-              <input
-                v-model.number="form.priority"
-                type="number"
-                min="0"
-                max="100"
-                placeholder="0"
-                class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
-              />
-            </div>
-          </div>
 
-          <!-- Open Delay & Status -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
             <div class="space-y-1">
-              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300"
-                >Độ trễ xuất hiện (ms)</label
-              >
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                Độ trễ xuất hiện (ms)
+              </label>
               <input
                 v-model.number="form.open_delay_ms"
                 type="number"
@@ -604,6 +676,37 @@ const calculateCTR = (clicks: number, impressions: number) => {
                 class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
               />
             </div>
+
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                Tự đóng sau (giây)
+              </label>
+              <input
+                v-model.number="form.auto_close_seconds"
+                type="number"
+                min="0"
+                placeholder="0 (Không đóng)"
+                class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
+              />
+            </div>
+          </div>
+
+          <!-- Section: Độ ưu tiên & Kích hoạt -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                Độ ưu tiên hiển thị (Priority)
+              </label>
+              <input
+                v-model.number="form.priority"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="0"
+                class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
+              />
+            </div>
+
             <div class="flex items-center gap-2 pt-4">
               <input
                 id="is_active_checkbox"
