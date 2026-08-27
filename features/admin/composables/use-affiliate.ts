@@ -8,7 +8,7 @@ import type {
 } from '../types/affiliate.type'
 
 import { useUserStore } from '@stores/user'
-import { toast } from '@shared/utils/toast'
+import { Toast } from '@shared/utils/toast'
 
 export function useAdminAffiliate() {
   const affiliateRepo = new AffiliateAdminRepository()
@@ -57,12 +57,12 @@ export function useAdminAffiliate() {
     try {
       isActionLoading.value = true
       const res = await affiliateRepo.createAd(payload)
-      toast.success('Tạo banner quảng cáo affiliate thành công')
+      Toast.success({ message: 'Tạo banner quảng cáo affiliate thành công' })
       await refreshAds()
       return res
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Lỗi khi tạo banner'
-      toast.error(msg)
+      Toast.error({ message: msg })
       throw err
     } finally {
       isActionLoading.value = false
@@ -73,12 +73,12 @@ export function useAdminAffiliate() {
     try {
       isActionLoading.value = true
       const res = await affiliateRepo.updateAd(id, payload)
-      toast.success('Cập nhật banner quảng cáo thành công')
+      Toast.success({ message: 'Cập nhật banner quảng cáo thành công' })
       await refreshAds()
       return res
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Lỗi khi cập nhật banner'
-      toast.error(msg)
+      Toast.error({ message: msg })
       throw err
     } finally {
       isActionLoading.value = false
@@ -90,11 +90,11 @@ export function useAdminAffiliate() {
       isActionLoading.value = true
       const newStatus = currentStatus === 1 ? 0 : 1
       await affiliateRepo.toggleAdStatus(id, newStatus)
-      toast.success(`Đã ${newStatus === 1 ? 'bật' : 'tắt'} banner quảng cáo`)
+      Toast.success({ message: `Đã ${newStatus === 1 ? 'bật' : 'tắt'} banner quảng cáo` })
       await refreshAds()
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Lỗi khi đổi trạng thái'
-      toast.error(msg)
+      Toast.error({ message: msg })
     } finally {
       isActionLoading.value = false
     }
@@ -104,11 +104,11 @@ export function useAdminAffiliate() {
     try {
       isActionLoading.value = true
       await affiliateRepo.deleteAd(id)
-      toast.success('Xóa banner quảng cáo thành công')
+      Toast.success({ message: 'Xóa banner quảng cáo thành công' })
       await refreshAds()
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Lỗi khi xóa banner'
-      toast.error(msg)
+      Toast.error({ message: msg })
       throw err
     } finally {
       isActionLoading.value = false
@@ -122,7 +122,7 @@ export function useAdminAffiliate() {
       return res
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Lỗi khi tải ảnh lên ImgBB'
-      toast.error(msg)
+      Toast.error({ message: msg })
       throw err
     } finally {
       isActionLoading.value = false
