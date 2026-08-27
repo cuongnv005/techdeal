@@ -148,7 +148,24 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">5. Bảo mật thông tin</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              5. Cookies Tiếp thị Liên kết (Affiliate & Partner Cookies)
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Khi bạn nhấp vào các đường link mua hàng hoặc banner nổi affiliate (Shopee, Lazada,
+              TikTok Shop, Tiki, AccessTrade...), một cookie theo dõi từ đối tác sẽ được lưu trên
+              trình duyệt của bạn. Mục đích duy nhất của cookie này là để ghi nhận lượt giới thiệu
+              mua hàng thành công và trả hoa hồng tương ứng cho TechDeal.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Các cookie tiếp thị này
+              <strong>không thu thập hoặc lưu trữ bất kỳ thông tin cá nhân nhạy cảm</strong> nào của
+              bạn (như tên, số điện thoại, tài khoản ngân hàng hoặc mật khẩu).
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Bảo mật thông tin</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Chúng tôi thực hiện các biện pháp bảo mật phù hợp để bảo vệ dữ liệu cá nhân của bạn
               khỏi bị truy cập, tiết lộ hoặc phá hủy trái phép. Tuy nhiên, xin lưu ý rằng không có
@@ -290,7 +307,24 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">5. Information Security</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              5. Affiliate & Partner Tracking Cookies
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              When you click on merchant deal links or floating affiliate ads (Shopee, Lazada,
+              TikTok Shop, Tiki, AccessTrade, etc.), a tracking cookie from the affiliate partner
+              may be stored on your browser. This cookie exists solely to attribute qualifying
+              purchases and reward referral commissions to TechDeal.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              These affiliate tracking cookies
+              <strong>do not collect or store any sensitive personal data</strong> (such as your
+              full name, phone number, financial details, or passwords).
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Information Security</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               We implement appropriate security measures to protect your personal data from
               unauthorized access, alteration, or destruction. However, please note that no data

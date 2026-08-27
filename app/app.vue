@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, nextTick } from 'vue'
 
-import AccesstradeFloatingAd from '@features/blog/components/accesstrade-floating-ad.vue'
+import CustomFloatingAd from '@features/blog/components/CustomFloatingAd.vue'
 import { useCookieConsent } from '@shared/composables/use-cookie-consent'
 import { useUserStore } from '@stores/user'
 
@@ -345,8 +345,8 @@ useHead(() => ({
     <div v-if="isAdskeeperAllowed" data-type="_mgwidget" data-widget-id="2064116"></div>
   </ClientOnly>
 
-  <!-- AccessTrade Floating Ad Widget -->
+  <!-- Custom Affiliate Floating Ad Widget -->
   <ClientOnly>
-    <AccesstradeFloatingAd v-if="isAdskeeperAllowed" />
+    <CustomFloatingAd v-if="isAdskeeperAllowed" />
   </ClientOnly>
 </template>

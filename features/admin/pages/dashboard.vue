@@ -11,7 +11,8 @@ import {
   LayoutDashboard,
   Gift,
   Link2,
-  Smartphone
+  Smartphone,
+  Tag
 } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
@@ -20,6 +21,7 @@ import CommentManagement from '../components/CommentManagement.vue'
 import PostManagement from '../components/PostManagement.vue'
 import StatsDashboard from '../components/StatsDashboard.vue'
 import UserManagement from '../components/UserManagement.vue'
+import AffiliateManagement from '../components/AffiliateManagement.vue'
 import { useAdminStats } from '../composables/use-admin'
 
 import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
@@ -35,7 +37,7 @@ const hasAccess = computed(() => {
 })
 
 const activeTab = ref<
-  'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink' | 'threads'
+  'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink' | 'threads' | 'affiliate'
 >('stats')
 
 // Call composables
@@ -187,6 +189,19 @@ const { stats, isLoadingStats } = await useAdminStats()
                 <Smartphone class="w-4 h-4" />
                 Quản lý Threads
               </button>
+
+              <button
+                @click="activeTab = 'affiliate'"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                :class="
+                  activeTab === 'affiliate'
+                    ? 'bg-[#3498db]/15 text-[#3498db] dark:bg-[#e74c3c]/15 dark:text-[#e74c3c]'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-950'
+                "
+              >
+                <Tag class="w-4 h-4" />
+                Quản lý Affiliate Ads
+              </button>
             </nav>
           </div>
         </aside>
@@ -229,6 +244,11 @@ const { stats, isLoadingStats } = await useAdminStats()
           <!-- Threads Tab -->
           <div v-else-if="activeTab === 'threads'">
             <ThreadManagement />
+          </div>
+
+          <!-- Affiliate Ads Tab -->
+          <div v-else-if="activeTab === 'affiliate'">
+            <AffiliateManagement />
           </div>
         </main>
       </div>
