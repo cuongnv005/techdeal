@@ -155,22 +155,22 @@ const getAnimationClass = () => {
           <X class="w-3 h-3" />
         </button>
 
-        <!-- Banner Image Container -->
+        <!-- Banner Image Container (Transparent for PNG) -->
         <div
           @click="handleClick"
-          class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 bg-white/95 dark:bg-zinc-900/95 border border-zinc-200 dark:border-zinc-700/80 p-1 flex items-center justify-center backdrop-blur-xs"
+          class="relative w-24 h-24 sm:w-28 sm:h-28 transition-transform duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
         >
           <img
             :src="ad.image_url"
             :alt="ad.name"
-            class="w-full h-full object-contain rounded-xl drop-shadow-xs"
+            class="w-full h-full object-contain filter drop-shadow-xl select-none pointer-events-auto"
             loading="lazy"
           />
 
           <!-- Subtle Platform Badge in Corner -->
           <div
             v-if="ad.platform"
-            class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase text-white tracking-widest shadow-xs"
+            class="absolute -bottom-1 right-0 px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase text-white tracking-widest shadow-md"
             :class="
               ad.platform === 'shopee'
                 ? 'bg-orange-500'
@@ -190,72 +190,81 @@ const getAnimationClass = () => {
 </template>
 
 <style scoped>
+@keyframes continuous-zoom {
+  0% {
+    transform: scale(0.92);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(0.92);
+  }
+}
+
 @keyframes gentle-shake {
   0%,
   100% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
   }
-  20% {
-    transform: rotate(-6deg);
+  15% {
+    transform: rotate(-10deg) scale(1.05);
   }
-  40% {
-    transform: rotate(6deg);
+  30% {
+    transform: rotate(10deg) scale(1.05);
+  }
+  45% {
+    transform: rotate(-6deg) scale(1.03);
   }
   60% {
-    transform: rotate(-3deg);
+    transform: rotate(6deg) scale(1.03);
   }
-  80% {
-    transform: rotate(3deg);
+  75% {
+    transform: rotate(0deg) scale(1);
   }
 }
 
 @keyframes bounce-subtle {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-14px) scale(1.06);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(0) scale(0.96);
+  }
+  70% {
+    transform: translateY(-6px) scale(1.02);
   }
 }
 
 @keyframes pulse-glow {
   0%,
   100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 0px rgba(52, 152, 219, 0));
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 2px rgba(255, 107, 0, 0.2));
   }
   50% {
-    transform: scale(1.04);
-    filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.4));
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 16px rgba(255, 107, 0, 0.7));
   }
-}
-
-@keyframes zoom-in {
-  0% {
-    transform: scale(0.85);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.animate-gentle-shake {
-  animation: gentle-shake 3s ease-in-out infinite;
-}
-
-.animate-bounce-subtle {
-  animation: bounce-subtle 2.5s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 .animate-zoom-in {
-  animation: zoom-in 1.5s ease-out;
+  animation: continuous-zoom 1.8s ease-in-out infinite;
+}
+
+.animate-gentle-shake {
+  animation: gentle-shake 2.2s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 1.8s ease-in-out infinite;
 }
 </style>
