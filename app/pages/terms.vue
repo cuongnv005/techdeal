@@ -167,6 +167,25 @@ useHead({
             </p>
           </section>
 
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              7. Liên kết Tiếp thị Liên kết (Affiliate Links) & Quảng cáo Mua sắm
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              TechDeal tham gia vào các chương trình tiếp thị liên kết (Affiliate Marketing) với các
+              sàn thương mại điện tử và đối tác uy tín như Shopee, Lazada, TikTok Shop, Tiki,
+              AccessTrade... Một số bài viết, banner nổi hoặc liên kết khuyến mãi trên website có
+              thể chứa mã tiếp thị liên kết.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              Khi bạn nhấp vào các liên kết này và thực hiện mua hàng, TechDeal có thể nhận được một
+              khoản hoa hồng giới thiệu nhỏ từ đối tác mà
+              <strong>hoàn toàn không làm tăng thêm bất kỳ chi phí nào</strong> đối với bạn. Các sản
+              phẩm, giá bán, chính sách giao hàng và bảo hành do chính sàn thương mại điện tử và bên
+              bán chịu trách nhiệm.
+            </p>
+          </section>
+
           <section class="space-y-3 border-t border-gray-250 dark:border-zinc-800 pt-6">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Liên hệ</h2>
             <p class="text-xs text-zinc-650 dark:text-zinc-400">
@@ -312,6 +331,24 @@ useHead({
               their respective billing and refund policies. TechDeal does not directly process or
               store your payment card information and cannot issue refunds directly — please contact
               Apple Support or Google Play Support for any refund requests.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
+              7. Affiliate Links & Shopping Advertisements
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              TechDeal participates in affiliate marketing programs with reputable e-commerce
+              platforms and networks including Shopee, Lazada, TikTok Shop, Tiki, AccessTrade, etc.
+              Some articles, floating banners, or deal links across our website may contain
+              affiliate tracking links.
+            </p>
+            <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
+              When you click on these links and make a purchase, TechDeal may earn a small referral
+              commission at <strong>no additional cost to you</strong>. Product listings, prices,
+              warranties, and delivery terms remain the sole responsibility of the respective
+              third-party merchants.
             </p>
           </section>
 
