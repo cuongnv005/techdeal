@@ -45,11 +45,18 @@ const imageInputRef = ref<HTMLInputElement | null>(null)
 
 const form = reactive<AffiliateAdFormPayload>({
   name: '',
+  ad_type: 'floating',
   platform: 'shopee',
   image_url: '',
   image_thumb_url: '',
   image_delete_url: '',
   target_url: '',
+  title: '',
+  description: '',
+  product_image_url: '',
+  background_image_url: '',
+  target_pages: ['go', 'giveaway'],
+  side_position: 'both',
   animation: 'zoom',
   position_vertical: 'middle',
   position_horizontal: 'right',
@@ -64,11 +71,18 @@ const form = reactive<AffiliateAdFormPayload>({
 const resetForm = () => {
   editingId.value = null
   form.name = ''
+  form.ad_type = 'floating'
   form.platform = 'shopee'
   form.image_url = ''
   form.image_thumb_url = ''
   form.image_delete_url = ''
   form.target_url = ''
+  form.title = ''
+  form.description = ''
+  form.product_image_url = ''
+  form.background_image_url = ''
+  form.target_pages = ['go', 'giveaway']
+  form.side_position = 'both'
   form.animation = 'zoom'
   form.position_vertical = 'middle'
   form.position_horizontal = 'right'
@@ -88,11 +102,22 @@ const openCreateModal = () => {
 const openEditModal = (ad: AffiliateAdItem) => {
   editingId.value = ad.id
   form.name = ad.name
+  form.ad_type = ad.ad_type || 'floating'
   form.platform = ad.platform
-  form.image_url = ad.image_url
+  form.image_url = ad.image_url || ''
   form.image_thumb_url = ad.image_thumb_url || ''
   form.image_delete_url = ad.image_delete_url || ''
   form.target_url = ad.target_url
+  form.title = ad.title || ''
+  form.description = ad.description || ''
+  form.product_image_url = ad.product_image_url || ''
+  form.background_image_url = ad.background_image_url || ''
+  try {
+    form.target_pages = ad.target_pages ? JSON.parse(ad.target_pages) : ['go', 'giveaway']
+  } catch (e) {
+    form.target_pages = ['go', 'giveaway']
+  }
+  form.side_position = ad.side_position || 'both'
   form.animation = ad.animation || 'zoom'
   form.position_vertical = ad.position_vertical || 'middle'
   form.position_horizontal = ad.position_horizontal || 'right'
@@ -110,13 +135,19 @@ const handleFileSelect = async (e: Event) => {
   if (!target.files || target.files.length === 0) return
 
   const file = target.files[0]
+  if (!file) return
+
   try {
     isUploadingImage.value = true
     const res = await uploadBannerImage(file)
     if (res && res.url) {
-      form.image_url = res.url
-      form.image_thumb_url = res.thumb_url || res.url
-      form.image_delete_url = res.delete_url || ''
+      if (form.ad_type === 'square_banner') {
+        form.product_image_url = res.url
+      } else {
+        form.image_url = res.url
+        form.image_thumb_url = res.thumb_url || res.url
+        form.image_delete_url = res.delete_url || ''
+      }
     }
   } catch (err) {
     console.error('Upload banner error:', err)
@@ -129,7 +160,7 @@ const handleFileSelect = async (e: Event) => {
 }
 
 const handleSubmit = async () => {
-  if (!form.name.trim() || !form.image_url.trim() || !form.target_url.trim()) {
+  if (!form.name.trim() || !form.target_url.trim()) {
     return
   }
 
@@ -298,14 +329,39 @@ const calculateCTR = (clicks: number, impressions: number) => {
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <img
-                    :src="ad.image_thumb_url || ad.image_url"
+                    :src="
+                      ad.product_image_url ||
+                      ad.image_thumb_url ||
+                      ad.image_url ||
+                      '/images/affiliate_square_bg.jpg'
+                    "
                     :alt="ad.name"
                     class="w-12 h-12 rounded-xl object-contain bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 p-1 shrink-0"
                   />
                   <div class="space-y-1 max-w-xs">
-                    <p class="font-bold text-zinc-900 dark:text-white line-clamp-1">
-                      {{ ad.name }}
-                    </p>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span
+                        v-if="ad.ad_type === 'square_banner'"
+                        class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                      >
+                        Vuông 1:1
+                      </span>
+                      <span
+                        v-else-if="ad.ad_type === 'vertical_banner'"
+                        class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
+                      >
+                        Dọc (PC)
+                      </span>
+                      <span
+                        v-else
+                        class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20"
+                      >
+                        Floating
+                      </span>
+                      <p class="font-bold text-zinc-900 dark:text-white line-clamp-1">
+                        {{ ad.name }}
+                      </p>
+                    </div>
                     <a
                       :href="ad.target_url"
                       target="_blank"
@@ -329,9 +385,28 @@ const calculateCTR = (clicks: number, impressions: number) => {
                 </span>
               </td>
 
-              <!-- Position -->
+              <!-- Position / Pages -->
               <td class="px-5 py-4">
                 <span
+                  v-if="ad.ad_type === 'square_banner'"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 rounded-md text-[11px] font-medium"
+                >
+                  In-Content (/go, /giveaway)
+                </span>
+                <span
+                  v-else-if="ad.ad_type === 'vertical_banner'"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-md text-[11px] font-medium"
+                >
+                  Side PC ({{
+                    ad.side_position === 'both'
+                      ? '2 bên'
+                      : ad.side_position === 'left'
+                        ? 'Bên trái'
+                        : 'Bên phải'
+                  }})
+                </span>
+                <span
+                  v-else
                   class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-md text-[11px] font-medium"
                 >
                   <Move class="w-3 h-3 text-zinc-400" />
@@ -481,17 +556,64 @@ const calculateCTR = (clicks: number, impressions: number) => {
         </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
+          <!-- Ad Type Selector -->
+          <div
+            class="space-y-1.5 p-3 bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30"
+          >
+            <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200 block">
+              Loại Banner / Vị trí hiển thị <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                @click="form.ad_type = 'floating'"
+                class="px-2.5 py-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer"
+                :class="
+                  form.ad_type === 'floating'
+                    ? 'bg-[#3498db] dark:bg-[#e74c3c] text-white border-transparent shadow-xs'
+                    : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700'
+                "
+              >
+                Floating Widget
+              </button>
+              <button
+                type="button"
+                @click="form.ad_type = 'square_banner'"
+                class="px-2.5 py-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer"
+                :class="
+                  form.ad_type === 'square_banner'
+                    ? 'bg-[#3498db] dark:bg-[#e74c3c] text-white border-transparent shadow-xs'
+                    : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700'
+                "
+              >
+                Banner Vuông 1:1
+              </button>
+              <button
+                type="button"
+                @click="form.ad_type = 'vertical_banner'"
+                class="px-2.5 py-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer"
+                :class="
+                  form.ad_type === 'vertical_banner'
+                    ? 'bg-[#3498db] dark:bg-[#e74c3c] text-white border-transparent shadow-xs'
+                    : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700'
+                "
+              >
+                Banner Dọc (PC)
+              </button>
+            </div>
+          </div>
+
           <!-- Name & Platform -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="sm:col-span-2 space-y-1">
               <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                Tên Banner / Sản phẩm <span class="text-red-500">*</span>
+                Tên Banner / Chiến dịch <span class="text-red-500">*</span>
               </label>
               <input
                 v-model="form.name"
                 type="text"
                 required
-                placeholder="VD: Quạt Mini Tích Điện Shopee Sale"
+                placeholder="VD: Shopee Sale 10.10 - Tai nghe Bluetooth"
                 class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
               />
             </div>
@@ -524,8 +646,68 @@ const calculateCTR = (clicks: number, impressions: number) => {
             />
           </div>
 
-          <!-- Banner Image Upload (ImgBB) -->
-          <div class="space-y-2">
+          <!-- Custom Fields for SQUARE_BANNER (Dynamic 3D Text + Product Image) -->
+          <div
+            v-if="form.ad_type === 'square_banner'"
+            class="p-3.5 bg-amber-50/50 dark:bg-amber-950/20 rounded-xl border border-amber-200/60 dark:border-amber-900/40 space-y-3"
+          >
+            <div
+              class="flex items-center gap-1.5 text-xs font-bold text-amber-800 dark:text-amber-300"
+            >
+              <Sparkles class="w-4 h-4 text-amber-500" />
+              <span>Thiết kế Dynamic Banner Vuông (Tự động render typography 3D & bục podium)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Tiêu đề Sale 3D (vd: 10.10, 9.9, SALE)
+                </label>
+                <input
+                  v-model="form.title"
+                  type="text"
+                  placeholder="10.10"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none font-bold"
+                />
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                  Mô tả ưu đãi (vd: DISC UP TO 70% OFF)
+                </label>
+                <input
+                  v-model="form.description"
+                  type="text"
+                  placeholder="DISC UP TO 70% OFF"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                Link ảnh sản phẩm không viền (PNG/WebP tách nền)
+              </label>
+              <div class="flex items-center gap-2">
+                <input
+                  v-model="form.product_image_url"
+                  type="url"
+                  placeholder="https://i.ibb.co/.../product_transparent.png"
+                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  @click="imageInputRef?.click()"
+                  class="px-2.5 py-1.5 bg-gray-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs rounded-lg border shrink-0 hover:bg-gray-200 cursor-pointer"
+                >
+                  Tải ảnh lên
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banner Image Upload (ImgBB) for Floating / Vertical -->
+          <div v-else class="space-y-2">
             <label class="text-xs font-bold text-zinc-700 dark:text-zinc-300">
               Hình ảnh Banner (Tự động tải lên ImgBB) <span class="text-red-500">*</span>
             </label>
@@ -555,7 +737,7 @@ const calculateCTR = (clicks: number, impressions: number) => {
             <input
               v-model="form.image_url"
               type="url"
-              required
+              :required="form.ad_type !== 'square_banner'"
               placeholder="https://i.ibb.co/.../banner.png"
               class="w-full px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none focus:border-[#3498db]"
             />
@@ -577,15 +759,16 @@ const calculateCTR = (clicks: number, impressions: number) => {
             </div>
           </div>
 
-          <!-- Section: Vị trí hiển thị (Position Settings) -->
+          <!-- Section: Vị trí hiển thị (Dành riêng cho Floating Ads) -->
           <div
+            v-if="form.ad_type === 'floating'"
             class="p-3.5 bg-gray-50 dark:bg-zinc-800/60 rounded-xl border border-gray-200 dark:border-zinc-700/60 space-y-3"
           >
             <div
               class="flex items-center gap-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200"
             >
               <Move class="w-3.5 h-3.5 text-[#3498db] dark:text-[#e74c3c]" />
-              <span>Vị trí hiển thị trên màn hình</span>
+              <span>Vị trí hiển thị Floating Widget trên màn hình</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -616,33 +799,24 @@ const calculateCTR = (clicks: number, impressions: number) => {
                 </select>
               </div>
             </div>
+          </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
-                  Khoảng cách dọc (Offset Vertical)
-                </label>
-                <input
-                  v-model="form.offset_vertical"
-                  type="text"
-                  placeholder="20px"
-                  :disabled="form.position_vertical === 'middle'"
-                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-                />
-              </div>
-
-              <div class="space-y-1">
-                <label class="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
-                  Khoảng cách ngang (Offset Horizontal)
-                </label>
-                <input
-                  v-model="form.offset_horizontal"
-                  type="text"
-                  placeholder="20px"
-                  class="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-lg border border-gray-200 dark:border-zinc-700 focus:outline-none"
-                />
-              </div>
-            </div>
+          <!-- Section: Cấu hình vị trí Banner Dọc PC (Vertical Banner) -->
+          <div
+            v-if="form.ad_type === 'vertical_banner'"
+            class="p-3.5 bg-gray-50 dark:bg-zinc-800/60 rounded-xl border border-gray-200 dark:border-zinc-700/60 space-y-2"
+          >
+            <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200 block">
+              Vị trí đặt banner dọc 2 bên sườn PC
+            </label>
+            <select
+              v-model="form.side_position"
+              class="w-full px-3 py-2 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl border border-gray-200 dark:border-zinc-700 focus:outline-none cursor-pointer"
+            >
+              <option value="both">Cả 2 bên trái & phải (Both)</option>
+              <option value="left">Chỉ bên trái (Left only)</option>
+              <option value="right">Chỉ bên phải (Right only)</option>
+            </select>
           </div>
 
           <!-- Section: Hiệu ứng & Thời gian -->

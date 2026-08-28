@@ -26,6 +26,8 @@ import {
 
 import { AuthRepository } from '../../auth/api/auth'
 import { usePublicGiveaway } from '../composables/use-giveaway'
+import SquareAffiliateBanner from '../../blog/components/SquareAffiliateBanner.vue'
+import VerticalSideBanners from '../../blog/components/VerticalSideBanners.vue'
 
 import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 import { useUserStore } from '@stores/user'
@@ -38,14 +40,18 @@ const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 
+// Monedia/Mondiad script tạm thời comment lại
+// useHead({
+//   meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+//   script: [
+//     {
+//       async: true,
+//       src: 'https://ss.mrmnd.com/banner.js'
+//     }
+//   ]
+// })
 useHead({
-  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
-  script: [
-    {
-      async: true,
-      src: 'https://ss.mrmnd.com/banner.js'
-    }
-  ]
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }]
 })
 
 const giveawayId = computed(() => (route.query.id as string) || '')
@@ -382,15 +388,18 @@ onMounted(() => {
       </div>
     </ClientOnly> -->
 
-    <!-- Banner Mondiad 120x600 — 2 bên, chỉ desktop (xl trở lên). -->
-    <ClientOnly>
+    <!-- Vertical Skyscraper Banners 2 bên màn hình PC -->
+    <VerticalSideBanners page="giveaway" />
+
+    <!-- Banner Mondiad 120x600 — 2 bên (Tạm thời ẩn) -->
+    <!-- <ClientOnly>
       <div v-if="isDesktopAd" class="fixed left-4 top-[150px] z-20">
         <div data-mndbanid="698e597b-c463-4f8d-9683-0a8722a82790"></div>
       </div>
       <div v-if="isDesktopAd" class="fixed right-4 top-[150px] z-20">
         <div data-mndbanid="3a14d44c-c271-4d67-9274-d703c06d1b28"></div>
       </div>
-    </ClientOnly>
+    </ClientOnly> -->
 
     <!-- Minimal Header (Zee Cast Style) -->
     <header
@@ -522,10 +531,15 @@ onMounted(() => {
             </div>
           </ClientOnly> -->
 
-          <!-- Banner Mondiad giữa 300x250 -->
+          <!-- Banner Shopee Dynamic Square 1:1 -->
           <div class="flex justify-center max-w-xl mx-auto px-4 mt-8">
-            <div data-mndbanid="6fb8e17f-b497-490b-8ce7-b12c570f3c78"></div>
+            <SquareAffiliateBanner page="giveaway" />
           </div>
+
+          <!-- Banner Mondiad giữa 300x250 (Tạm thời ẩn) -->
+          <!-- <div class="flex justify-center max-w-xl mx-auto px-4 mt-8">
+            <div data-mndbanid="6fb8e17f-b497-490b-8ce7-b12c570f3c78"></div>
+          </div> -->
 
           <!-- PRO CARD / GIVEAWAY SPECIFICATIONS (Zee Cast Style) -->
           <section class="max-w-xl mx-auto">
