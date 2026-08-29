@@ -173,6 +173,11 @@ onMounted(() => {
           />
         </div>
 
+        <!-- Banner Shopee Dynamic Square 1:1 -->
+        <div class="mb-6 flex justify-center w-full relative z-10">
+          <SquareAffiliateBanner page="go" />
+        </div>
+
         <!-- Loading state -->
         <div
           v-if="isLoading || (!shortlink && !error)"
@@ -375,11 +380,6 @@ onMounted(() => {
             <UiAdsterraBanner adKey="de4c283a402db789fc1517d138bbe90b" :width="300" :height="250" />
           </div>
         </ClientOnly> -->
-
-        <!-- Banner Shopee Dynamic Square 1:1 -->
-        <div class="mt-8 flex justify-center w-full relative z-10">
-          <SquareAffiliateBanner page="go" />
-        </div>
 
         <!-- Banner Mondiad 300x250 (Tạm thời ẩn) -->
         <!-- <div class="mt-8 flex justify-center w-full relative z-10">
