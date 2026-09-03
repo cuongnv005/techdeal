@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'Content-Type', 'text/xml; charset=utf-8')
 
   try {
-    const apiUrl = process.env.VITE_API_URL || 'https://techdeal-worker.mdchannelvn.workers.dev/api'
+    const apiUrl = process.env.VITE_API_URL || 'https://api.techdeal.io.vn/api'
     // Chuẩn hoá: bỏ mọi dấu "/" ở cuối rồi tự thêm "/" tại từng chỗ ghép. APP_URL trong .env
     // KHÔNG có "/" cuối, nếu ghép trực tiếp sẽ ra "https://techdeal.io.vnblog/..." (link gãy).
     const appUrl = (process.env.APP_URL || 'https://techdeal.io.vn').replace(/\/+$/, '')

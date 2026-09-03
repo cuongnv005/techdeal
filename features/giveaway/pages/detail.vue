@@ -93,9 +93,10 @@ const initGoogleSignIn = () => {
   const setupButton = () => {
     const g = (window as any).google
     if (g) {
+      const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
       g.accounts.id.initialize({
         client_id: config.public.googleClientId,
-        login_uri: 'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/google',
+        login_uri: `${apiUrl}/auth/google`,
         ux_mode: 'redirect',
         auto_select: false
       })

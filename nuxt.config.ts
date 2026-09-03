@@ -14,6 +14,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      apiUrl: process.env.VITE_API_URL || 'https://api.techdeal.io.vn/api',
       googleClientId:
         process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID ||
         '559334545172-uarhhls0lrd7rbgoa9538dm16p76kiv6.apps.googleusercontent.com',
