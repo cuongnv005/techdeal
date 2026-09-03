@@ -124,6 +124,7 @@ onMounted(() => {
     script.defer = true
     script.onload = () => {
       const g = (window as any).google
+      if (g) {
         const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
         g.accounts.id.initialize({
           client_id: config.public.googleClientId,

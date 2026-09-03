@@ -47,6 +47,8 @@ const handleLogin = async () => {
 
 const handleCredentialResponse = async (response: any) => {
   const idToken = response.credential
+  isLoading.value = true
+  try {
     const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
     const res = await fetch(`${apiUrl}/auth/google`, {
       method: 'POST',

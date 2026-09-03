@@ -37,6 +37,8 @@ const handleResetPassword = async () => {
     return
   }
 
+  isLoading.value = true
+  errorMsg.value = ''
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
   try {
