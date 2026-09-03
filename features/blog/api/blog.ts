@@ -335,19 +335,7 @@ export class BlogRepository {
     relatedPosts: BlogPost[]
   } | null> {
     try {
-      let querySlug = slug
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
-      if (isUuid) {
-        const postsRes = await this.getPosts({ limit: 1000, lang })
-        const found = postsRes.items.find((p) => p.id === slug)
-        if (found && found.slug) {
-          querySlug = found.slug
-        } else {
-          return null
-        }
-      }
-
-      const path = lang === 'en' ? `/posts/en/${querySlug}` : `/posts/${querySlug}?lang=vi`
+      const path = lang === 'en' ? `/posts/en/${slug}` : `/posts/${slug}?lang=vi`
       const response = await HttpService.get<unknown, AxiosResponse<ApiResponse<ApiPostDetail>>>(
         path
       )
