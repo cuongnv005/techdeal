@@ -406,5 +406,19 @@
     "click_to_zoom": "Bấm để xem to",
     "click_image_to_zoom": "🔍 Bấm vào ảnh để xem to hơn",
     "close": "Đóng"
+  },
+  "error": {
+    "page_not_found": "Không tìm thấy trang",
+    "page_not_found_desc": "Trang bạn tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.",
+    "something_went_wrong": "Đã có lỗi xảy ra",
+    "go_home": "Về trang chủ",
+    "maintenance": {
+      "badge": "Tạm thời gián đoạn",
+      "title": "Hệ Thống Đang Bảo Trì",
+      "desc": "Hệ thống đang được nâng cấp và tối ưu hoặc vượt giới hạn truy xuất tạm thời. Vui lòng quay lại sau 1 tiếng để chúng tôi khắc phục!",
+      "reassurance": "Dữ liệu của bạn luôn an toàn. Chúng tôi sẽ trở lại ngay khi hoàn tất.",
+      "retry": "Thử tải lại trang",
+      "retrying": "Đang tải lại..."
+    }
   }
 }
