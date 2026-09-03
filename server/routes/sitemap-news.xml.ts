@@ -8,9 +8,9 @@ export default defineEventHandler(async (event) => {
     const apiUrl = process.env.VITE_API_URL || 'https://techdeal-worker.mdchannelvn.workers.dev/api'
     const appUrl = process.env.APP_URL || 'https://techdeal.io.vn/'
 
-    // Fetch latest 100 posts to ensure we get all recent ones
+    // Fetch latest 20 posts for Google News (within 48h)
     const response = await axios.get(`${apiUrl}/posts`, {
-      params: { limit: 100 }
+      params: { limit: 20 }
     })
 
     const posts = response.data?.data?.items || []

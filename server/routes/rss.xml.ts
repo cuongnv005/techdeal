@@ -10,9 +10,9 @@ export default defineEventHandler(async (event) => {
     // KHÔNG có "/" cuối, nếu ghép trực tiếp sẽ ra "https://techdeal.io.vnblog/..." (link gãy).
     const appUrl = (process.env.APP_URL || 'https://techdeal.io.vn').replace(/\/+$/, '')
 
-    // Fetch latest 50 posts
+    // Fetch latest 20 posts
     const response = await axios.get(`${apiUrl}/posts`, {
-      params: { limit: 50 }
+      params: { limit: 20 }
     })
 
     const posts = response.data?.data?.items || []

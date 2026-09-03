@@ -53,7 +53,7 @@ export default defineSitemapEventHandler(async () => {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/posts?limit=100`)
+    const response = await fetch(`${apiUrl}/posts?limit=20`)
     const resData = await response.json()
     if (resData && resData.success && resData.data && Array.isArray(resData.data.items)) {
       const dynamicPages = resData.data.items
