@@ -39,9 +39,11 @@ const handleResetPassword = async () => {
 
   isLoading.value = true
   errorMsg.value = ''
+  const config = useRuntimeConfig()
+  const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
   try {
     const res = await fetch(
-      'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/reset-password',
+      `${apiUrl}/auth/reset-password`,
       {
         method: 'POST',
         headers: {

@@ -17,8 +17,10 @@ const handleResetRequest = async () => {
   }
   isLoading.value = true
   try {
+    const config = useRuntimeConfig()
+    const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
     const res = await fetch(
-      'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/forgot-password',
+      `${apiUrl}/auth/forgot-password`,
       {
         method: 'POST',
         headers: {

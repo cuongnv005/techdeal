@@ -49,7 +49,8 @@ const handleCredentialResponse = async (response: any) => {
   const idToken = response.credential
   isLoading.value = true
   try {
-    const res = await fetch('https://techdeal-worker.mdchannelvn.workers.dev/api/auth/google', {
+    const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
+    const res = await fetch(`${apiUrl}/auth/google`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -132,9 +133,10 @@ onMounted(() => {
     script.onload = () => {
       const g = (window as any).google
       if (g) {
+        const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
         g.accounts.id.initialize({
           client_id: config.public.googleClientId,
-          login_uri: 'https://techdeal-worker.mdchannelvn.workers.dev/api/auth/google',
+          login_uri: `${apiUrl}/auth/google`,
           ux_mode: 'redirect',
           auto_select: false
         })

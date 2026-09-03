@@ -12,7 +12,7 @@ export default defineSitemapEventHandler(async () => {
     { loc: '/game' }
   ]
 
-  const apiUrl = process.env.VITE_API_URL || 'https://techdeal-worker.mdchannelvn.workers.dev/api'
+  const apiUrl = process.env.VITE_API_URL || 'https://api.techdeal.io.vn/api'
   const dealsPages: any[] = []
 
   // Fetch dynamic deal lastmod for /deals/ios and /deals/android
