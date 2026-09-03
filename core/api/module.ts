@@ -70,11 +70,34 @@ class HttpModule {
         return response
       },
       (error: AxiosError) => {
-        const message: string | undefined = (error?.response?.data as HttpErrorPayload)?.message
-        if (message) {
-          Toast.error({ message })
+        const status = error.response?.status
+        const msg = (
+          (error?.response?.data as HttpErrorPayload)?.message ||
+          error.message ||
+          ''
+        ).toLowerCase()
+
+        // Kiểm tra lỗi Backend sập, timeout, network error hoặc chạm trần D1 row read
+        const isMaintenanceError =
+          !error.response ||
+          [500, 502, 503, 504].includes(status as number) ||
+          msg.includes('d1') ||
+          msg.includes('row read') ||
+          msg.includes('rate limit') ||
+          msg.includes('network error') ||
+          msg.includes('econnrefused') ||
+          msg.includes('etimedout')
+
+        if (isMaintenanceError) {
+          if (process.client) {
+            import('@shared/composables/use-maintenance').then(({ useMaintenance }) => {
+              const { triggerMaintenance } = useMaintenance()
+              triggerMaintenance()
+            })
+          }
         }
-        if (error.response?.status === 401) {
+
+        if (status === 401) {
           if (process.client) {
             import('@stores/user').then(({ useUserStore }) => {
               const userStore = useUserStore()

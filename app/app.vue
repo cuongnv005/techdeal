@@ -3,10 +3,13 @@ import { computed, watch, onMounted, nextTick } from 'vue'
 
 import CustomFloatingAd from '@features/blog/components/CustomFloatingAd.vue'
 import { useCookieConsent } from '@shared/composables/use-cookie-consent'
+import { useMaintenance } from '@shared/composables/use-maintenance'
 import { useUserStore } from '@stores/user'
 
 const userStore = useUserStore()
 userStore.initializeAuth()
+
+const { isMaintenanceActive, maintenanceCustomMessage } = useMaintenance()
 
 // ---- Google Consent Mode v2 ----------------------------------------------
 // AdSense hiện KHÔNG chạy (tài khoản chưa được duyệt) — script adsbygoogle.js
@@ -348,5 +351,15 @@ useHead(() => ({
   <!-- Custom Affiliate Floating Ad Widget -->
   <ClientOnly>
     <CustomFloatingAd v-if="isAdskeeperAllowed" />
+  </ClientOnly>
+
+  <!-- Fullscreen Maintenance Overlay when backend is unreachable / D1 rows exceed -->
+  <ClientOnly>
+    <div
+      v-if="isMaintenanceActive"
+      class="fixed inset-0 z-[999999] overflow-y-auto bg-slate-50 dark:bg-zinc-950 flex flex-col"
+    >
+      <UiMaintenanceView :message="maintenanceCustomMessage" :show-retry="true" />
+    </div>
   </ClientOnly>
 </template>
