@@ -11,6 +11,7 @@ interface Props {
   hasMore: boolean
   loading?: boolean
   isAuthenticated: boolean
+  currentUserId?: string
 }
 
 defineProps<Props>()
@@ -19,6 +20,8 @@ const emit = defineEmits<{
   expand: []
   reply: [comment: ApiComment]
   like: [comment: ApiComment]
+  report: [comment: ApiComment]
+  block: [comment: ApiComment]
 }>()
 </script>
 
@@ -29,8 +32,11 @@ const emit = defineEmits<{
       :key="reply.id"
       :comment="reply"
       :is-authenticated="isAuthenticated"
+      :current-user-id="currentUserId"
       @reply="emit('reply', $event)"
       @like="emit('like', $event)"
+      @report="emit('report', $event)"
+      @block="emit('block', $event)"
     />
 
     <button

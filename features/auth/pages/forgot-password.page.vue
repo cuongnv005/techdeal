@@ -19,16 +19,13 @@ const handleResetRequest = async () => {
   try {
     const config = useRuntimeConfig()
     const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
-    const res = await fetch(
-      `${apiUrl}/auth/forgot-password`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: email.value })
-      }
-    )
+    const res = await fetch(`${apiUrl}/auth/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email.value })
+    })
     const data = await res.json()
     if (!res.ok || !data.success) {
       throw new Error(data.message || t('auth.err_reset_failed'))

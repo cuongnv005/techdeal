@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { useRoute } from '#app'
+import { Flag, Ban, ShieldAlert } from 'lucide-vue-next'
 
 import UserAvatar from '../components/UserAvatar.vue'
 import UserPostList from '../components/UserPostList.vue'
@@ -13,6 +14,8 @@ import type { UserProfile } from '../types/user.type'
 import Footer from '@features/blog/components/Footer.vue'
 import Header from '@features/blog/components/Header.vue'
 import { useUserStore } from '@stores/user'
+import ReportModal from '@features/moderation/components/ReportModal.vue'
+import { moderationRepository } from '@features/moderation/api/moderation'
 
 const route = useRoute()
 const authorIdParam = route.params.id as string
@@ -25,6 +28,64 @@ const { profileData, isLoading, error, page, updateProfile } = useUser(authorIdP
 const isOwner = computed(() => {
   return userStore.isAuthenticated && userStore.id === authorIdParam
 })
+
+const isReportUserOpen = ref(false)
+const isBlocked = ref(false)
+
+const checkBlockedStatus = async () => {
+  if (userStore.isAuthenticated && !isOwner.value) {
+    try {
+      const blockedList = await moderationRepository.getBlockedUsers()
+      isBlocked.value = blockedList.some((u) => String(u.id) === String(authorIdParam))
+    } catch (e) {
+      console.error('Error checking blocked status:', e)
+    }
+  }
+}
+
+watch(
+  () => userStore.isAuthenticated,
+  (auth) => {
+    if (auth) checkBlockedStatus()
+  },
+  { immediate: true }
+)
+
+const handleBlockUser = async () => {
+  if (
+    !confirm(
+      t('moderation.block_confirm', {
+        name: profileWithEmail.value.full_name || profileWithEmail.value.username
+      })
+    )
+  )
+    return
+  try {
+    const res = await moderationRepository.blockUser(authorIdParam)
+    if (res.success) {
+      isBlocked.value = true
+      alert(t('moderation.block_success'))
+    } else {
+      alert(res.error || 'Lỗi khi chặn người dùng!')
+    }
+  } catch (e: any) {
+    alert(e.message || 'Lỗi khi chặn người dùng!')
+  }
+}
+
+const handleUnblockUser = async () => {
+  try {
+    const res = await moderationRepository.unblockUser(authorIdParam)
+    if (res.success) {
+      isBlocked.value = false
+      alert(t('moderation.unblock_success'))
+    } else {
+      alert(res.error || 'Lỗi khi bỏ chặn người dùng!')
+    }
+  } catch (e: any) {
+    alert(e.message || 'Lỗi khi bỏ chặn người dùng!')
+  }
+}
 
 const usernameVal = computed(() => profileData.value?.profile?.username || '')
 
@@ -245,7 +306,47 @@ const getRoleName = (role?: string) => {
               {{ profileWithEmail.bio || $t('user_profile.no_bio') }}
             </p>
           </div>
+
+          <!-- Actions for non-owners: Report & Block User -->
+          <div v-if="!isOwner && userStore.isAuthenticated" class="flex md:flex-col gap-2 shrink-0">
+            <button
+              @click="isReportUserOpen = true"
+              class="px-3.5 py-2 rounded-xl border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              :title="$t('moderation.report_btn')"
+            >
+              <Flag class="w-3.5 h-3.5" />
+              <span>{{ $t('moderation.report_btn') }}</span>
+            </button>
+
+            <button
+              v-if="!isBlocked"
+              @click="handleBlockUser"
+              class="px-3.5 py-2 rounded-xl border border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-500/10 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              :title="$t('moderation.block_user_btn')"
+            >
+              <Ban class="w-3.5 h-3.5" />
+              <span>{{ $t('moderation.block_user_btn') }}</span>
+            </button>
+
+            <button
+              v-else
+              @click="handleUnblockUser"
+              class="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-200 hover:bg-zinc-700 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              :title="$t('moderation.unblock_user_btn')"
+            >
+              <ShieldAlert class="w-3.5 h-3.5" />
+              <span>{{ $t('moderation.unblock_user_btn') }}</span>
+            </button>
+          </div>
         </div>
+
+        <!-- Report User Modal -->
+        <ReportModal
+          v-model:open="isReportUserOpen"
+          target-type="user"
+          :target-id="authorIdParam"
+          :target-title="profileWithEmail.full_name || profileWithEmail.username"
+        />
 
         <!-- Details Grid: Info & Posts -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

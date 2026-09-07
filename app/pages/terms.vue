@@ -84,9 +84,51 @@ useHead({
             </ul>
           </section>
 
+          <!-- Mục 4: UGC Zero-Tolerance Policy & 24h Moderation (Apple Guideline 1.2) -->
+          <section
+            class="space-y-3 p-4 bg-amber-500/10 dark:bg-amber-500/5 rounded-xl border border-amber-500/20"
+          >
+            <h2
+              class="text-lg font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2"
+            >
+              <span>⚠️</span> 4. Nội dung do Người dùng tạo (UGC) &amp; Chính sách Không Khoan
+              Nhượng (Zero-Tolerance)
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
+              TechDeal áp dụng
+              <strong>CHÍNH SÁCH KHÔNG KHOAN NHƯỢNG (ZERO-TOLERANCE POLICY)</strong> đối với mọi nội
+              dung phản cảm, quấy rối, ngôn từ thù địch hoặc người dùng có hành vi lăng mạ, lừa đảo.
+            </p>
+            <ul class="list-disc pl-5 text-xs text-zinc-700 dark:text-zinc-300 space-y-1.5">
+              <li>
+                <strong>Nghiêm cấm tuyệt đối:</strong> Nghiêm cấm các bài đăng, bình luận hoặc thông
+                tin hồ sơ có tính chất đồi trụy, khiêu dâm, lăng mạ, phân biệt đối xử, quấy rối,
+                kích động bạo lực hoặc lừa đảo.
+              </li>
+              <li>
+                <strong>Cơ chế Báo cáo (Report / Flag):</strong> Người dùng có thể báo cáo bất kỳ
+                bài viết, deal hoặc bình luận vi phạm nào trực tiếp trên ứng dụng hoặc website thông
+                qua nút "Báo cáo".
+              </li>
+              <li>
+                <strong>Cơ chế Chặn (Block User):</strong> Người dùng có quyền chặn bất kỳ người
+                dùng nào có hành vi quấy rối. Toàn bộ nội dung của người bị chặn sẽ bị ẩn ngay lập
+                tức.
+              </li>
+              <li>
+                <strong>Cam kết xử lý trong 24 giờ:</strong> Đội ngũ kiểm duyệt TechDeal cam kết
+                <strong
+                  >xem xét mọi báo cáo vi phạm, gỡ bỏ nội dung xấu độc và xử lý/khóa tài khoản vi
+                  phạm trong vòng 24 giờ</strong
+                >
+                kể từ thời điểm nhận được báo cáo.
+              </li>
+            </ul>
+          </section>
+
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              4. Liên kết đến nền tảng bên thứ ba (Third-Party Links)
+              5. Liên kết đến nền tảng bên thứ ba (Third-Party Links)
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Các bài viết và ưu đãi trên TechDeal có thể chứa đường dẫn trực tiếp đến các ứng dụng,
@@ -103,7 +145,7 @@ useHead({
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              5. Tuyên bố từ chối trách nhiệm
+              6. Tuyên bố từ chối trách nhiệm
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Tất cả thông tin trên TechDeal được cung cấp theo nguyên tắc "nguyên trạng" và "sẵn
@@ -115,7 +157,7 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Thay đổi Điều khoản</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Thay đổi Điều khoản</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Chúng tôi có quyền sửa đổi các điều khoản này bất kỳ lúc nào. Mọi thay đổi sẽ được
               đăng trên trang này với ngày cập nhật mới nhất. Việc bạn tiếp tục sử dụng trang web
@@ -125,7 +167,7 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Luật áp dụng</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">8. Luật áp dụng</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Các Điều khoản Dịch vụ này được điều chỉnh và giải thích theo pháp luật Việt Nam. Mọi
               tranh chấp phát sinh liên quan đến việc sử dụng trang web sẽ được giải quyết tại tòa
@@ -135,7 +177,7 @@ useHead({
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              8. Gói Thành viên VIP (TechDeal VIP) &amp; Thanh toán trong ứng dụng
+              9. Gói Thành viên VIP (TechDeal VIP) &amp; Thanh toán trong ứng dụng
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Ứng dụng di động TechDeal cung cấp gói thành viên trả phí "TechDeal VIP" giúp loại bỏ
@@ -169,7 +211,7 @@ useHead({
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              7. Liên kết Tiếp thị Liên kết (Affiliate Links) & Quảng cáo Mua sắm
+              10. Liên kết Tiếp thị Liên kết (Affiliate Links) &amp; Quảng cáo Mua sắm
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               TechDeal tham gia vào các chương trình tiếp thị liên kết (Affiliate Marketing) với các
@@ -214,65 +256,101 @@ useHead({
           >
             Terms of Service
           </h1>
-          <p class="text-zinc-550 text-xs italic">Last updated: August 10, 2026</p>
+          <p class="text-zinc-550 text-xs italic">Last updated: September 7, 2026</p>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">1. Acceptance of Terms</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Welcome to TechDeal ("we", "TechDeal"). By accessing or using our website, you agree
-              to comply with and be bound by these Terms of Service. If you do not agree with these
-              terms, please do not use our website.
+              Welcome to TechDeal ("we", "TechDeal"). By accessing or using our website or mobile
+              applications, you agree to comply with and be bound by these Terms of Service. If you
+              do not agree with these terms, please do not use our services.
             </p>
           </section>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              2. Content & Intellectual Property
+              2. Content &amp; Intellectual Property
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              TechDeal is a personal blog and news platform sharing information, reviews, and guides
-              on technology, consumer electronics, and video games (gaming). All content on this
-              website, including articles, images, and logos, is owned by TechDeal or its creators
-              and protected by copyright laws. You may not copy, republish, or distribute our
-              content without prior written permission.
+              TechDeal is a technology news, deal discovery and community platform sharing
+              information, reviews, and guides on technology, consumer electronics, and software.
+              All content created by TechDeal, including articles, images, and logos, is owned by
+              TechDeal or its creators and protected by copyright laws.
             </p>
           </section>
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              3. User Behavior & Comments
+              3. User Behavior &amp; Accounts
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
-              If you create an account or participate in discussions by leaving comments:
+              If you create an account or participate in discussions by submitting content or
+              leaving comments:
             </p>
             <ul class="list-disc pl-5 text-xs text-zinc-650 dark:text-zinc-400 space-y-1">
-              <li>You agree to provide true, accurate, and complete information.</li>
+              <li>You agree to provide true, accurate, and complete registration information.</li>
               <li>
                 You are responsible for maintaining the confidentiality of your login credentials.
               </li>
+              <li>You must not post abusive, offensive, defamatory, spam, or unlawful content.</li>
+            </ul>
+          </section>
+
+          <!-- Section 4: UGC Zero-Tolerance Policy & 24h Moderation (Apple Guideline 1.2) -->
+          <section
+            class="space-y-3 p-4 bg-amber-500/10 dark:bg-amber-500/5 rounded-xl border border-amber-500/20"
+          >
+            <h2
+              class="text-lg font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2"
+            >
+              <span>⚠️</span> 4. User-Generated Content (UGC) &amp; ZERO-TOLERANCE Policy
+            </h2>
+            <p class="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
+              TechDeal enforces a <strong>STRICT ZERO-TOLERANCE POLICY</strong> for objectionable
+              content and abusive users.
+            </p>
+            <ul class="list-disc pl-5 text-xs text-zinc-700 dark:text-zinc-300 space-y-1.5">
               <li>
-                You must not post abusive, offensive, spam, or unlawful content in the comments
-                section.
+                <strong>Strictly Prohibited:</strong> We do not tolerate hate speech, harassment,
+                sexually explicit materials, threats, defamation, fraud, or abusive conduct in any
+                form across articles, threads, comments, or user profiles.
+              </li>
+              <li>
+                <strong>Flagging &amp; Reporting Mechanism:</strong> Users can flag/report any
+                objectionable content (threads, comments, or accounts) immediately using the
+                "Report" button.
+              </li>
+              <li>
+                <strong>Blocking Mechanism:</strong> Users can block abusive users at any time. All
+                content generated by blocked users will be hidden immediately from your feed.
+              </li>
+              <li>
+                <strong>24-Hour Moderation Commitment:</strong> Our moderation team is committed to
+                <strong
+                  >reviewing all reports, removing objectionable content, and ejecting/banning
+                  offending accounts within 24 hours</strong
+                >
+                of receiving a report.
               </li>
             </ul>
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">4. Third-Party Links</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">5. Third-Party Links</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               Articles and deals on TechDeal may contain direct links to third-party applications,
               stores, or websites (such as Google Play, App Store, Steam, Epic Games Store...).
               These links are provided solely for convenience and transparent offer details.
               <strong
-                >TechDeal does not participate in affiliate marketing and does not receive any
-                commissions or financial benefits</strong
+                >TechDeal does not participate in affiliate marketing for standard developer deals
+                and does not receive any commissions</strong
               >
-              from your accesses or transactions on these platforms.
+              from your accesses or transactions unless explicitly stated.
             </p>
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">5. Disclaimer</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Disclaimer</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               All information on TechDeal is provided on an "as is" and "as available" basis for
               general informational and entertainment purposes only. While we strive to present
@@ -282,7 +360,7 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">6. Changes to Terms</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Changes to Terms</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               We reserve the right to modify these terms at any time. Any changes will be posted on
               this page with the latest updated date. Your continued use of the website after
@@ -291,7 +369,7 @@ useHead({
           </section>
 
           <section class="space-y-3">
-            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">7. Governing Law</h2>
+            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">8. Governing Law</h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               These Terms of Service are governed by and construed in accordance with the laws of
               Vietnam. Any disputes arising in connection with the use of the website shall be
@@ -301,7 +379,7 @@ useHead({
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              8. VIP Membership (TechDeal VIP) &amp; In-App Payments
+              9. VIP Membership (TechDeal VIP) &amp; In-App Payments
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               The TechDeal mobile app offers a paid "TechDeal VIP" membership that removes ads and
@@ -336,7 +414,7 @@ useHead({
 
           <section class="space-y-3">
             <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
-              7. Affiliate Links & Shopping Advertisements
+              10. Affiliate Links &amp; Shopping Advertisements
             </h2>
             <p class="text-xs leading-relaxed text-zinc-650 dark:text-zinc-400">
               TechDeal participates in affiliate marketing programs with reputable e-commerce

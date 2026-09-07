@@ -420,5 +420,35 @@
       "retry": "Try Reloading Page",
       "retrying": "Reloading..."
     }
+  },
+  "moderation": {
+    "report_title": "Report Violation",
+    "report_desc": "Help us keep the TechDeal community safe and respectful by reporting objectionable or abusive content.",
+    "reason_label": "Select a violation reason:",
+    "reasons": {
+      "spam": "Spam / Advertising",
+      "harassment": "Harassment / Abusive behavior",
+      "hate_speech": "Hate speech / Offensive language",
+      "inappropriate": "Inappropriate / Objectionable content",
+      "fraud": "Fraud / Malicious links",
+      "other": "Other reason"
+    },
+    "detail_label": "Detailed description (minimum 10 characters):",
+    "detail_placeholder": "Provide specific details about the violation...",
+    "detail_min_error": "Detailed description must be at least 10 characters!",
+    "select_reason_error": "Please select a reason for your report!",
+    "submitting": "Submitting report...",
+    "submit": "Submit Report",
+    "cancel": "Cancel",
+    "report_btn": "Report",
+    "block_user_btn": "Block User",
+    "unblock_user_btn": "Unblock",
+    "block_confirm": "Are you sure you want to block {name}? All content and comments by this user will be hidden from your account immediately.",
+    "block_success": "User blocked successfully!",
+    "unblock_success": "User unblocked!",
+    "report_success": "Report submitted successfully. Our moderation team will review and take action within 24 hours.",
+    "action_24h_notice": "Commitment: All reports are reviewed and acted upon within 24 hours.",
+    "blocked_users_title": "Blocked Users",
+    "no_blocked_users": "You haven't blocked any users."
   }
 }

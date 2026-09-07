@@ -12,7 +12,8 @@ import {
   Gift,
   Link2,
   Smartphone,
-  Tag
+  Tag,
+  Flag
 } from 'lucide-vue-next'
 
 import Footer from '../../blog/components/Footer.vue'
@@ -22,6 +23,7 @@ import PostManagement from '../components/PostManagement.vue'
 import StatsDashboard from '../components/StatsDashboard.vue'
 import UserManagement from '../components/UserManagement.vue'
 import AffiliateManagement from '../components/AffiliateManagement.vue'
+import ModerationManagement from '../components/ModerationManagement.vue'
 import { useAdminStats } from '../composables/use-admin'
 
 import GiveawayManagement from '@features/giveaway/components/GiveawayManagement.vue'
@@ -37,7 +39,15 @@ const hasAccess = computed(() => {
 })
 
 const activeTab = ref<
-  'stats' | 'posts' | 'comments' | 'users' | 'giveaway' | 'shortlink' | 'threads' | 'affiliate'
+  | 'stats'
+  | 'reports'
+  | 'posts'
+  | 'comments'
+  | 'users'
+  | 'giveaway'
+  | 'shortlink'
+  | 'threads'
+  | 'affiliate'
 >('stats')
 
 // Call composables
@@ -110,6 +120,19 @@ const { stats, isLoadingStats } = await useAdminStats()
               >
                 <LayoutDashboard class="w-4 h-4" />
                 Tổng quan & Thống kê
+              </button>
+
+              <button
+                @click="activeTab = 'reports'"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-xs font-bold rounded-xl transition-all cursor-pointer relative"
+                :class="
+                  activeTab === 'reports'
+                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 font-extrabold'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-950'
+                "
+              >
+                <Flag class="w-4 h-4 text-amber-500" />
+                Báo cáo Vi phạm (UGC)
               </button>
 
               <button
@@ -214,6 +237,11 @@ const { stats, isLoadingStats } = await useAdminStats()
               Đang tải số liệu...
             </div>
             <StatsDashboard v-else :stats-data="stats" />
+          </div>
+
+          <!-- UGC Reports Tab -->
+          <div v-else-if="activeTab === 'reports'">
+            <ModerationManagement />
           </div>
 
           <!-- Posts Tab -->
