@@ -448,7 +448,11 @@
     "unblock_success": "Đã bỏ chặn người dùng!",
     "report_success": "Báo cáo vi phạm đã được gửi thành công. Đội ngũ kiểm duyệt sẽ xem xét và xử lý trong vòng 24 giờ.",
     "action_24h_notice": "Cam kết xử lý: Mọi báo cáo vi phạm sẽ được đội ngũ kiểm duyệt xem xét và xử lý trong vòng 24 giờ.",
+    "blocked_users_btn": "Danh sách chặn",
     "blocked_users_title": "Danh sách người dùng đã chặn",
-    "no_blocked_users": "Bạn chưa chặn người dùng nào."
+    "blocked_users_desc": "Quản lý những người dùng bạn đã chặn",
+    "no_blocked_users": "Bạn chưa chặn người dùng nào.",
+    "no_blocked_users_desc": "Khi chặn ai đó, nội dung và bình luận của họ sẽ bị ẩn khỏi bảng tin của bạn.",
+    "unblock_confirm": "Bạn có chắc chắn muốn bỏ chặn {name}?"
   }
 }

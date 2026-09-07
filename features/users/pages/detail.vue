@@ -15,6 +15,7 @@ import Footer from '@features/blog/components/Footer.vue'
 import Header from '@features/blog/components/Header.vue'
 import { useUserStore } from '@stores/user'
 import ReportModal from '@features/moderation/components/ReportModal.vue'
+import BlockedUsersModal from '@features/moderation/components/BlockedUsersModal.vue'
 import { moderationRepository } from '@features/moderation/api/moderation'
 
 const route = useRoute()
@@ -30,6 +31,7 @@ const isOwner = computed(() => {
 })
 
 const isReportUserOpen = ref(false)
+const isBlockedUsersOpen = ref(false)
 const isBlocked = ref(false)
 
 const checkBlockedStatus = async () => {
@@ -307,8 +309,20 @@ const getRoleName = (role?: string) => {
             </p>
           </div>
 
+          <!-- Actions for owner: Blocked Users list -->
+          <div v-if="isOwner" class="flex md:flex-col gap-2 shrink-0">
+            <button
+              @click="isBlockedUsersOpen = true"
+              class="px-3.5 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              :title="$t('moderation.blocked_users_btn')"
+            >
+              <ShieldAlert class="w-3.5 h-3.5 text-red-500" />
+              <span>{{ $t('moderation.blocked_users_btn') }}</span>
+            </button>
+          </div>
+
           <!-- Actions for non-owners: Report & Block User -->
-          <div v-if="!isOwner && userStore.isAuthenticated" class="flex md:flex-col gap-2 shrink-0">
+          <div v-else-if="userStore.isAuthenticated" class="flex md:flex-col gap-2 shrink-0">
             <button
               @click="isReportUserOpen = true"
               class="px-3.5 py-2 rounded-xl border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
@@ -347,6 +361,9 @@ const getRoleName = (role?: string) => {
           :target-id="authorIdParam"
           :target-title="profileWithEmail.full_name || profileWithEmail.username"
         />
+
+        <!-- Blocked Users Modal (Owner only) -->
+        <BlockedUsersModal v-if="isOwner" v-model:open="isBlockedUsersOpen" />
 
         <!-- Details Grid: Info & Posts -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

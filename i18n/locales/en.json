@@ -448,7 +448,11 @@
     "unblock_success": "User unblocked!",
     "report_success": "Report submitted successfully. Our moderation team will review and take action within 24 hours.",
     "action_24h_notice": "Commitment: All reports are reviewed and acted upon within 24 hours.",
+    "blocked_users_btn": "Blocked Users",
     "blocked_users_title": "Blocked Users",
-    "no_blocked_users": "You haven't blocked any users."
+    "blocked_users_desc": "Manage users you have blocked",
+    "no_blocked_users": "You haven't blocked any users.",
+    "no_blocked_users_desc": "When you block someone, their content and comments will be hidden from your feed.",
+    "unblock_confirm": "Are you sure you want to unblock {name}?"
   }
 }
