@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { Heart } from 'lucide-vue-next'
+import { Heart, Flag, Ban } from 'lucide-vue-next'
 
 import type { ApiComment } from '../api/blog'
 
 interface Props {
   comment: ApiComment
   isAuthenticated: boolean
+  currentUserId?: string
 }
 
 const props = defineProps<Props>()
@@ -15,6 +16,8 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   reply: [comment: ApiComment]
   like: [comment: ApiComment]
+  report: [comment: ApiComment]
+  block: [comment: ApiComment]
 }>()
 
 const localePath = useLocalePath()
@@ -38,6 +41,14 @@ const showMention = computed(
     !!props.comment.reply_to &&
     props.comment.reply_to.comment_id !== props.comment.parent_comment_id
 )
+
+const isSelf = computed(() => {
+  return (
+    props.currentUserId &&
+    props.comment.author_id &&
+    String(props.currentUserId) === String(props.comment.author_id)
+  )
+})
 </script>
 
 <template>
@@ -68,7 +79,7 @@ const showMention = computed(
         {{ comment.content }}
       </p>
 
-      <div v-if="isAuthenticated" class="pt-1 flex items-center gap-4">
+      <div v-if="isAuthenticated" class="pt-1 flex items-center gap-4 flex-wrap">
         <button
           @click="emit('like', comment)"
           class="text-[10px] font-bold transition-colors flex items-center gap-1 cursor-pointer"
@@ -82,6 +93,26 @@ const showMention = computed(
           class="text-[10px] font-bold text-zinc-500 hover:text-[#3498db] dark:hover:text-[#e74c3c] transition-colors cursor-pointer"
         >
           {{ $t('comments.reply') }}
+        </button>
+
+        <button
+          v-if="!isSelf"
+          @click="emit('report', comment)"
+          class="text-[10px] font-bold text-zinc-400 hover:text-amber-500 transition-colors flex items-center gap-1 cursor-pointer ml-auto"
+          :title="$t('moderation.report_btn')"
+        >
+          <Flag class="w-3 h-3" />
+          {{ $t('moderation.report_btn') }}
+        </button>
+
+        <button
+          v-if="!isSelf && comment.author_id"
+          @click="emit('block', comment)"
+          class="text-[10px] font-bold text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-1 cursor-pointer"
+          :title="$t('moderation.block_user_btn')"
+        >
+          <Ban class="w-3 h-3" />
+          {{ $t('moderation.block_user_btn') }}
         </button>
       </div>
     </div>

@@ -14,7 +14,8 @@ import {
   Link,
   Check,
   Sparkles,
-  Pencil
+  Pencil,
+  Flag
 } from 'lucide-vue-next'
 
 import { blogRepository } from '../api/blog'
@@ -29,10 +30,12 @@ import type { BlogPost } from '../types/post.type'
 
 import { useUserStore } from '@stores/user'
 import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
+import ReportModal from '@features/moderation/components/ReportModal.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
 const { isMobileAd } = useAdBreakpoint()
+const isReportPostOpen = ref(false)
 
 const isAuthor = computed(() => {
   if (!userStore.isAuthenticated) return false
@@ -633,8 +636,28 @@ useHead(() => {
                 <Pencil class="w-4 h-4" />
                 {{ $t('detail.edit_post') }}
               </NuxtLink>
+
+              <!-- Report Post Button -->
+              <button
+                v-if="!isAuthor && userStore.isAuthenticated"
+                @click="isReportPostOpen = true"
+                class="px-3 py-2 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                :title="$t('moderation.report_btn')"
+              >
+                <Flag class="w-4 h-4 text-amber-500" />
+                {{ $t('moderation.report_btn') }}
+              </button>
             </div>
           </div>
+
+          <!-- Report Post Modal -->
+          <ReportModal
+            v-model:open="isReportPostOpen"
+            target-type="post"
+            :target-id="post.id"
+            :target-title="post.title"
+          />
+
           <AdBanner width="970px" height="90px" :is-google-ad="true" />
 
           <!-- Comments Section -->

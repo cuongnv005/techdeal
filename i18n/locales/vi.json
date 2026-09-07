@@ -420,5 +420,35 @@
       "retry": "Thử tải lại trang",
       "retrying": "Đang tải lại..."
     }
+  },
+  "moderation": {
+    "report_title": "Báo cáo vi phạm",
+    "report_desc": "Giúp chúng tôi giữ môi trường TechDeal an toàn và lành mạnh bằng cách báo cáo nội dung không phù hợp.",
+    "reason_label": "Chọn lý do vi phạm:",
+    "reasons": {
+      "spam": "Spam / Quảng cáo rác",
+      "harassment": "Quấy rối / Đe dọa / Lăng mạ",
+      "hate_speech": "Ngôn từ thù địch / Xúc phạm",
+      "inappropriate": "Nội dung phản cảm / Khiêu dâm",
+      "fraud": "Lừa đảo / Liên kết độc hại",
+      "other": "Lý do khác"
+    },
+    "detail_label": "Mô tả chi tiết vi phạm (tối thiểu 10 ký tự):",
+    "detail_placeholder": "Nhập chi tiết về hành vi vi phạm...",
+    "detail_min_error": "Mô tả chi tiết phải có tối thiểu 10 ký tự!",
+    "select_reason_error": "Vui lòng chọn lý do báo cáo!",
+    "submitting": "Đang gửi báo cáo...",
+    "submit": "Gửi báo cáo",
+    "cancel": "Hủy bỏ",
+    "report_btn": "Báo cáo",
+    "block_user_btn": "Chặn người dùng",
+    "unblock_user_btn": "Bỏ chặn",
+    "block_confirm": "Bạn có chắc chắn muốn chặn {name}? Tất cả nội dung và bình luận của người này sẽ bị ẩn khỏi tài khoản của bạn.",
+    "block_success": "Đã chặn người dùng thành công!",
+    "unblock_success": "Đã bỏ chặn người dùng!",
+    "report_success": "Báo cáo vi phạm đã được gửi thành công. Đội ngũ kiểm duyệt sẽ xem xét và xử lý trong vòng 24 giờ.",
+    "action_24h_notice": "Cam kết xử lý: Mọi báo cáo vi phạm sẽ được đội ngũ kiểm duyệt xem xét và xử lý trong vòng 24 giờ.",
+    "blocked_users_title": "Danh sách người dùng đã chặn",
+    "no_blocked_users": "Bạn chưa chặn người dùng nào."
   }
 }

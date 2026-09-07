@@ -10,6 +10,8 @@ import CommentItem from './CommentItem.vue'
 import CommentReplies from './CommentReplies.vue'
 
 import { useUserStore } from '@stores/user'
+import ReportModal from '@features/moderation/components/ReportModal.vue'
+import { moderationRepository } from '@features/moderation/api/moderation'
 
 interface Props {
   postId: string
@@ -30,6 +32,14 @@ const loadingMore = ref(false)
 const postingRoot = ref(false)
 const postingReply = ref(false)
 
+// Danh sách user bị chặn trong phiên hiện tại để ẩn ngay lập tức nội dung
+const blockedUserIds = ref<Set<string>>(new Set())
+
+// Report Modal state
+const isReportOpen = ref(false)
+const reportTargetId = ref<string>('')
+const reportTargetTitle = ref<string>('')
+
 interface ExpandedReplies {
   items: ApiComment[]
   total: number
@@ -45,6 +55,33 @@ interface ReplyTarget {
 }
 
 const replyTarget = ref<ReplyTarget | null>(null)
+
+// Tải danh sách user bị chặn của tài khoản hiện tại khi đã đăng nhập
+const loadBlockedUsers = async () => {
+  if (userStore.isAuthenticated) {
+    try {
+      const list = await moderationRepository.getBlockedUsers()
+      blockedUserIds.value = new Set(list.map((u) => String(u.id)))
+    } catch (e) {
+      console.error('Error fetching blocked users in comments:', e)
+    }
+  }
+}
+
+watch(
+  () => userStore.isAuthenticated,
+  (auth) => {
+    if (auth) loadBlockedUsers()
+  },
+  { immediate: true }
+)
+
+// Lọc các comment mà author không nằm trong danh sách chặn
+const visibleRootComments = computed(() => {
+  return rootComments.value.filter(
+    (c) => !c.author_id || !blockedUserIds.value.has(String(c.author_id))
+  )
+})
 
 const hasMoreRoot = computed(
   () => !!pagination.value && pagination.value.current_page < pagination.value.total_pages
@@ -78,21 +115,27 @@ const loadMore = () => {
   fetchComments(pagination.value.current_page + 1, true)
 }
 
-// Trạng thái hiển thị trả lời của 1 bình luận gốc: dùng preview từ API list cho tới khi user
-// bấm "Xem thêm trả lời" (expandedReplies), lúc đó thay bằng toàn bộ trả lời tải riêng
+// Trạng thái hiển thị trả lời của 1 bình luận gốc: lọc sạch các comment bị chặn
 const repliesView = (root: ApiComment) => {
   const expanded = expandedReplies.value[root.id]
   if (expanded) {
+    const visibleItems = expanded.items.filter(
+      (c) => !c.author_id || !blockedUserIds.value.has(String(c.author_id))
+    )
     return {
-      items: expanded.items,
-      total: expanded.total,
+      items: visibleItems,
+      total: visibleItems.length,
       hasMore: expanded.loading,
       loading: expanded.loading
     }
   }
+  const rawItems = root.replies?.items ?? []
+  const visibleItems = rawItems.filter(
+    (c) => !c.author_id || !blockedUserIds.value.has(String(c.author_id))
+  )
   return {
-    items: root.replies?.items ?? [],
-    total: root.replies?.total ?? 0,
+    items: visibleItems,
+    total: visibleItems.length,
     hasMore: root.replies?.has_more ?? false,
     loading: false
   }
@@ -128,6 +171,30 @@ const handleLike = async (comment: ApiComment) => {
   if (result) {
     comment.like_count = result.like_count
     comment.liked_by_me = result.liked
+  }
+}
+
+const handleReportComment = (comment: ApiComment) => {
+  reportTargetId.value = comment.id
+  reportTargetTitle.value = `Bình luận của ${comment.author_name}: "${comment.content.slice(0, 40)}..."`
+  isReportOpen.value = true
+}
+
+const handleBlockAuthor = async (comment: ApiComment) => {
+  if (!comment.author_id) return
+  const authorId = String(comment.author_id)
+  if (!confirm(t('moderation.block_confirm', { name: comment.author_name }))) return
+
+  try {
+    const res = await moderationRepository.blockUser(authorId)
+    if (res.success) {
+      blockedUserIds.value.add(authorId)
+      alert(t('moderation.block_success'))
+    } else {
+      alert(res.error || 'Lỗi khi chặn người dùng!')
+    }
+  } catch (e: any) {
+    alert(e.message || 'Lỗi khi chặn người dùng!')
   }
 }
 
@@ -226,21 +293,27 @@ const submitReply = async (content: string) => {
       {{ $t('comments.loading') }}
     </div>
 
-    <div v-else-if="rootComments.length === 0" class="text-center py-8 text-xs text-zinc-400">
+    <div
+      v-else-if="visibleRootComments.length === 0"
+      class="text-center py-8 text-xs text-zinc-400"
+    >
       {{ $t('comments.empty') }}
     </div>
 
     <div v-else class="space-y-4">
       <div
-        v-for="root in rootComments"
+        v-for="root in visibleRootComments"
         :key="root.id"
         class="p-5 rounded-2xl bg-white dark:bg-zinc-900/50 border border-gray-150 dark:border-zinc-900 space-y-4"
       >
         <CommentItem
           :comment="root"
           :is-authenticated="userStore.isAuthenticated"
+          :current-user-id="userStore.id || undefined"
           @reply="openReply"
           @like="handleLike"
+          @report="handleReportComment"
+          @block="handleBlockAuthor"
         />
 
         <CommentReplies
@@ -249,9 +322,12 @@ const submitReply = async (content: string) => {
           :has-more="repliesView(root).hasMore"
           :loading="repliesView(root).loading"
           :is-authenticated="userStore.isAuthenticated"
+          :current-user-id="userStore.id || undefined"
           @expand="expandReplies(root)"
           @reply="openReply"
           @like="handleLike"
+          @report="handleReportComment"
+          @block="handleBlockAuthor"
         />
 
         <CommentForm
@@ -279,5 +355,13 @@ const submitReply = async (content: string) => {
         {{ loadingMore ? $t('comments.loading_short') : $t('comments.load_more') }}
       </button>
     </div>
+
+    <!-- Report Modal for Comments -->
+    <ReportModal
+      v-model:open="isReportOpen"
+      target-type="comment"
+      :target-id="reportTargetId"
+      :target-title="reportTargetTitle"
+    />
   </div>
 </template>

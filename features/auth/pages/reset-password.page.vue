@@ -42,16 +42,13 @@ const handleResetPassword = async () => {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl || 'https://api.techdeal.io.vn/api'
   try {
-    const res = await fetch(
-      `${apiUrl}/auth/reset-password`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ token: token.value, password: newPassword.value })
-      }
-    )
+    const res = await fetch(`${apiUrl}/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token: token.value, password: newPassword.value })
+    })
     const data = await res.json()
     if (!res.ok || !data.success) {
       throw new Error(data.message || 'Đặt lại mật khẩu thất bại!')
