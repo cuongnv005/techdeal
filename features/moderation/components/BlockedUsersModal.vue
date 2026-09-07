@@ -26,7 +26,7 @@ const fetchBlockedUsers = async () => {
   try {
     blockedUsers.value = await moderationRepository.getBlockedUsers()
   } catch (err: any) {
-    errorMsg.value = err.message || 'Không thể tải danh sách đã chặn'
+    errorMsg.value = err.message || t('moderation.load_error')
   } finally {
     isLoading.value = false
   }
@@ -53,10 +53,10 @@ const handleUnblock = async (user: BlockedUser) => {
       blockedUsers.value = blockedUsers.value.filter((u) => u.id !== user.id)
       emit('unblocked', user.id)
     } else {
-      alert(res.error || 'Lỗi khi bỏ chặn người dùng!')
+      alert(res.error || t('moderation.unblock_error'))
     }
   } catch (err: any) {
-    alert(err.message || 'Lỗi khi bỏ chặn người dùng!')
+    alert(err.message || t('moderation.unblock_error'))
   } finally {
     unblockingId.value = null
   }
