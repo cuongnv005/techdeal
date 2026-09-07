@@ -2,6 +2,7 @@
 import { computed, watch, onMounted, nextTick } from 'vue'
 
 import CustomFloatingAd from '@features/blog/components/CustomFloatingAd.vue'
+import { useAdBreakpoint } from '@shared/composables/use-ad-breakpoint'
 import { useCookieConsent } from '@shared/composables/use-cookie-consent'
 import { useMaintenance } from '@shared/composables/use-maintenance'
 import { useUserStore } from '@stores/user'
@@ -9,6 +10,7 @@ import { useUserStore } from '@stores/user'
 const userStore = useUserStore()
 userStore.initializeAuth()
 
+const { isDesktopAd } = useAdBreakpoint()
 const { isMaintenanceActive, maintenanceCustomMessage } = useMaintenance()
 
 // ---- Google Consent Mode v2 ----------------------------------------------
@@ -343,9 +345,13 @@ useHead(() => ({
     <div v-if="isToasterAllowed" data-type="_mgwidget" data-widget-id="2060411"></div>
   </ClientOnly> -->
 
-  <!-- MGID Smart Notification Widget -->
+  <!-- MGID Smart Notification Widget (Chỉ mount trên Desktop/PC qua useAdBreakpoint) -->
   <ClientOnly>
-    <div v-if="isAdskeeperAllowed" data-type="_mgwidget" data-widget-id="2064116"></div>
+    <div
+      v-if="isAdskeeperAllowed && isDesktopAd"
+      data-type="_mgwidget"
+      data-widget-id="2064116"
+    ></div>
   </ClientOnly>
 
   <!-- Custom Affiliate Floating Ad Widget -->

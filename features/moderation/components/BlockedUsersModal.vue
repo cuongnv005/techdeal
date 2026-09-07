@@ -42,7 +42,7 @@ watch(
 )
 
 const handleUnblock = async (user: BlockedUser) => {
-  if (!confirm(t('moderation.unblock_confirm', { name: user.full_name || user.username }))) {
+  if (!confirm(t('moderation.unblock_confirm', { name: user.display_name || user.username }))) {
     return
   }
 
@@ -165,7 +165,7 @@ const close = () => {
                 />
                 <div class="min-w-0">
                   <p class="text-xs font-bold text-zinc-900 dark:text-white truncate">
-                    {{ user.full_name || user.username }}
+                    {{ user.display_name || user.username }}
                   </p>
                   <p class="text-[10px] text-zinc-500 truncate">@{{ user.username }}</p>
                 </div>
@@ -177,7 +177,7 @@ const close = () => {
                 class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-gray-200 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors shrink-0 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
               >
                 <Loader2 v-if="unblockingId === user.id" class="w-3.5 h-3.5 animate-spin" />
-                <span>{{ $t('moderation.unblock_btn') || 'Bỏ chặn' }}</span>
+                <span>{{ $t('moderation.unblock_user_btn') }}</span>
               </button>
             </div>
           </div>
@@ -191,7 +191,7 @@ const close = () => {
             @click="close"
             class="px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-xl transition-colors cursor-pointer"
           >
-            {{ $t('common.close') || 'Đóng' }}
+            {{ $t('common.close') }}
           </button>
         </div>
       </div>

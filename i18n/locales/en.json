@@ -27,7 +27,10 @@
     "logout": "Logout",
     "dashboard": "Dashboard",
     "welcome_user": "Welcome, ",
-    "email_placeholder": "Enter your email..."
+    "email_placeholder": "Enter your email...",
+    "close": "Close",
+    "loading": "Loading...",
+    "retry": "Retry"
   },
   "sidebar": {
     "newsletter_title": "TechDeal Newsletter",

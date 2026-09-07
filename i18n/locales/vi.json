@@ -27,7 +27,10 @@
     "logout": "Đăng xuất",
     "dashboard": "Dashboard",
     "welcome_user": "Chào, ",
-    "email_placeholder": "Nhập email của bạn..."
+    "email_placeholder": "Nhập email của bạn...",
+    "close": "Đóng",
+    "loading": "Đang tải...",
+    "retry": "Thử lại"
   },
   "sidebar": {
     "newsletter_title": "Bản tin TechDeal",
