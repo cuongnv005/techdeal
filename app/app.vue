@@ -10,7 +10,7 @@ import { useUserStore } from '@stores/user'
 const userStore = useUserStore()
 userStore.initializeAuth()
 
-const { isDesktopAd } = useAdBreakpoint()
+const { isPcAd } = useAdBreakpoint()
 const { isMaintenanceActive, maintenanceCustomMessage } = useMaintenance()
 
 // ---- Google Consent Mode v2 ----------------------------------------------
@@ -347,11 +347,12 @@ useHead(() => ({
 
   <!-- MGID Smart Notification Widget (Chỉ mount trên Desktop/PC qua useAdBreakpoint) -->
   <ClientOnly>
-    <div
-      v-if="isAdskeeperAllowed && isDesktopAd"
-      data-type="_mgwidget"
-      data-widget-id="2064116"
-    ></div>
+    <div v-if="isAdskeeperAllowed && isPcAd">
+      <div data-type="_mgwidget" data-widget-id="2064116"></div>
+      <component :is="'script'">
+        (function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");
+      </component>
+    </div>
   </ClientOnly>
 
   <!-- Custom Affiliate Floating Ad Widget -->

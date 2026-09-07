@@ -23,16 +23,20 @@ import { onMounted, ref } from 'vue'
 // screens trong tailwind.css). Đây là NGUỒN DUY NHẤT quyết định banner nào
 // chạy — template không còn dùng `hidden xl:*` cho mấy khối này nữa.
 const XL_BREAKPOINT = 1280
+// Ngưỡng PC / Tablet (>= 768px) để phân định màn hình máy tính với điện thoại di động (< 768px).
+const PC_BREAKPOINT = 768
 
 export function useAdBreakpoint() {
   const isDesktopAd = ref(false)
   const isMobileAd = ref(false)
+  const isPcAd = ref(false)
 
   onMounted(() => {
     const isDesktop = window.matchMedia(`(min-width: ${XL_BREAKPOINT}px)`).matches
     isDesktopAd.value = isDesktop
     isMobileAd.value = !isDesktop
+    isPcAd.value = window.matchMedia(`(min-width: ${PC_BREAKPOINT}px)`).matches
   })
 
-  return { isDesktopAd, isMobileAd }
+  return { isDesktopAd, isMobileAd, isPcAd }
 }
