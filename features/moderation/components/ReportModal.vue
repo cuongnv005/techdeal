@@ -78,121 +78,123 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div
-    v-if="open"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
-    @click.self="close"
-  >
+  <Teleport to="body">
     <div
-      class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleUp"
+      v-if="open"
+      class="fixed inset-0 top-0 left-0 right-0 bottom-0 w-screen h-screen z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto animate-fadeIn"
+      @click.self="close"
     >
-      <!-- Modal Header -->
       <div
-        class="flex items-center justify-between p-5 border-b border-gray-150 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50"
+        class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto animate-scaleUp"
       >
-        <div class="flex items-center gap-2.5">
-          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-500">
-            <Flag class="w-5 h-5" />
+        <!-- Modal Header -->
+        <div
+          class="flex items-center justify-between p-5 border-b border-gray-150 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50"
+        >
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+              <Flag class="w-5 h-5" />
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
+                {{ $t('moderation.report_title') }}
+              </h3>
+              <p v-if="targetTitle" class="text-[11px] text-zinc-400 line-clamp-1 max-w-[260px]">
+                {{ targetTitle }}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 class="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
-              {{ $t('moderation.report_title') }}
-            </h3>
-            <p v-if="targetTitle" class="text-[11px] text-zinc-400 line-clamp-1 max-w-[260px]">
-              {{ targetTitle }}
+          <button
+            @click="close"
+            class="p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <X class="w-4 h-4" />
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <form @submit.prevent="handleSubmit" class="p-5 space-y-4">
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {{ $t('moderation.report_desc') }}
+          </p>
+
+          <!-- 24-Hour Moderation Commitment Banner -->
+          <div
+            class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2"
+          >
+            <ShieldAlert class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+            <p class="text-[11px] font-medium text-amber-900 dark:text-amber-400 leading-relaxed">
+              {{ $t('moderation.action_24h_notice') }}
             </p>
           </div>
-        </div>
-        <button
-          @click="close"
-          class="p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-        >
-          <X class="w-4 h-4" />
-        </button>
-      </div>
 
-      <!-- Modal Body -->
-      <form @submit.prevent="handleSubmit" class="p-5 space-y-4">
-        <p class="text-xs text-zinc-500 dark:text-zinc-400">
-          {{ $t('moderation.report_desc') }}
-        </p>
-
-        <!-- 24-Hour Moderation Commitment Banner -->
-        <div
-          class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2"
-        >
-          <ShieldAlert class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-          <p class="text-[11px] font-medium text-amber-900 dark:text-amber-400 leading-relaxed">
-            {{ $t('moderation.action_24h_notice') }}
-          </p>
-        </div>
-
-        <div class="space-y-2">
-          <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-            {{ $t('moderation.reason_label') }}
-          </label>
-          <div class="space-y-1.5">
-            <label
-              v-for="r in REASONS"
-              :key="r.value"
-              class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all text-xs"
-              :class="
-                selectedReason === r.value
-                  ? 'border-[#3498db] bg-[#3498db]/5 dark:border-[#e74c3c] dark:bg-[#e74c3c]/5 text-zinc-900 dark:text-white font-bold'
-                  : 'border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
-              "
-            >
-              <input
-                type="radio"
-                name="report_reason"
-                :value="r.value"
-                v-model="selectedReason"
-                class="accent-[#3498db] dark:accent-[#e74c3c]"
-              />
-              <span>{{ $t(r.key) }}</span>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+              {{ $t('moderation.reason_label') }}
             </label>
+            <div class="space-y-1.5">
+              <label
+                v-for="r in REASONS"
+                :key="r.value"
+                class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all text-xs"
+                :class="
+                  selectedReason === r.value
+                    ? 'border-[#3498db] bg-[#3498db]/5 dark:border-[#e74c3c] dark:bg-[#e74c3c]/5 text-zinc-900 dark:text-white font-bold'
+                    : 'border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
+                "
+              >
+                <input
+                  type="radio"
+                  name="report_reason"
+                  :value="r.value"
+                  v-model="selectedReason"
+                  class="accent-[#3498db] dark:accent-[#e74c3c]"
+                />
+                <span>{{ $t(r.key) }}</span>
+              </label>
+            </div>
           </div>
-        </div>
 
-        <!-- Expanded Details if reason is 'other' -->
-        <div v-if="selectedReason === 'other'" class="space-y-1.5 animate-fadeIn">
-          <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-            {{ $t('moderation.detail_label') }}
-          </label>
-          <textarea
-            v-model="details"
-            :placeholder="$t('moderation.detail_placeholder')"
-            rows="3"
-            class="w-full text-xs p-3 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-[#3498db]"
-          ></textarea>
-        </div>
+          <!-- Expanded Details if reason is 'other' -->
+          <div v-if="selectedReason === 'other'" class="space-y-1.5 animate-fadeIn">
+            <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+              {{ $t('moderation.detail_label') }}
+            </label>
+            <textarea
+              v-model="details"
+              :placeholder="$t('moderation.detail_placeholder')"
+              rows="3"
+              class="w-full text-xs p-3 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+            ></textarea>
+          </div>
 
-        <!-- Error message -->
-        <p v-if="errorMessage" class="text-xs font-bold text-red-500">
-          {{ errorMessage }}
-        </p>
+          <!-- Error message -->
+          <p v-if="errorMessage" class="text-xs font-bold text-red-500">
+            {{ errorMessage }}
+          </p>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-3 pt-2">
-          <button
-            type="button"
-            @click="close"
-            class="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-zinc-800 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-          >
-            {{ $t('moderation.cancel') }}
-          </button>
-          <button
-            type="submit"
-            :disabled="isSubmitting || !selectedReason"
-            class="flex-1 py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
-            <span v-else>{{ $t('moderation.submit') }}</span>
-          </button>
-        </div>
-      </form>
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-3 pt-2">
+            <button
+              type="button"
+              @click="close"
+              class="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-zinc-800 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+              {{ $t('moderation.cancel') }}
+            </button>
+            <button
+              type="submit"
+              :disabled="isSubmitting || !selectedReason"
+              class="flex-1 py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
+              <span v-else>{{ $t('moderation.submit') }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>

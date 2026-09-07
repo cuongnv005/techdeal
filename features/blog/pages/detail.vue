@@ -53,6 +53,14 @@ if (process.client) {
 
 const { locale } = useI18n()
 const localePath = useLocalePath()
+
+const handleTriggerReportPost = () => {
+  if (!userStore.isAuthenticated) {
+    navigateTo(localePath('/login'))
+    return
+  }
+  isReportPostOpen.value = true
+}
 // isEn must read directly from route.path (not locale.value) to avoid a race condition:
 // When the user clicks the "Read in Vietnamese" link from an English article, route.path
 // changes from /en/blog/... to /blog/... immediately, but locale.value is only updated
@@ -536,32 +544,45 @@ useHead(() => {
 
             <!-- Meta statistics -->
             <div
-              class="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-zinc-500 border-b border-gray-200 dark:border-zinc-850 pb-4"
+              class="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 text-xs text-zinc-500 border-b border-gray-200 dark:border-zinc-850 pb-4"
             >
-              <span class="flex items-center gap-1.5">
-                <User class="w-4 h-4" />
-                {{ $t('detail.posted_by') }}
-                <NuxtLink
-                  :to="localePath(`/user/${post.authorId}`)"
-                  class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
-                >
-                  <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
-                    post.author
-                  }}</strong>
-                </NuxtLink>
-              </span>
-              <span class="flex items-center gap-1.5">
-                <Calendar class="w-4 h-4" />
-                {{ post.publishDate }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <Eye class="w-4 h-4 text-zinc-450" />
-                {{ post.views }} {{ $t('detail.views') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <MessageSquare class="w-4 h-4 text-zinc-450" />
-                {{ commentCount }} {{ $t('detail.comments') }}
-              </span>
+              <div class="flex flex-wrap items-center gap-y-2 gap-x-4">
+                <span class="flex items-center gap-1.5">
+                  <User class="w-4 h-4" />
+                  {{ $t('detail.posted_by') }}
+                  <NuxtLink
+                    :to="localePath(`/user/${post.authorId}`)"
+                    class="hover:text-[#3498db] dark:hover:text-[#e74c3c] hover:underline transition-colors"
+                  >
+                    <strong class="text-zinc-700 dark:text-zinc-300 font-semibold">{{
+                      post.author
+                    }}</strong>
+                  </NuxtLink>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <Calendar class="w-4 h-4" />
+                  {{ post.publishDate }}
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <Eye class="w-4 h-4 text-zinc-450" />
+                  {{ post.views }} {{ $t('detail.views') }}
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <MessageSquare class="w-4 h-4 text-zinc-450" />
+                  {{ commentCount }} {{ $t('detail.comments') }}
+                </span>
+              </div>
+
+              <!-- Top Quick Report Post Button -->
+              <button
+                v-if="!isAuthor"
+                @click="handleTriggerReportPost"
+                class="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors cursor-pointer py-1 px-2 rounded-lg hover:bg-amber-500/10"
+                :title="$t('moderation.report_btn')"
+              >
+                <Flag class="w-3.5 h-3.5 text-amber-500" />
+                <span>{{ $t('moderation.report_btn') }}</span>
+              </button>
             </div>
           </div>
 
@@ -639,8 +660,8 @@ useHead(() => {
 
               <!-- Report Post Button -->
               <button
-                v-if="!isAuthor && userStore.isAuthenticated"
-                @click="isReportPostOpen = true"
+                v-if="!isAuthor"
+                @click="handleTriggerReportPost"
                 class="px-3 py-2 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
                 :title="$t('moderation.report_btn')"
               >
