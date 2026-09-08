@@ -456,6 +456,8 @@
     "blocked_users_desc": "Manage users you have blocked",
     "no_blocked_users": "You haven't blocked any users.",
     "no_blocked_users_desc": "When you block someone, their content and comments will be hidden from your feed.",
-    "unblock_confirm": "Are you sure you want to unblock {name}?"
+    "unblock_confirm": "Are you sure you want to unblock {name}?",
+    "unblock_error": "Failed to unblock user!",
+    "load_error": "Failed to load blocked users list."
   }
 }

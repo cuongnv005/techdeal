@@ -456,6 +456,8 @@
     "blocked_users_desc": "Quản lý những người dùng bạn đã chặn",
     "no_blocked_users": "Bạn chưa chặn người dùng nào.",
     "no_blocked_users_desc": "Khi chặn ai đó, nội dung và bình luận của họ sẽ bị ẩn khỏi bảng tin của bạn.",
-    "unblock_confirm": "Bạn có chắc chắn muốn bỏ chặn {name}?"
+    "unblock_confirm": "Bạn có chắc chắn muốn bỏ chặn {name}?",
+    "unblock_error": "Lỗi khi bỏ chặn người dùng!",
+    "load_error": "Không thể tải danh sách người dùng đã chặn."
   }
 }

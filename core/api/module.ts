@@ -30,6 +30,11 @@ class HttpModule {
 
     this.instance.interceptors.request.use(
       (config) => {
+        if (process.client) {
+          const isEn =
+            window.location.pathname === '/en' || window.location.pathname.startsWith('/en/')
+          config.headers['Accept-Language'] = isEn ? 'en' : 'vi'
+        }
         return config
       },
       (error: AxiosError) => Promise.reject(error)
