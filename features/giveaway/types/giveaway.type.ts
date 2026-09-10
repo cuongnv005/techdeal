@@ -8,7 +8,8 @@ export interface Giveaway {
   is_expired: boolean
   is_out_of_keys: boolean
   has_claimed: boolean
-  is_block?: boolean
+  is_app_popup?: boolean | number
+  app_clicks_count?: number
   activation_link?: string
   image_url?: string
   deal_thread_id?: string | null
@@ -35,7 +36,18 @@ export interface CreateGiveawayInput {
   key_quantity: number
   original_price: number
   expiry_date: string
-  is_block?: boolean
+  is_app_popup?: boolean | number
+  image_url?: string
+  deal_thread_id?: string | null
+}
+
+export interface UpdateGiveawayInput {
+  app_name?: string
+  activation_link?: string
+  key_quantity?: number
+  original_price?: number
+  expiry_date?: string
+  is_app_popup?: boolean | number
   image_url?: string
   deal_thread_id?: string | null
 }

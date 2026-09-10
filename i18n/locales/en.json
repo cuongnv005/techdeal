@@ -459,5 +459,12 @@
     "unblock_confirm": "Are you sure you want to unblock {name}?",
     "unblock_error": "Failed to unblock user!",
     "load_error": "Failed to load blocked users list."
+  },
+  "app_popup": {
+    "badge": "MOBILE APP",
+    "title": "TechDeal is now on the App Store!",
+    "desc": "Download TechDeal App today to receive instant deal alerts and claim giveaways instantly on the go.",
+    "cta_alt": "Download on the App Store",
+    "close": "Close"
   }
 }

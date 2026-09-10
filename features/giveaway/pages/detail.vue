@@ -146,64 +146,20 @@ watch([isAuthModalOpen, authTab], async ([isOpen]) => {
   }
 })
 
-const isReferrerInvalid = ref(false)
-
-const checkReferrer = () => {
-  if (!process.client) return
-
-  // If the giveaway has loaded and is_block is explicitly false, we don't block
-  if (giveaway.value && giveaway.value.is_block === false) {
-    isReferrerInvalid.value = false
-    return
-  }
-
-  // Otherwise, run the referrer checks
-  if (sessionStorage.getItem('techdeal_valid_session') === 'true') {
-    isReferrerInvalid.value = false
-    return
-  }
-
-  const referrer = document.referrer
-  if (referrer) {
-    try {
-      const url = new URL(referrer)
-      const hostname = url.hostname
-      // Allow if it comes from techdeal.io.vn or subdomains, or localhost/dev IP
-      if (
-        hostname.endsWith('techdeal.io.vn') ||
-        hostname.includes('localhost') ||
-        hostname.includes('192.168.1.56')
-      ) {
-        isReferrerInvalid.value = false
-        sessionStorage.setItem('techdeal_valid_session', 'true')
-      } else {
-        isReferrerInvalid.value = true
-      }
-    } catch (e) {
-      isReferrerInvalid.value = true
-    }
-  } else {
-    // Direct link paste
-    isReferrerInvalid.value = true
-  }
-}
-
 // Check expiry status on load and show modal
 onMounted(() => {
   if (process.client) {
     localStorage.removeItem('google_login_redirect_url')
   }
-  checkReferrer()
   if (giveaway.value?.is_expired) {
     isExpiredModalOpen.value = true
   }
 })
 
-// Listen to giveaway changes to trigger expired modal & re-evaluate referrer rules
+// Listen to giveaway changes to trigger expired modal
 watch(
   () => giveaway.value,
   (newVal) => {
-    checkReferrer()
     if (newVal?.is_expired) {
       isExpiredModalOpen.value = true
     }
@@ -437,7 +393,7 @@ onMounted(() => {
 
         <!-- Error State -->
         <div
-          v-else-if="error || !giveaway || !giveawayId || isReferrerInvalid"
+          v-else-if="error || !giveaway || !giveawayId"
           class="py-16 px-8 text-center bg-white rounded-[32px] border-2 border-black shadow-[0_20px_60px_rgba(0,0,0,0.08)] max-w-lg mx-auto space-y-6"
         >
           <div
@@ -446,15 +402,10 @@ onMounted(() => {
             <AlertTriangle class="w-8 h-8" />
           </div>
           <h2 class="text-2xl font-black font-serif tracking-tight leading-none uppercase">
-            {{ isReferrerInvalid ? $t('giveaway.invalid_access') : $t('giveaway.not_found') }}
+            {{ $t('giveaway.not_found') }}
           </h2>
           <p class="text-zinc-600 text-sm leading-relaxed max-w-xs mx-auto">
-            <template v-if="isReferrerInvalid">
-              {{ $t('giveaway.invalid_access_desc') }}
-            </template>
-            <template v-else>
-              {{ $t('giveaway.not_found_desc') }}
-            </template>
+            {{ $t('giveaway.not_found_desc') }}
           </p>
           <NuxtLink
             :to="localePath('/')"
@@ -511,6 +462,7 @@ onMounted(() => {
               :thread-id="giveaway.deal_thread_id"
               :app-name="giveaway.deal_app_name"
               :referrer="`techdeal_giveaway=${giveawayId}`"
+              :force-light="true"
             />
           </div>
 
@@ -1158,6 +1110,13 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Popup giới thiệu & tải App Store (is_app_popup) -->
+    <UiAppDownloadModal
+      :is-app-popup="giveaway?.is_app_popup"
+      target-type="giveaway"
+      :target-id="giveawayId"
+    />
   </div>
 </template>
 

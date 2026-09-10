@@ -14,7 +14,8 @@ import {
   BarChart2,
   Pencil,
   Tag,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Smartphone
 } from 'lucide-vue-next'
 
 import { ThreadRepoImpl } from '../../thread/api/thread'
@@ -46,7 +47,8 @@ const form = ref({
   name: '',
   target_url: '',
   hash: '',
-  guide_image_url: ''
+  guide_image_url: '',
+  is_app_popup: false
 })
 
 // --- Gắn deal (thread) vào shortlink ---
@@ -126,7 +128,8 @@ const openCreateModal = () => {
     name: '',
     target_url: '',
     hash: '',
-    guide_image_url: ''
+    guide_image_url: '',
+    is_app_popup: false
   }
   selectedThread.value = null
   threadSearchQuery.value = ''
@@ -140,7 +143,8 @@ const openEditModal = (link: Shortlink) => {
     name: link.name,
     target_url: link.target_url,
     hash: link.hash,
-    guide_image_url: link.guide_image_url || ''
+    guide_image_url: link.guide_image_url || '',
+    is_app_popup: link.is_app_popup === 1 || link.is_app_popup === true
   }
   selectedThread.value = link.deal_thread_id
     ? { id: link.deal_thread_id, app_name: link.deal_app_name || link.deal_thread_id }
@@ -170,7 +174,8 @@ const handleSubmit = async () => {
     name: form.value.name,
     target_url: normalizeUrl(form.value.target_url),
     deal_thread_id: selectedThread.value?.id || null,
-    guide_image_url: form.value.guide_image_url.trim() || null
+    guide_image_url: form.value.guide_image_url.trim() || null,
+    is_app_popup: form.value.is_app_popup ? 1 : 0
   }
 
   if (editingId.value) {
@@ -192,6 +197,11 @@ const handleDelete = async (id: string) => {
   if (confirm('Bạn có chắc chắn muốn xóa liên kết rút gọn này không?')) {
     await deleteShortlink(id)
   }
+}
+
+const toggleAppPopup = async (link: Shortlink) => {
+  const nextVal = link.is_app_popup === 1 || link.is_app_popup === true ? 0 : 1
+  await updateShortlink(link.id, { is_app_popup: nextVal })
 }
 
 const copyShortlink = (hash: string, id: string) => {
@@ -322,7 +332,8 @@ const viewStats = async (id: string) => {
               <th class="px-6 py-4">Tên gợi nhớ</th>
               <th class="px-6 py-4">Mã Hash (Rút gọn)</th>
               <th class="px-6 py-4">Link đích</th>
-              <th class="px-6 py-4">Số Clicks</th>
+              <th class="px-6 py-4">Click Web</th>
+              <th class="px-6 py-4">Click App</th>
               <th class="px-6 py-4">Ngày Tạo</th>
               <th class="px-6 py-4 text-right">Hành động</th>
             </tr>
@@ -360,9 +371,36 @@ const viewStats = async (id: string) => {
                   <Tag class="w-2.5 h-2.5" /> Deal: {{ link.deal_app_name || link.deal_thread_id }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-xs font-bold flex items-center gap-1.5 pt-5">
-                <BarChart2 class="w-3.5 h-3.5 text-zinc-400" />
-                {{ link.clicks_count || 0 }}
+              <td class="px-6 py-4 text-xs font-bold">
+                <div
+                  class="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-200"
+                  title="Lượt click chuyển hướng web"
+                >
+                  <BarChart2 class="w-3.5 h-3.5 text-zinc-400" />
+                  <span>{{ link.clicks_count || 0 }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-xs font-bold">
+                <div class="space-y-1">
+                  <button
+                    @click="toggleAppPopup(link)"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-lg transition-all border cursor-pointer select-none"
+                    :class="
+                      link.is_app_popup === 1 || link.is_app_popup === true
+                        ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20'
+                        : 'bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-200'
+                    "
+                    title="Click để thay đổi bật/tắt popup tải App Store"
+                  >
+                    <Smartphone class="w-3 h-3" />
+                    <span>{{
+                      link.is_app_popup === 1 || link.is_app_popup === true ? 'Popup ON' : 'OFF'
+                    }}</span>
+                  </button>
+                  <div class="text-[10px] text-zinc-500 dark:text-zinc-400 font-semibold pl-0.5">
+                    {{ link.app_clicks_count || 0 }} click
+                  </div>
+                </div>
               </td>
               <td class="px-6 py-4 text-xs font-medium text-zinc-400">
                 {{ formatDate(link.created_at) }}
@@ -405,7 +443,7 @@ const viewStats = async (id: string) => {
             </tr>
 
             <tr v-if="filteredShortlinks.length === 0">
-              <td colspan="6" class="px-6 py-12 text-center text-xs text-zinc-400 italic">
+              <td colspan="7" class="px-6 py-12 text-center text-xs text-zinc-400 italic">
                 Không tìm thấy liên kết rút gọn nào...
               </td>
             </tr>
@@ -592,6 +630,30 @@ const viewStats = async (id: string) => {
               type="text"
               placeholder="https://... — hiện dưới card đếm ngược trên trang /go"
               class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+            />
+          </div>
+
+          <!-- Switch bật/tắt popup App Store -->
+          <div
+            class="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-200 dark:border-zinc-800"
+          >
+            <div class="space-y-0.5 pr-4">
+              <label
+                for="shortlink_is_app_popup"
+                class="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5 cursor-pointer"
+              >
+                <Smartphone class="w-3.5 h-3.5 text-indigo-500" />
+                Hiện Popup giới thiệu App Store
+              </label>
+              <p class="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                Tự động bật popup mời tải app khi người dùng truy cập link /go này (Mặc định: Tắt)
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              id="shortlink_is_app_popup"
+              v-model="form.is_app_popup"
+              class="w-4 h-4 rounded border-gray-300 text-[#3498db] dark:text-[#e74c3c] focus:ring-0 cursor-pointer"
             />
           </div>
 
