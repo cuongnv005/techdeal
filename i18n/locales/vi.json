@@ -459,5 +459,12 @@
     "unblock_confirm": "Bạn có chắc chắn muốn bỏ chặn {name}?",
     "unblock_error": "Lỗi khi bỏ chặn người dùng!",
     "load_error": "Không thể tải danh sách người dùng đã chặn."
+  },
+  "app_popup": {
+    "badge": "ỨNG DỤNG DI ĐỘNG",
+    "title": "TechDeal đã có mặt trên App Store!",
+    "desc": "Tải ngay ứng dụng TechDeal để nhận thông báo deal HOT và nhận quà bản quyền tức thì không cần chờ đợi.",
+    "cta_alt": "Tải trên App Store",
+    "close": "Đóng"
   }
 }

@@ -388,6 +388,13 @@ onMounted(() => {
       </div>
     </main>
 
+    <!-- Popup giới thiệu & tải App Store (is_app_popup) -->
+    <UiAppDownloadModal
+      :is-app-popup="shortlink?.is_app_popup"
+      target-type="shortlink"
+      :target-id="shortlink?.hash || (route.params.hash as string)"
+    />
+
     <Footer />
   </div>
 </template>

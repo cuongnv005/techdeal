@@ -13,9 +13,9 @@ import {
   Key,
   Calendar,
   AlertCircle,
-  ShieldCheck,
   Pencil,
-  Tag
+  Tag,
+  Smartphone
 } from 'lucide-vue-next'
 
 import { ThreadRepoImpl } from '../../thread/api/thread'
@@ -52,7 +52,7 @@ const form = ref<CreateGiveawayInput>({
   key_quantity: 10,
   original_price: 0,
   expiry_date: '',
-  is_block: false,
+  is_app_popup: false,
   image_url: ''
 })
 
@@ -143,7 +143,7 @@ const openCreateModal = (): void => {
     key_quantity: 10,
     original_price: 0,
     expiry_date: localISODate, // Default 7 days from now in local time
-    is_block: false,
+    is_app_popup: false,
     image_url: ''
   }
   selectedThread.value = null
@@ -169,7 +169,7 @@ const openEditModal = (giveaway: Giveaway): void => {
     key_quantity: giveaway.key_quantity,
     original_price: giveaway.original_price,
     expiry_date: localISODate,
-    is_block: giveaway.is_block !== false,
+    is_app_popup: giveaway.is_app_popup === 1 || giveaway.is_app_popup === true,
     image_url: giveaway.image_url || ''
   }
   selectedThread.value = giveaway.deal_thread_id
@@ -185,7 +185,8 @@ const handleSubmitForm = async (): Promise<void> => {
   const formattedData: CreateGiveawayInput = {
     ...form.value,
     expiry_date: new Date(form.value.expiry_date).toISOString(),
-    deal_thread_id: selectedThread.value?.id || null
+    deal_thread_id: selectedThread.value?.id || null,
+    is_app_popup: form.value.is_app_popup ? 1 : 0
   }
 
   if (isEditMode.value && editingGiveawayId.value) {
@@ -201,8 +202,9 @@ const handleSubmitForm = async (): Promise<void> => {
   }
 }
 
-const toggleBlock = async (giveaway: Giveaway) => {
-  await updateGiveaway(giveaway.id, { is_block: giveaway.is_block !== false ? false : true })
+const toggleAppPopup = async (giveaway: Giveaway) => {
+  const nextVal = giveaway.is_app_popup ? 0 : 1
+  await updateGiveaway(giveaway.id, { is_app_popup: nextVal })
 }
 
 const handleFinish = async (id: string) => {
@@ -360,7 +362,7 @@ const formatPrice = (price: number) => {
               <th class="px-6 py-4">Số lượng Key</th>
               <th class="px-6 py-4">Giá gốc</th>
               <th class="px-6 py-4">Thời Hạn</th>
-              <th class="px-6 py-4">Bảo Mật</th>
+              <th class="px-6 py-4">App Popup</th>
               <th class="px-6 py-4">Trạng Thái</th>
               <th class="px-6 py-4 text-right">Hành động</th>
             </tr>
@@ -392,18 +394,24 @@ const formatPrice = (price: number) => {
               </td>
               <td class="px-6 py-4">
                 <button
-                  @click="toggleBlock(giveaway)"
+                  @click="toggleAppPopup(giveaway)"
                   class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-xl transition-all border cursor-pointer select-none"
                   :class="
-                    giveaway.is_block !== false
-                      ? 'bg-red-500/10 text-red-550 border-red-500/20 hover:bg-red-500/20'
-                      : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-200'
+                    giveaway.is_app_popup
+                      ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20'
+                      : 'bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-200'
                   "
-                  title="Click để thay đổi chế độ chặn truy cập trực tiếp"
+                  title="Click để thay đổi bật/tắt popup tải App Store"
                 >
-                  <ShieldCheck class="w-3.5 h-3.5" v-if="giveaway.is_block !== false" />
-                  <span>{{ giveaway.is_block !== false ? 'Chặn Direct' : 'Không Chặn' }}</span>
+                  <Smartphone class="w-3.5 h-3.5" />
+                  <span>{{ giveaway.is_app_popup ? 'Popup ON' : 'OFF' }}</span>
                 </button>
+                <div
+                  v-if="giveaway.app_clicks_count"
+                  class="text-[9px] text-zinc-400 font-semibold mt-1"
+                >
+                  {{ giveaway.app_clicks_count }} click app
+                </div>
               </td>
               <td class="px-6 py-4">
                 <span
@@ -688,19 +696,29 @@ const formatPrice = (price: number) => {
             />
           </div>
 
-          <div class="flex items-center gap-2 py-2">
+          <!-- Switch bật/tắt popup App Store -->
+          <div
+            class="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-200 dark:border-zinc-800"
+          >
+            <div class="space-y-0.5 pr-4">
+              <label
+                for="giveaway_is_app_popup"
+                class="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5 cursor-pointer"
+              >
+                <Smartphone class="w-3.5 h-3.5 text-indigo-500" />
+                Hiện Popup giới thiệu App Store
+              </label>
+              <p class="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                Tự động bật popup mời tải app khi người dùng truy cập trang giveaway này (Mặc định:
+                Tắt)
+              </p>
+            </div>
             <input
-              v-model="form.is_block"
               type="checkbox"
-              id="is_block"
-              class="w-4 h-4 text-[#3498db] dark:text-[#e74c3c] border-gray-300 rounded focus:ring-[#3498db]"
+              id="giveaway_is_app_popup"
+              v-model="form.is_app_popup"
+              class="w-4 h-4 rounded border-gray-300 text-[#3498db] dark:text-[#e74c3c] focus:ring-0 cursor-pointer"
             />
-            <label
-              for="is_block"
-              class="text-[10px] font-bold uppercase tracking-wider text-zinc-450 cursor-pointer"
-            >
-              Chặn truy cập trực tiếp (Yêu cầu đi từ trang web TechDeal)
-            </label>
           </div>
 
           <div

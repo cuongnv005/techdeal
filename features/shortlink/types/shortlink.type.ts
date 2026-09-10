@@ -6,6 +6,8 @@ export interface Shortlink {
   created_at: string
   updated_at: string
   clicks_count: number
+  is_app_popup?: boolean | number
+  app_clicks_count?: number
   deal_thread_id?: string | null
   guide_image_url?: string | null
   deal_app_name?: string | null
@@ -25,6 +27,7 @@ export interface CreateShortlinkInput {
   hash?: string
   deal_thread_id?: string | null
   guide_image_url?: string | null
+  is_app_popup?: boolean | number
 }
 
 export interface UpdateShortlinkInput {
@@ -32,6 +35,7 @@ export interface UpdateShortlinkInput {
   target_url?: string
   deal_thread_id?: string | null
   guide_image_url?: string | null
+  is_app_popup?: boolean | number
 }
 
 export interface ShortlinkReferrer {
