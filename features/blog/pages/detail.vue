@@ -24,6 +24,7 @@ import AdskeeperWidget from '../components/AdskeeperWidget.vue'
 import CommentList from '../components/CommentList.vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
+import GiveawayWaitlistWidget from '../components/GiveawayWaitlistWidget.vue'
 import { parseBBCode, injectMiddleAd } from '../utils/bbcode'
 
 import type { BlogPost } from '../types/post.type'
@@ -684,6 +685,11 @@ useHead(() => {
           <!-- Comments Section -->
           <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
 
+          <!-- Giveaway VIP Code Waitlist Widget (Mobile Only - ngay dưới danh sách bình luận) -->
+          <div class="my-6 lg:hidden">
+            <GiveawayWaitlistWidget />
+          </div>
+
           <!-- MGID Smart Ad Widget Dưới Bài Viết -->
           <ClientOnly>
             <div class="my-6">
@@ -801,6 +807,11 @@ useHead(() => {
                 data-play-button="true"
               ></div>
             </div>
+          </div>
+
+          <!-- Giveaway VIP Code Waitlist Widget (Desktop Only - trên mobile chuyển xuống dưới bình luận) -->
+          <div class="hidden lg:block">
+            <GiveawayWaitlistWidget />
           </div>
         </aside>
       </div>

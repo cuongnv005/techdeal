@@ -466,5 +466,23 @@
     "desc": "Download TechDeal App today to receive instant deal alerts and claim giveaways instantly on the go.",
     "cta_alt": "Download on the App Store",
     "close": "Close"
+  },
+  "giveaway_waitlist": {
+    "badge": "VIP GIVEAWAY",
+    "title": "VIP Code Waitlist",
+    "subtitle": "Want to get the $39.99 TechDeal VIP package for free? Enter your email to get a priority Queue Number — we'll automatically email your VIP code when your round arrives!",
+    "email_placeholder": "Enter your email address...",
+    "btn_submit": "Get Queue Number",
+    "btn_submitting": "Processing...",
+    "success_badge": "REGISTRATION SUCCESSFUL",
+    "existing_badge": "YOUR QUEUE POSITION",
+    "queue_text": "You are #{queue} in the waitlist",
+    "batch_text": "Scheduled to receive code in ROUND {batch}",
+    "email_notice": "Your VIP code will be emailed to {email} when your turn arrives.",
+    "app_prompt_title": "Have you downloaded TechDeal on your phone yet?",
+    "app_prompt_desc": "Download now to enjoy the Free tier (full features) and be ready to activate VIP as soon as your code arrives!",
+    "download_appstore": "Download on the App Store",
+    "btn_register_another": "Register another email",
+    "invalid_email": "Please enter a valid email address!"
   }
 }
