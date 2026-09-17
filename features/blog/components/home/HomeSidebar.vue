@@ -16,6 +16,7 @@ import {
 import { blogRepository } from '../../api/blog'
 import AdBanner from '../AdBanner.vue'
 import AdskeeperWidget from '../AdskeeperWidget.vue'
+import GiveawayWaitlistWidget from '../GiveawayWaitlistWidget.vue'
 
 import type { BlogPost } from '../../types/post.type'
 
@@ -207,5 +208,8 @@ const getCategoryLink = (id: string) => {
         </li>
       </ul>
     </div>
+
+    <!-- Giveaway VIP Code Waitlist Widget (Dưới phần Chuyên mục nổi bật) -->
+    <GiveawayWaitlistWidget />
   </aside>
 </template>

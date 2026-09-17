@@ -466,5 +466,23 @@
     "desc": "Tải ngay ứng dụng TechDeal để nhận thông báo deal HOT và nhận quà bản quyền tức thì không cần chờ đợi.",
     "cta_alt": "Tải trên App Store",
     "close": "Đóng"
+  },
+  "giveaway_waitlist": {
+    "badge": "GIVEAWAY VIP",
+    "title": "Hàng Chờ Nhận Code VIP",
+    "subtitle": "Bạn muốn nhận miễn phí gói VIP trị giá $39.99 của app TechDeal. Hãy nhập email lấy Số Thứ Tự ưu tiên — hệ thống sẽ tự động gửi mã VIP tới bạn khi tới đợt!",
+    "email_placeholder": "Nhập địa chỉ email của bạn...",
+    "btn_submit": "Lấy số thứ tự",
+    "btn_submitting": "Đang xử lý...",
+    "success_badge": "ĐĂNG KÝ THÀNH CÔNG",
+    "existing_badge": "VỊ TRÍ HÀNG CHỜ CỦA BẠN",
+    "queue_text": "Bạn là người thứ #{queue} trong danh sách chờ",
+    "batch_text": "Dự kiến nhận mã vào ĐỢT {batch}",
+    "email_notice": "Mã VIP sẽ được gửi tự động vào email {email} khi tới lượt.",
+    "app_prompt_title": "Bạn đã tải app TechDeal trên điện thoại chưa?",
+    "app_prompt_desc": "Tải app ngay để dùng thử bản Free (không giới hạn tính năng) và sẵn sàng kích hoạt VIP ngay khi có mã!",
+    "download_appstore": "Tải trên App Store",
+    "btn_register_another": "Đăng ký email khác",
+    "invalid_email": "Vui lòng nhập đúng định dạng email!"
   }
 }
