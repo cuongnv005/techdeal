@@ -3,6 +3,8 @@ import { ref, watch } from 'vue'
 import { X, ShieldAlert, UserX, Loader2, CheckCircle2 } from 'lucide-vue-next'
 import { moderationRepository, type BlockedUser } from '../api/moderation'
 
+import { useUserStore } from '@stores/user'
+
 interface Props {
   open: boolean
 }
@@ -14,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const blockedUsers = ref<BlockedUser[]>([])
 const isLoading = ref(false)
@@ -51,6 +54,7 @@ const handleUnblock = async (user: BlockedUser) => {
     const res = await moderationRepository.unblockUser(user.id)
     if (res.success) {
       blockedUsers.value = blockedUsers.value.filter((u) => u.id !== user.id)
+      userStore.removeBlockedUserId(user.id)
       emit('unblocked', user.id)
     } else {
       alert(res.error || t('moderation.unblock_error'))
