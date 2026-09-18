@@ -2,6 +2,7 @@ import { useCookie } from '#app'
 import { defineStore } from 'pinia'
 
 import { HttpService } from '@core/api/service'
+import { moderationRepository } from '@features/moderation/api/moderation'
 
 interface UserState {
   id: string | null
@@ -9,6 +10,8 @@ interface UserState {
   email: string | null
   role: 'admin' | 'mod' | 'user' | null
   isAuthenticated: boolean
+  blockedUserIds: string[]
+  blockedUsersLoaded: boolean
 }
 
 export const useUserStore = defineStore('user', {
@@ -17,7 +20,9 @@ export const useUserStore = defineStore('user', {
     username: null,
     email: null,
     role: null,
-    isAuthenticated: false
+    isAuthenticated: false,
+    blockedUserIds: [],
+    blockedUsersLoaded: false
   }),
 
   getters: {
@@ -78,12 +83,46 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    async fetchBlockedUserIds(force = false): Promise<string[]> {
+      if (!this.isAuthenticated) {
+        this.blockedUserIds = []
+        this.blockedUsersLoaded = false
+        return []
+      }
+      if (this.blockedUsersLoaded && !force) {
+        return this.blockedUserIds
+      }
+      try {
+        const list = await moderationRepository.getBlockedUsers()
+        this.blockedUserIds = list.map((u) => String(u.id))
+        this.blockedUsersLoaded = true
+        return this.blockedUserIds
+      } catch (e) {
+        console.error('Error fetching blocked users in store:', e)
+        return this.blockedUserIds
+      }
+    },
+
+    addBlockedUserId(id: string | number) {
+      const strId = String(id)
+      if (!this.blockedUserIds.includes(strId)) {
+        this.blockedUserIds.push(strId)
+      }
+    },
+
+    removeBlockedUserId(id: string | number) {
+      const strId = String(id)
+      this.blockedUserIds = this.blockedUserIds.filter((x) => x !== strId)
+    },
+
     logout() {
       this.id = null
       this.username = null
       this.email = null
       this.role = null
       this.isAuthenticated = false
+      this.blockedUserIds = []
+      this.blockedUsersLoaded = false
 
       const tokenCookie = useCookie('token')
       const userCookie = useCookie('user_info')
