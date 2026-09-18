@@ -685,10 +685,10 @@ useHead(() => {
           <!-- Comments Section -->
           <CommentList v-if="post.id" :post-id="post.id" @count="commentCount = $event" />
 
-          <!-- Giveaway VIP Code Waitlist Widget (Mobile Only - ngay dưới danh sách bình luận) -->
-          <div class="my-6 lg:hidden">
+          <!-- Giveaway VIP Code Waitlist Widget (Tạm ẩn sau đợt đăng ký) -->
+          <!-- <div class="my-6 lg:hidden">
             <GiveawayWaitlistWidget />
-          </div>
+          </div> -->
 
           <!-- MGID Smart Ad Widget Dưới Bài Viết -->
           <ClientOnly>
@@ -809,10 +809,10 @@ useHead(() => {
             </div>
           </div>
 
-          <!-- Giveaway VIP Code Waitlist Widget (Desktop Only - trên mobile chuyển xuống dưới bình luận) -->
-          <div class="hidden lg:block">
+          <!-- Giveaway VIP Code Waitlist Widget (Tạm ẩn sau đợt đăng ký) -->
+          <!-- <div class="hidden lg:block">
             <GiveawayWaitlistWidget />
-          </div>
+          </div> -->
         </aside>
       </div>
 
