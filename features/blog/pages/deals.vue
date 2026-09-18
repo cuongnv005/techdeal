@@ -64,27 +64,15 @@ const {
       if (similarMatch && similarMatch[1]) {
         const tag = similarMatch[1].trim().normalize('NFC')
         try {
-          const candidates = Array.from(
-            new Set([
-              tag,
-              tag.toLowerCase(),
-              tag.toUpperCase(),
-              tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
-            ])
-          )
-          let tagPosts: BlogPost[] = []
-          for (const cand of candidates) {
-            const tagPostsRes = await blogRepository.getPosts({
-              tag: cand,
-              limit: 6,
-              enrich: false,
-              lang: locale.value === 'en' ? 'en' : 'vi'
-            })
-            tagPosts = tagPostsRes.items
-            if (tagPosts && tagPosts.length > 0) {
-              break
-            }
-          }
+          // Backend so khớp t.name = ? COLLATE NOCASE (docs/worker-request-quota-optimization-plan.md
+          // Phase 3/4) — không cần tự thử 4 biến thể chữ hoa/thường ở FE nữa, gọi 1 lần duy nhất.
+          const tagPostsRes = await blogRepository.getPosts({
+            tag,
+            limit: 6,
+            enrich: false,
+            lang: locale.value === 'en' ? 'en' : 'vi'
+          })
+          const tagPosts = tagPostsRes.items
           finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
         } catch (err) {
           console.error('Error fetching similar tag posts:', err)

@@ -183,6 +183,10 @@ export default defineNuxtConfig({
 
   sitemap: {
     sources: ['/api/__sitemap__/urls'],
+    // Cấu hình tường minh (module mặc định 600s) — sitemap không cần cập nhật thường xuyên hơn
+    // 1h, tránh mỗi lượt bot crawl đều gọi lại /api/__sitemap__/urls (3 request tới Worker mỗi lần).
+    // Xem docs/worker-request-quota-optimization-plan.md (repo backend) Phase 2.
+    cacheMaxAgeSeconds: 3600,
     exclude: [
       '/forgot-password',
       '/login',
@@ -238,9 +242,13 @@ export default defineNuxtConfig({
     '/search': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
-    // Deals pages được biên tập thủ công, cần thấy nội dung mới lập tức.
-    // ssr true: render trực tiếp trên mỗi request để tránh lỗi kẹt cache SWR của Vercel/Cloudflare.
-    '/deals/**': { ssr: true },
+    // SWR 30s (docs/worker-request-quota-optimization-plan.md Phase 4): trước đây ssr:true cứng vì
+    // sợ "kẹt cache" — nhưng mỗi pageview không cache tốn 3-7 request tới Worker (đúng trang chiến
+    // dịch marketing dồn traffic 11:30 & 20:00). TTL 30s vẫn đủ "gần như tức thì" cho biên tập viên,
+    // trong khi cắt gần hết request lặp lại giữa các user xem cùng trang trong cùng khung giờ vàng.
+    // Nếu phát hiện lại hiện tượng "kẹt cache" (nội dung mới không lên sau >60s), rollback về
+    // { ssr: true } qua Vercel instant rollback trước, điều tra nguyên nhân thật sau.
+    '/deals/**': { swr: 30 },
     '/admin/**': { ssr: false },
     // Trang tĩnh tuyệt đối, không có dữ liệu theo user/thời gian thực —
     // prerender ở build time, phục vụ như file tĩnh, không tốn CPU function.
