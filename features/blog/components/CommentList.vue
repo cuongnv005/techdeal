@@ -11,7 +11,6 @@ import CommentReplies from './CommentReplies.vue'
 
 import { useUserStore } from '@stores/user'
 import ReportModal from '@features/moderation/components/ReportModal.vue'
-import { moderationRepository } from '@features/moderation/api/moderation'
 
 interface Props {
   postId: string
@@ -56,12 +55,12 @@ interface ReplyTarget {
 
 const replyTarget = ref<ReplyTarget | null>(null)
 
-// Tải danh sách user bị chặn của tài khoản hiện tại khi đã đăng nhập
+// Tải danh sách user bị chặn của tài khoản hiện tại từ UserStore (đã cache trong RAM)
 const loadBlockedUsers = async () => {
   if (userStore.isAuthenticated) {
     try {
-      const list = await moderationRepository.getBlockedUsers()
-      blockedUserIds.value = new Set(list.map((u) => String(u.id)))
+      const ids = await userStore.fetchBlockedUserIds()
+      blockedUserIds.value = new Set(ids)
     } catch (e) {
       console.error('Error fetching blocked users in comments:', e)
     }

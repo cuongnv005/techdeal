@@ -37,8 +37,8 @@ const isBlocked = ref(false)
 const checkBlockedStatus = async () => {
   if (userStore.isAuthenticated && !isOwner.value) {
     try {
-      const blockedList = await moderationRepository.getBlockedUsers()
-      isBlocked.value = blockedList.some((u) => String(u.id) === String(authorIdParam))
+      const blockedIds = await userStore.fetchBlockedUserIds()
+      isBlocked.value = blockedIds.includes(String(authorIdParam))
     } catch (e) {
       console.error('Error checking blocked status:', e)
     }
@@ -65,6 +65,7 @@ const handleBlockUser = async () => {
   try {
     const res = await moderationRepository.blockUser(authorIdParam)
     if (res.success) {
+      userStore.addBlockedUserId(authorIdParam)
       isBlocked.value = true
       alert(t('moderation.block_success'))
     } else {
@@ -79,6 +80,7 @@ const handleUnblockUser = async () => {
   try {
     const res = await moderationRepository.unblockUser(authorIdParam)
     if (res.success) {
+      userStore.removeBlockedUserId(authorIdParam)
       isBlocked.value = false
       alert(t('moderation.unblock_success'))
     } else {

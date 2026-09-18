@@ -97,27 +97,13 @@ const { data: postDetail } = await useAsyncData(
         if (similarMatch && similarMatch[1]) {
           const tag = similarMatch[1].trim().normalize('NFC')
           try {
-            const candidates = Array.from(
-              new Set([
-                tag,
-                tag.toLowerCase(),
-                tag.toUpperCase(),
-                tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
-              ])
-            )
-            let tagPosts: BlogPost[] = []
-            for (const cand of candidates) {
-              const tagPostsRes = await blogRepository.getPosts({
-                tag: cand,
-                limit: 6,
-                enrich: false,
-                lang: isEn.value ? 'en' : 'vi'
-              })
-              tagPosts = tagPostsRes.items
-              if (tagPosts && tagPosts.length > 0) {
-                break
-              }
-            }
+            const tagPostsRes = await blogRepository.getPosts({
+              tag,
+              limit: 6,
+              enrich: false,
+              lang: isEn.value ? 'en' : 'vi'
+            })
+            const tagPosts = tagPostsRes.items || []
             finalRelated = tagPosts.filter((p) => p.id !== detail.post.id).slice(0, 5)
           } catch (err) {
             console.error('Error fetching similar tag posts:', err)
