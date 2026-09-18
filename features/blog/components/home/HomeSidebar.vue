@@ -209,7 +209,7 @@ const getCategoryLink = (id: string) => {
       </ul>
     </div>
 
-    <!-- Giveaway VIP Code Waitlist Widget (Dưới phần Chuyên mục nổi bật) -->
-    <GiveawayWaitlistWidget />
+    <!-- Giveaway VIP Code Waitlist Widget (Tạm ẩn sau đợt đăng ký) -->
+    <!-- <GiveawayWaitlistWidget /> -->
   </aside>
 </template>
