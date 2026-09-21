@@ -607,6 +607,21 @@ const handlePublish = async () => {
     }
 
     if (response && response.success) {
+      // Revalidate Vercel ISR cache for deal pages & related paths
+      try {
+        const revalidatePaths = ['/deals/ios', '/deals/android']
+        if (response.data?.slug) {
+          revalidatePaths.push(`/blog/${response.data.slug}`)
+        }
+        await $fetch('/api/revalidate', {
+          method: 'POST',
+          body: { paths: revalidatePaths }
+        })
+        clearNuxtData(['deal-post-ios', 'deal-post-android'])
+      } catch (err) {
+        console.error('Revalidation error:', err)
+      }
+
       alert(
         isEditMode.value
           ? 'Chúc mừng! Bài viết đã được cập nhật thành công!'
