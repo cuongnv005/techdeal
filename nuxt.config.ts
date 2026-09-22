@@ -13,7 +13,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    vercelBypassToken: process.env.VERCEL_BYPASS_TOKEN || 'techdeal-revalidate-secret-token',
     public: {
       apiUrl: process.env.VITE_API_URL || 'https://api.techdeal.io.vn/api',
       googleClientId:
@@ -243,10 +242,9 @@ export default defineNuxtConfig({
     '/search': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/publish': { sitemap: false, robots: 'noindex, nofollow' },
     '/blog/**': { ssr: true },
-    // Deals pages bật ISR (Incremental Static Regeneration) trên Vercel Edge.
-    // Trang được cache để tối ưu request Worker. Khi cập nhật/đăng bài deal mới,
-    // frontend/backend gọi /api/revalidate để xóa cache tức thì trên Vercel.
-    '/deals/**': { isr: true },
+    // Deals pages render SSR trực tiếp trên mỗi request để tránh lỗi kẹt cache CDN.
+    // Tầng cache và giảm tải D1 được xử lý tối ưu tại Backend Cloudflare Worker Cache API.
+    '/deals/**': { ssr: true },
     '/admin/**': { ssr: false },
     // Trang tĩnh tuyệt đối, không có dữ liệu theo user/thời gian thực —
     // prerender ở build time, phục vụ như file tĩnh, không tốn CPU function.
@@ -257,12 +255,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: (process.env['NITRO_PRESET'] as any) || 'vercel',
-    vercel: {
-      config: {
-        bypassToken: process.env.VERCEL_BYPASS_TOKEN || 'techdeal-revalidate-secret-token'
-      }
-    }
+    preset: (process.env['NITRO_PRESET'] as any) || 'vercel'
   },
 
   sentry: {
