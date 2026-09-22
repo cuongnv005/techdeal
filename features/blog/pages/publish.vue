@@ -607,28 +607,22 @@ const handlePublish = async () => {
     }
 
     if (response && response.success) {
-      // Revalidate Vercel ISR cache for deal pages & related paths
-      try {
-        const revalidatePaths = ['/deals/ios', '/deals/android']
-        if (response.data?.slug) {
-          revalidatePaths.push(`/blog/${response.data.slug}`)
-        }
-        await $fetch('/api/revalidate', {
-          method: 'POST',
-          body: { paths: revalidatePaths }
-        })
-        clearNuxtData(['deal-post-ios', 'deal-post-android'])
-      } catch (err) {
-        console.error('Revalidation error:', err)
-      }
+      clearNuxtData(['deal-post-ios', 'deal-post-android'])
 
       alert(
         isEditMode.value
           ? 'Chúc mừng! Bài viết đã được cập nhật thành công!'
           : `Chúc mừng! Bài viết đã được ${postData.scheduledAt ? 'hẹn giờ đăng thành công!' : 'đăng thành công!'}`
       )
-      // Redirect to the post detail page if slug is available, otherwise to homepage
-      if (response.data?.slug) {
+      // Redirect to deals page directly if category is deals, otherwise to post detail page or homepage
+      if (categoryId.value === 'deals') {
+        const platform = selectedTags.value
+          .map((t) => t.toLowerCase())
+          .includes('android')
+          ? 'android'
+          : 'ios'
+        await navigateTo(`/deals/${platform}`)
+      } else if (response.data?.slug) {
         await navigateTo(`/blog/${response.data.slug}`)
       } else {
         await navigateTo('/')
