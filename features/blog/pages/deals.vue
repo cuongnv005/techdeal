@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 
 import { useRoute, useAsyncData, navigateTo } from '#app'
 import {
@@ -52,7 +52,8 @@ const platformTitle = computed(() => (props.platform === 'ios' ? 'iOS' : 'Androi
 const {
   data: dealData,
   pending,
-  error
+  error,
+  refresh
 } = await useAsyncData(`deal-post-${props.platform}`, async () => {
   const detail = await blogRepository.getDealByPlatform(props.platform)
   let finalRelated: BlogPost[] = []
@@ -207,6 +208,10 @@ watch(
   },
   { immediate: true }
 )
+
+onMounted(() => {
+  refresh()
+})
 
 // Sidebar popular posts
 const { data: popularSidebarPostsData } = await useAsyncData(
