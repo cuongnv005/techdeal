@@ -154,11 +154,17 @@ export function useAdminComments() {
     await refreshComments()
   }
 
+  const toggleUserCommentBan = async (authorId: string): Promise<void> => {
+    await adminRepo.toggleUserCommentBan(authorId)
+    await refreshComments()
+  }
+
   return {
     commentsData,
     isLoadingComments,
     commentsError,
     deleteComment,
+    toggleUserCommentBan,
     refreshComments,
     currentPage,
     searchQuery
@@ -219,12 +225,18 @@ export function useAdminUsers() {
     await refreshUsers()
   }
 
+  const toggleUserCommentBan = async (id: string): Promise<void> => {
+    await adminRepo.toggleUserCommentBan(id)
+    await refreshUsers()
+  }
+
   return {
     usersData,
     isLoadingUsers,
     usersError,
     updateUserRole,
     toggleUserStatus,
+    toggleUserCommentBan,
     refreshUsers,
     currentPage,
     searchQuery,

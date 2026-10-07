@@ -26,10 +26,12 @@ export interface PostItem {
 
 export interface CommentItem {
   id: string
+  author_id?: string
   content: string
   author: string
   postTitle: string
   date: string
+  is_comment_banned?: boolean
 }
 
 export interface UserItem {
@@ -38,6 +40,7 @@ export interface UserItem {
   email: string
   role: 'admin' | 'mod' | 'user'
   status: 'active' | 'blocked'
+  is_comment_banned?: boolean
   joinDate: string
 }
 

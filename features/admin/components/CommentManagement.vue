@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 
-import { Search, Trash2, MessageSquare, User, FileText } from 'lucide-vue-next'
+import { Search, Trash2, MessageSquare, MessageSquareOff, User, FileText } from 'lucide-vue-next'
 
 import { useAdminComments } from '../composables/use-admin'
 
-const { commentsData, isLoadingComments, deleteComment, currentPage, searchQuery } =
-  useAdminComments()
+const {
+  commentsData,
+  isLoadingComments,
+  deleteComment,
+  toggleUserCommentBan,
+  currentPage,
+  searchQuery
+} = useAdminComments()
 
 const paginatedComments = computed(() => commentsData.value?.items || [])
 const filteredComments = paginatedComments
@@ -43,6 +49,17 @@ const visiblePages = computed(() => {
 const confirmDelete = (id: string, author: string): void => {
   if (confirm(`Bạn có chắc chắn muốn xóa bình luận của "${author}"?`)) {
     deleteComment(id)
+  }
+}
+
+const handleToggleCommentBan = async (
+  authorId: string,
+  author: string,
+  isBanned?: boolean
+): Promise<void> => {
+  const action = isBanned ? 'gỡ cấm bình luận' : 'cấm bình luận (và toàn bộ thiết bị liên kết)'
+  if (confirm(`Bạn có chắc chắn muốn ${action} cho tác giả "${author}"?`)) {
+    await toggleUserCommentBan(authorId)
   }
 }
 </script>
@@ -99,6 +116,13 @@ const confirmDelete = (id: string, author: string): void => {
                     >
                       <User class="w-3.5 h-3.5" /> {{ comment.author }}
                     </span>
+                    <span
+                      v-if="comment.is_comment_banned"
+                      class="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                      title="Tác giả và thiết bị liên kết bị cấm bình luận"
+                    >
+                      Bị cấm BL
+                    </span>
                     <span>•</span>
                     <span>{{ comment.date }}</span>
                   </div>
@@ -113,13 +137,38 @@ const confirmDelete = (id: string, author: string): void => {
                 </div>
               </td>
               <td class="px-6 py-4 text-right">
-                <button
-                  @click="confirmDelete(comment.id, comment.author)"
-                  class="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all cursor-pointer"
-                  title="Xóa bình luận"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
+                <div class="flex items-center justify-end gap-1">
+                  <button
+                    v-if="comment.author_id"
+                    @click="
+                      handleToggleCommentBan(
+                        comment.author_id,
+                        comment.author,
+                        comment.is_comment_banned
+                      )
+                    "
+                    class="p-2 rounded-xl transition-all cursor-pointer"
+                    :class="
+                      comment.is_comment_banned
+                        ? 'text-red-500 hover:bg-red-500/10'
+                        : 'text-zinc-400 hover:text-amber-500 hover:bg-amber-500/10'
+                    "
+                    :title="
+                      comment.is_comment_banned
+                        ? 'Gỡ cấm bình luận tác giả (kèm thiết bị)'
+                        : 'Cấm tác giả bình luận (kèm thiết bị)'
+                    "
+                  >
+                    <MessageSquareOff class="w-4 h-4" />
+                  </button>
+                  <button
+                    @click="confirmDelete(comment.id, comment.author)"
+                    class="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all cursor-pointer"
+                    title="Xóa bình luận"
+                  >
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                </div>
               </td>
             </tr>
 
