@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 
-import { Search, UserCheck, ShieldAlert, Calendar, Mail, User } from 'lucide-vue-next'
+import {
+  Search,
+  UserCheck,
+  ShieldAlert,
+  Calendar,
+  Mail,
+  User,
+  MessageSquareOff,
+  MessageSquare
+} from 'lucide-vue-next'
 
 import { useAdminUsers } from '../composables/use-admin'
 
@@ -10,6 +19,7 @@ const {
   isLoadingUsers,
   updateUserRole,
   toggleUserStatus,
+  toggleUserCommentBan,
   currentPage,
   searchQuery,
   roleFilter,
@@ -51,6 +61,13 @@ const visiblePages = computed(() => {
 const onRoleChange = (id: string, event: Event): void => {
   const select = event.target as HTMLSelectElement
   updateUserRole(id, select.value as 'admin' | 'mod' | 'user')
+}
+
+const handleToggleCommentBan = async (id: string, username: string, isBanned?: boolean): Promise<void> => {
+  const action = isBanned ? 'gỡ cấm bình luận' : 'cấm bình luận (và toàn bộ thiết bị liên kết)'
+  if (confirm(`Bạn có chắc chắn muốn ${action} cho người dùng "${username}"?`)) {
+    await toggleUserCommentBan(id)
+  }
 }
 </script>
 
@@ -127,16 +144,25 @@ const onRoleChange = (id: string, event: Event): void => {
                 </select>
               </td>
               <td class="px-6 py-4">
-                <span
-                  class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                  :class="
-                    user.status === 'active'
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                      : 'bg-red-500/10 text-red-650 border border-red-500/20'
-                  "
-                >
-                  {{ user.status === 'active' ? 'Hoạt động' : 'Bị chặn' }}
-                </span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    :class="
+                      user.status === 'active'
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                        : 'bg-red-500/10 text-red-650 border border-red-500/20'
+                    "
+                  >
+                    {{ user.status === 'active' ? 'Hoạt động' : 'Bị chặn' }}
+                  </span>
+                  <span
+                    v-if="user.is_comment_banned"
+                    class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                    title="Tài khoản và thiết bị liên kết bị cấm bình luận"
+                  >
+                    Cấm BL
+                  </span>
+                </div>
               </td>
               <td
                 class="px-6 py-4 text-xs font-semibold text-zinc-550 flex items-center gap-1 pt-6"
@@ -145,19 +171,38 @@ const onRoleChange = (id: string, event: Event): void => {
                 {{ user.joinDate }}
               </td>
               <td class="px-6 py-4 text-right">
-                <button
-                  @click="toggleUserStatus(user.id)"
-                  class="p-2 rounded-xl transition-all cursor-pointer"
-                  :class="
-                    user.status === 'active'
-                      ? 'text-zinc-400 hover:text-red-500 hover:bg-red-500/10'
-                      : 'text-emerald-500 hover:bg-emerald-500/10'
-                  "
-                  :title="user.status === 'active' ? 'Chặn tài khoản' : 'Kích hoạt tài khoản'"
-                >
-                  <ShieldAlert v-if="user.status === 'active'" class="w-4 h-4" />
-                  <UserCheck v-else class="w-4 h-4" />
-                </button>
+                <div class="flex items-center justify-end gap-1">
+                  <button
+                    @click="handleToggleCommentBan(user.id, user.username, user.is_comment_banned)"
+                    class="p-2 rounded-xl transition-all cursor-pointer"
+                    :class="
+                      user.is_comment_banned
+                        ? 'text-red-500 hover:bg-red-500/10'
+                        : 'text-zinc-400 hover:text-amber-500 hover:bg-amber-500/10'
+                    "
+                    :title="
+                      user.is_comment_banned
+                        ? 'Gỡ cấm bình luận (kèm thiết bị)'
+                        : 'Cấm bình luận (kèm thiết bị)'
+                    "
+                  >
+                    <MessageSquareOff v-if="user.is_comment_banned" class="w-4 h-4" />
+                    <MessageSquare v-else class="w-4 h-4" />
+                  </button>
+                  <button
+                    @click="toggleUserStatus(user.id)"
+                    class="p-2 rounded-xl transition-all cursor-pointer"
+                    :class="
+                      user.status === 'active'
+                        ? 'text-zinc-400 hover:text-red-500 hover:bg-red-500/10'
+                        : 'text-emerald-500 hover:bg-emerald-500/10'
+                    "
+                    :title="user.status === 'active' ? 'Chặn tài khoản' : 'Kích hoạt tài khoản'"
+                  >
+                    <ShieldAlert v-if="user.status === 'active'" class="w-4 h-4" />
+                    <UserCheck v-else class="w-4 h-4" />
+                  </button>
+                </div>
               </td>
             </tr>
 

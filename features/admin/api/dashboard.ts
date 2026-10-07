@@ -37,6 +37,7 @@ export abstract class AdminRepository {
   ): Promise<PaginatedResult<UserItem>>
   abstract updateUserRole(id: string, role: 'admin' | 'mod' | 'user'): Promise<unknown>
   abstract toggleUserStatus(id: string): Promise<unknown>
+  abstract toggleUserCommentBan(id: string): Promise<unknown>
   abstract getBaseQuotaConfig(): Promise<BaseQuotaConfig>
   abstract updateBaseQuotaConfig(value: number): Promise<BaseQuotaConfig>
 }
@@ -85,11 +86,13 @@ interface WorkerPost {
 
 interface WorkerComment {
   id: string
+  author_id?: string
   content: string
   created_at: string
   author_name: string
   post_title: string
   post_slug: string
+  is_comment_banned?: boolean
 }
 
 interface WorkerUser {
@@ -99,6 +102,7 @@ interface WorkerUser {
   role: 'admin' | 'mod' | 'user'
   status: 'active' | 'blocked'
   created_at: string
+  is_comment_banned?: boolean
 }
 
 export class AdminRepoImpl implements AdminRepository {
@@ -324,10 +328,12 @@ export class AdminRepoImpl implements AdminRepository {
 
       const items = list.map((comment) => ({
         id: comment.id,
+        author_id: comment.author_id,
         content: comment.content,
         author: comment.author_name,
         postTitle: comment.post_title,
-        date: new Date(comment.created_at).toLocaleString('vi-VN')
+        date: new Date(comment.created_at).toLocaleString('vi-VN'),
+        is_comment_banned: comment.is_comment_banned
       }))
 
       const pagination =
@@ -392,6 +398,7 @@ export class AdminRepoImpl implements AdminRepository {
         email: user.email,
         role: user.role,
         status: user.status,
+        is_comment_banned: user.is_comment_banned,
         joinDate: new Date(user.created_at).toLocaleDateString('vi-VN')
       }))
 
@@ -421,6 +428,10 @@ export class AdminRepoImpl implements AdminRepository {
 
   async toggleUserStatus(id: string): Promise<unknown> {
     return await HttpService.patch(`/admin/users/${id}/toggle-status`, {})
+  }
+
+  async toggleUserCommentBan(id: string): Promise<unknown> {
+    return await HttpService.patch(`/admin/users/${id}/toggle-comment-ban`, {})
   }
 
   async getBaseQuotaConfig(): Promise<BaseQuotaConfig> {
