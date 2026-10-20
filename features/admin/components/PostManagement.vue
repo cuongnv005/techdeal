@@ -11,7 +11,8 @@ import {
   Plus,
   CheckCircle,
   XCircle,
-  Pencil
+  Pencil,
+  Send
 } from 'lucide-vue-next'
 
 import { useAdminPosts } from '../composables/use-admin'
@@ -92,6 +93,12 @@ const confirmUnpublish = (id: string, title: string): void => {
     unpublishPost(id)
   }
 }
+
+const confirmPublishNow = (id: string, title: string): void => {
+  if (confirm(`Bạn có chắc chắn muốn đăng ngay bài viết: "${title}"?`)) {
+    approvePost(id)
+  }
+}
 </script>
 
 <template>
@@ -124,7 +131,7 @@ const confirmUnpublish = (id: string, title: string): void => {
           class="text-xs px-3 py-2.5 border border-gray-250 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-770 dark:text-zinc-300 focus:outline-none cursor-pointer"
         >
           <option value="">Tất cả trạng thái</option>
-          <option value="pending">Chờ duyệt</option>
+          <option value="pending">Chờ đăng</option>
           <option value="published">Đã đăng</option>
           <option value="unpublished">Hủy đăng</option>
         </select>
@@ -219,12 +226,21 @@ const confirmUnpublish = (id: string, title: string): void => {
               </td>
               <td class="px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-1">
-                  <!-- Duyệt bài (chỉ hiện khi pending hoặc unpublished) -->
+                  <!-- Đăng ngay (chỉ hiện khi pending / chờ đăng) -->
                   <button
-                    v-if="post.status !== 'published'"
+                    v-if="post.status === 'pending'"
+                    @click="confirmPublishNow(post.id, post.title)"
+                    class="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all cursor-pointer"
+                    title="Đăng ngay"
+                  >
+                    <Send class="w-4 h-4" />
+                  </button>
+                  <!-- Đăng lại (chỉ hiện khi unpublished / hủy đăng) -->
+                  <button
+                    v-else-if="post.status === 'unpublished'"
                     @click="approvePost(post.id)"
                     class="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all cursor-pointer"
-                    title="Duyệt bài viết"
+                    title="Đăng lại bài viết"
                   >
                     <CheckCircle class="w-4 h-4" />
                   </button>

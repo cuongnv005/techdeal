@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 
-import { Search, Plus, Clock, Trash2, X, AlertCircle, Pencil, Crown } from 'lucide-vue-next'
+import { Search, Plus, Clock, Trash2, X, AlertCircle, Pencil, Crown, Send } from 'lucide-vue-next'
 
 import { useAdminThreads, useAdminThreadDetail } from '../composables/use-thread'
 import { AdminRepoImpl } from '@features/admin/api/dashboard'
@@ -15,6 +15,7 @@ const {
   createThread,
   updateThread,
   expireThread,
+  publishThread,
   deleteThread,
   actionError,
   isPending,
@@ -47,6 +48,7 @@ interface ThreadFormState {
   deal_link: string
   is_vip_only: boolean
   deal_ends_at: string
+  scheduled_at: string
   max_claims: string
   status: string
 }
@@ -63,6 +65,7 @@ const emptyForm = (): ThreadFormState => ({
   deal_link: '',
   is_vip_only: false,
   deal_ends_at: '',
+  scheduled_at: '',
   max_claims: '',
   status: 'published'
 })
@@ -147,6 +150,7 @@ const openEditModal = async (thread: Thread): Promise<void> => {
       deal_link: full?.deal_link ?? '',
       is_vip_only: !!(full?.is_vip_only ?? thread.is_vip_only),
       deal_ends_at: toLocalDateTimeValue(full?.deal_ends_at ?? thread.deal_ends_at),
+      scheduled_at: toLocalDateTimeValue(full?.scheduled_at ?? thread.scheduled_at),
       max_claims:
         full?.max_claims != null
           ? String(full.max_claims)
@@ -163,6 +167,8 @@ const openEditModal = async (thread: Thread): Promise<void> => {
 }
 
 const handleSubmitForm = async (): Promise<void> => {
+  const isScheduled = !!form.value.scheduled_at
+  const finalStatus = isScheduled ? 'pending' : form.value.status
   const payload: CreateThreadInput = {
     app_name: form.value.app_name,
     summary: form.value.summary,
@@ -175,8 +181,9 @@ const handleSubmitForm = async (): Promise<void> => {
     original_price: form.value.original_price || undefined,
     is_vip_only: form.value.is_vip_only,
     deal_ends_at: form.value.deal_ends_at ? new Date(form.value.deal_ends_at).toISOString() : null,
+    scheduled_at: form.value.scheduled_at ? new Date(form.value.scheduled_at).toISOString() : null,
     max_claims: form.value.max_claims === '' ? null : Number(form.value.max_claims),
-    status: form.value.status
+    status: finalStatus
   }
 
   if (isEditMode.value && editingThreadId.value) {
@@ -189,6 +196,12 @@ const handleSubmitForm = async (): Promise<void> => {
     if (resultId) {
       isFormModalOpen.value = false
     }
+  }
+}
+
+const handlePublishNow = async (id: string, name: string) => {
+  if (confirm(`Bạn có chắc chắn muốn đăng ngay thread: "${name}"?`)) {
+    await publishThread(id)
   }
 }
 
@@ -402,28 +415,49 @@ onMounted(() => {
                 <span
                   class="inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border"
                   :class="
-                    thread.status !== 'published'
-                      ? 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700'
-                      : isDealExpired(thread)
-                        ? 'bg-red-500/10 text-red-550 border-red-500/20'
-                        : isOutOfClaims(thread)
-                          ? 'bg-amber-500/10 text-amber-555 border-amber-500/20'
-                          : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                    thread.status === 'pending'
+                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+                      : thread.status !== 'published'
+                        ? 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700'
+                        : isDealExpired(thread)
+                          ? 'bg-red-500/10 text-red-550 border-red-500/20'
+                          : isOutOfClaims(thread)
+                            ? 'bg-amber-500/10 text-amber-555 border-amber-500/20'
+                            : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                   "
                 >
                   {{
-                    thread.status !== 'published'
-                      ? thread.status
-                      : isDealExpired(thread)
-                        ? 'Đã hết hạn'
-                        : isOutOfClaims(thread)
-                          ? 'Hết lượt nhận'
-                          : 'Hoạt động'
+                    thread.status === 'pending'
+                      ? 'Chờ đăng'
+                      : thread.status !== 'published'
+                        ? (thread.status === 'unpublished' ? 'Đã ẩn' : thread.status)
+                        : isDealExpired(thread)
+                          ? 'Đã hết hạn'
+                          : isOutOfClaims(thread)
+                            ? 'Hết lượt nhận'
+                            : 'Hoạt động'
                   }}
                 </span>
+                <div
+                  v-if="thread.status === 'pending' && thread.scheduled_at"
+                  class="text-[10px] text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1 font-medium"
+                >
+                  <Clock class="w-3 h-3 shrink-0" />
+                  <span>{{ formatDate(thread.scheduled_at) }}</span>
+                </div>
               </td>
               <td class="px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-2">
+                  <!-- Đăng ngay (chỉ hiện khi pending / chờ đăng) -->
+                  <button
+                    v-if="thread.status === 'pending'"
+                    @click="handlePublishNow(thread.id, thread.app_name)"
+                    class="p-2 rounded-xl transition-all cursor-pointer text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10"
+                    title="Đăng ngay"
+                  >
+                    <Send class="w-4 h-4" />
+                  </button>
+
                   <button
                     @click="openEditModal(thread)"
                     class="p-2 rounded-xl transition-all cursor-pointer text-zinc-400 hover:text-[#3498db] hover:bg-[#3498db]/10"
@@ -656,6 +690,19 @@ onMounted(() => {
             </div>
             <div class="space-y-1">
               <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+                >Thời Gian Đăng / Hẹn Giờ (Tùy chọn)</label
+              >
+              <input
+                v-model="form.scheduled_at"
+                type="datetime-local"
+                class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
                 >Số Lượng Giới Hạn (Tùy chọn)</label
               >
               <input
@@ -666,20 +713,19 @@ onMounted(() => {
                 class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
               />
             </div>
-          </div>
-
-          <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
-              >Trạng Thái</label
-            >
-            <select
-              v-model="form.status"
-              class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
-            >
-              <option value="published">Đã xuất bản</option>
-              <option value="pending">Chờ duyệt</option>
-              <option value="unpublished">Đã ẩn</option>
-            </select>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-450"
+                >Trạng Thái</label
+              >
+              <select
+                v-model="form.status"
+                class="w-full text-xs px-3 py-2.5 border border-gray-255 dark:border-zinc-800 rounded-xl bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#3498db]"
+              >
+                <option value="published">Đã xuất bản</option>
+                <option value="pending">Chờ đăng</option>
+                <option value="unpublished">Đã ẩn</option>
+              </select>
+            </div>
           </div>
 
           <div class="flex items-center gap-2 py-2">

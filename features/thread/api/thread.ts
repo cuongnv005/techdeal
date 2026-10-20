@@ -21,6 +21,7 @@ export abstract class ThreadRepository {
   abstract adminCreate(data: CreateThreadInput): Promise<ApiResponse<{ id: string }>>
   abstract adminUpdate(id: string, data: Partial<CreateThreadInput>): Promise<ApiResponse<any>>
   abstract adminExpire(id: string): Promise<ApiResponse<any>>
+  abstract adminPublish(id: string): Promise<ApiResponse<any>>
   abstract adminDelete(id: string): Promise<ApiResponse<any>>
 }
 
@@ -105,6 +106,22 @@ export class ThreadRepoImpl implements ThreadRepository {
       return {
         success: false,
         error: e.response?.data?.error || e.message || 'Lỗi khi kết thúc deal',
+        data: null
+      }
+    }
+  }
+
+  async adminPublish(id: string): Promise<ApiResponse<any>> {
+    try {
+      const response = await HttpService.put<unknown, AxiosResponse<ApiResponse<any>>>(
+        `/admin/threads/${id}/publish`,
+        {}
+      )
+      return response.data
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.response?.data?.error || e.message || 'Lỗi khi đăng thread ngay',
         data: null
       }
     }

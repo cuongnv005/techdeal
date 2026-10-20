@@ -102,6 +102,26 @@ export function useAdminThreads() {
     }
   }
 
+  const publishThread = async (id: string) => {
+    isPending.value = true
+    actionError.value = null
+    try {
+      const resp = await repo.adminPublish(id)
+      if (resp.success) {
+        await refresh()
+        return true
+      } else {
+        actionError.value = resp.error || 'Không thể đăng thread ngay'
+        return false
+      }
+    } catch (e: any) {
+      actionError.value = e.message || 'Có lỗi xảy ra khi đăng thread ngay'
+      return false
+    } finally {
+      isPending.value = false
+    }
+  }
+
   const deleteThread = async (id: string) => {
     isPending.value = true
     actionError.value = null
@@ -129,6 +149,7 @@ export function useAdminThreads() {
     createThread,
     updateThread,
     expireThread,
+    publishThread,
     deleteThread,
     actionError,
     isPending,
