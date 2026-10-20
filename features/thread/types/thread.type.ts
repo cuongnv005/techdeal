@@ -21,6 +21,7 @@ export interface Thread {
   author_name?: string
   created_at: string
   updated_at?: string
+  scheduled_at?: string | null
 }
 
 export interface CreateThreadInput {
@@ -37,4 +38,5 @@ export interface CreateThreadInput {
   deal_ends_at?: string | null
   max_claims?: number | null
   status?: string
+  scheduled_at?: string | null
 }
