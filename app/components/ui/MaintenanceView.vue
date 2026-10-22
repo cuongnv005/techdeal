@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AlertTriangle, Clock, RefreshCw } from 'lucide-vue-next'
 import { ref } from 'vue'
+import { useMaintenance } from '@shared/composables/use-maintenance'
 
 const props = defineProps<{
   title?: string
@@ -8,11 +9,13 @@ const props = defineProps<{
   showRetry?: boolean
 }>()
 
+const { resetMaintenance } = useMaintenance()
 const isReloading = ref(false)
 
 const handleReload = () => {
   if (process.client) {
     isReloading.value = true
+    resetMaintenance()
     window.location.reload()
   }
 }

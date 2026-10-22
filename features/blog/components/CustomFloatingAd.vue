@@ -37,14 +37,14 @@ onMounted(async () => {
     const res = await HttpService.get<
       unknown,
       { data: { success: boolean; data: ActiveAffiliateAd | null } }
-    >('/affiliate/floating-ad/active')
+    >('/affiliate/floating-ad/active', undefined, { skipMaintenance: true } as any)
     const adData = res.data?.data
     if (adData && adData.id && adData.image_url && adData.target_url) {
       ad.value = adData
 
       // Gửi impression ngầm
       try {
-        HttpService.post(`/affiliate/floating-ad/${adData.id}/impression`, {})
+        HttpService.post(`/affiliate/floating-ad/${adData.id}/impression`, {}, { skipMaintenance: true } as any)
       } catch (e) {
         // ignore
       }
@@ -84,7 +84,7 @@ const handleClick = () => {
 
   // Ghi nhận click ngầm
   try {
-    HttpService.post(`/affiliate/floating-ad/${ad.value.id}/click`, {})
+    HttpService.post(`/affiliate/floating-ad/${ad.value.id}/click`, {}, { skipMaintenance: true } as any)
   } catch (e) {
     // ignore
   }

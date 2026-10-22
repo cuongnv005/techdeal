@@ -31,7 +31,7 @@ onMounted(async () => {
     const res = await HttpService.get<
       unknown,
       { data: { success: boolean; data: VerticalAdItem[] } }
-    >(`/affiliate/ads/active?type=vertical_banner&page=${props.page}`)
+    >(`/affiliate/ads/active?type=vertical_banner&page=${props.page}`, undefined, { skipMaintenance: true } as any)
 
     const items = res.data?.data
     if (items && items.length > 0) {
@@ -46,14 +46,14 @@ onMounted(async () => {
         const pickedLeft = leftItems[Math.floor(Math.random() * leftItems.length)]
         if (pickedLeft) {
           leftAd.value = pickedLeft
-          HttpService.post(`/affiliate/ads/${pickedLeft.id}/impression`, {}).catch(() => {})
+          HttpService.post(`/affiliate/ads/${pickedLeft.id}/impression`, {}, { skipMaintenance: true } as any).catch(() => {})
         }
       }
       if (rightItems.length > 0) {
         const pickedRight = rightItems[Math.floor(Math.random() * rightItems.length)]
         if (pickedRight) {
           rightAd.value = pickedRight
-          HttpService.post(`/affiliate/ads/${pickedRight.id}/impression`, {}).catch(() => {})
+          HttpService.post(`/affiliate/ads/${pickedRight.id}/impression`, {}, { skipMaintenance: true } as any).catch(() => {})
         }
       }
     }
@@ -64,7 +64,7 @@ onMounted(async () => {
 
 const handleClick = (adItem?: VerticalAdItem | null) => {
   if (adItem?.id) {
-    HttpService.post(`/affiliate/ads/${adItem.id}/click`, {}).catch(() => {})
+    HttpService.post(`/affiliate/ads/${adItem.id}/click`, {}, { skipMaintenance: true } as any).catch(() => {})
   }
 }
 </script>

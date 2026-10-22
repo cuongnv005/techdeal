@@ -41,7 +41,7 @@ onMounted(async () => {
     const res = await HttpService.get<
       unknown,
       { data: { success: boolean; data: SquareAdItem[] } }
-    >(`/affiliate/ads/active?type=square_banner&page=${props.page}`)
+    >(`/affiliate/ads/active?type=square_banner&page=${props.page}`, undefined, { skipMaintenance: true } as any)
 
     const items = res.data?.data
     if (items && items.length > 0) {
@@ -53,7 +53,7 @@ onMounted(async () => {
         // Ghi nhận impression ngầm
         if (ad.value?.id) {
           try {
-            HttpService.post(`/affiliate/ads/${ad.value.id}/impression`, {})
+            HttpService.post(`/affiliate/ads/${ad.value.id}/impression`, {}, { skipMaintenance: true } as any)
           } catch (e) {
             // ignore
           }
@@ -80,7 +80,7 @@ const displayBackground = computed(
 const handleClick = () => {
   if (ad.value?.id) {
     try {
-      HttpService.post(`/affiliate/ads/${ad.value.id}/click`, {})
+      HttpService.post(`/affiliate/ads/${ad.value.id}/click`, {}, { skipMaintenance: true } as any)
     } catch (e) {
       // ignore
     }
