@@ -56,6 +56,15 @@ class HttpModule {
           }
         }
 
+        if (response?.status === 200 && process.client) {
+          import('@shared/composables/use-maintenance').then(({ useMaintenance }) => {
+            const { isMaintenanceActive, resetMaintenance } = useMaintenance()
+            if (isMaintenanceActive.value) {
+              resetMaintenance()
+            }
+          })
+        }
+
         if (response?.status !== 200) {
           Toast.error({ message: response.data.message })
           if (response?.status === 404) {
@@ -75,6 +84,7 @@ class HttpModule {
         return response
       },
       (error: AxiosError) => {
+        const url = error.config?.url || ''
         const status = error.response?.status
         const msg = (
           (error?.response?.data as HttpErrorPayload)?.message ||
@@ -82,16 +92,44 @@ class HttpModule {
           ''
         ).toLowerCase()
 
-        // Kiểm tra lỗi Backend sập, timeout, network error hoặc chạm trần D1 row read
+        // 1. Tuyệt đối không kích hoạt màn hình bảo trì với:
+        // - Request bị hủy (user chuyển trang / abort)
+        // - Request bị trình duyệt hoặc AdBlock / Brave Shields chặn (ERR_BLOCKED_BY_CLIENT / net::ERR_BLOCKED_BY_CLIENT)
+        // - Thiết bị người dùng offline / mất mạng cục bộ
+        // - Các request phụ / quảng cáo (affiliate, ads, impression, click, tracking, views, stats)
+        // - Cấu hình request có cờ skipMaintenance = true
+        const isCanceled =
+          axios.isCancel(error) ||
+          error.code === 'ERR_CANCELED' ||
+          error.name === 'CanceledError'
+        const isClientBlocked =
+          error.code === 'ERR_BLOCKED_BY_CLIENT' ||
+          msg.includes('blocked by client') ||
+          msg.includes('err_blocked_by_client')
+        const isOffline =
+          process.client && typeof navigator !== 'undefined' && !navigator.onLine
+        const isAuxiliaryRequest =
+          url.includes('/affiliate/') ||
+          url.includes('/ads/') ||
+          url.includes('/impression') ||
+          url.includes('/click') ||
+          url.includes('/views') ||
+          url.includes('/stats') ||
+          (error.config as any)?.skipMaintenance === true
+
+        if (isCanceled || isClientBlocked || isOffline || isAuxiliaryRequest) {
+          return Promise.reject(error)
+        }
+
+        // 2. Chỉ kích hoạt bảo trì khi server Cloudflare Worker sập thật sự:
+        // - Cloudflare Worker / Gateway trả về 502, 503, 504
+        // - Server trả về lỗi chạm trần D1 row read / rate limit
         const isMaintenanceError =
-          !error.response ||
-          [500, 502, 503, 504].includes(status as number) ||
-          msg.includes('d1') ||
+          [502, 503, 504].includes(status as number) ||
+          msg.includes('d1_error') ||
           msg.includes('row read') ||
           msg.includes('rate limit') ||
-          msg.includes('network error') ||
-          msg.includes('econnrefused') ||
-          msg.includes('etimedout')
+          (status === 500 && (msg.includes('d1') || msg.includes('database quota')))
 
         if (isMaintenanceError) {
           if (process.client) {

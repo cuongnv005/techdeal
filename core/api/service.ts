@@ -12,7 +12,8 @@ export abstract class IHttpAdapter<T = unknown> {
 
   abstract get<TParams = unknown, TResponse = AxiosResponse>(
     url: string,
-    params?: TParams
+    params?: TParams,
+    options?: AxiosRequestConfig
   ): Promise<TResponse>
 
   abstract post<TData = unknown, TResponse = AxiosResponse>(
@@ -52,13 +53,15 @@ class HttpAxiosService implements IHttpAdapter<AxiosInstance> {
    * Makes a GET request
    * @param url - Endpoint URL
    * @param params - Query parameters
+   * @param options - Additional Axios request config
    * @returns Promise with the response
    */
   get<TParams = unknown, TResponse = AxiosResponse>(
     url: string,
-    params?: TParams
+    params?: TParams,
+    options?: AxiosRequestConfig
   ): Promise<TResponse> {
-    return this.client.get(url, { params })
+    return this.client.get(url, { params, ...options })
   }
 
   /**
